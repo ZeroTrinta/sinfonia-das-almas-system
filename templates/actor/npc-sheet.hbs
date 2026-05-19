@@ -1,0 +1,28 @@
+<form class="sinfonia-sheet npc {{cssClass}}" autocomplete="off">
+  <header class="sheet-header">
+    <img class="actor-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
+    <div class="header-fields">
+      <input class="actor-name" type="text" name="name" value="{{actor.name}}"/>
+      <div class="npc-stats">
+        <div class="badge pv">
+          <span>♥ PV</span>
+          <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0" max="{{system.recursos.pv.max}}"/>
+          <span>/</span>
+          <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
+        </div>
+        <div class="combate-box"><label>Defesa</label><input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/></div>
+        <div class="combate-box"><label>Iniciativa</label><input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/></div>
+        <div class="field-group"><label>Tipo</label><input type="text" name="system.tipo" value="{{system.tipo}}" placeholder="Ex: Humanoide, Besta..."/></div>
+        <div class="field-group"><label>CR</label><input type="number" name="system.cr" value="{{system.cr}}" min="0" step="0.25"/></div>
+      </div>
+    </div>
+  </header>
+  <div class="sheet-body">
+    <section class="panel">
+      <h3 class="panel-title">Descrição</h3>
+      <div class="editor-container">
+        {{editor descricaoEnriquecida name="system.descricao" button=true editable=isEditable}}
+      </div>
+    </section>
+  </div>
+</form>

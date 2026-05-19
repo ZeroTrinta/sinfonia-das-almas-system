@@ -1,0 +1,6 @@
+# Foundry VTT
+packs/
+.DS_Store
+Thumbs.db
+node_modules/
+*.log

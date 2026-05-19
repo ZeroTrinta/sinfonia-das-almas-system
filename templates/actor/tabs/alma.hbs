@@ -1,0 +1,54 @@
+{{!-- TAB ALMA --}}
+<div class="alma-layout">
+
+  {{!-- EIXO DA ALMA --}}
+  <section class="panel alma-panel">
+    <h3 class="panel-title">Eixo da Alma</h3>
+    <div class="cabo-de-guerra">
+
+      <div class="alma-lado det-lado">
+        <div class="alma-label det-label">★ Determinação <span class="alma-valor">{{system.alma.determinacao}}</span></div>
+        <div class="alma-bar-track det-track">
+          <div class="alma-bar-fill det-fill" style="width: {{pct system.alma.determinacao 10}}%"></div>
+        </div>
+        <div class="alma-controls">
+          <button type="button" class="det-btn" data-delta="-1">−</button>
+          <input type="number" name="system.alma.determinacao" value="{{system.alma.determinacao}}" min="0" max="10" class="alma-num"/>
+          <button type="button" class="det-btn" data-delta="1">+</button>
+        </div>
+      </div>
+
+      <div class="alma-divider">⟷</div>
+
+      <div class="alma-lado cor-lado">
+        <div class="alma-label cor-label">☠ Corrupção <span class="alma-valor">{{system.alma.corrupcao}}</span></div>
+        <div class="alma-bar-track cor-track">
+          <div class="alma-bar-fill cor-fill" style="width: {{pct system.alma.corrupcao 10}}%"></div>
+        </div>
+        <div class="alma-controls">
+          <span class="cor-info">Automático (10 − Determinação)</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  {{!-- PILAR --}}
+  <section class="panel">
+    <h3 class="panel-title">Pilar da Alma</h3>
+    <input type="text" name="system.alma.pilar" value="{{system.alma.pilar}}" placeholder="O que sustenta sua vontade de continuar..."/>
+  </section>
+
+  {{!-- QUALIDADES E DEFEITOS --}}
+  <div class="qual-def-grid">
+    <section class="panel">
+      <h3 class="panel-title" style="color:#80e8f8;">Qualidades</h3>
+      <textarea name="system.alma.qualidades" placeholder="Liste as qualidades do personagem...">{{system.alma.qualidades}}</textarea>
+    </section>
+    <section class="panel">
+      <h3 class="panel-title" style="color:#c87070;">Defeitos</h3>
+      <textarea name="system.alma.defeitos" placeholder="Liste os defeitos do personagem...">{{system.alma.defeitos}}</textarea>
+    </section>
+  </div>
+
+</div>

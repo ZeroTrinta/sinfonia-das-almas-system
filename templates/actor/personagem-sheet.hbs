@@ -1,0 +1,119 @@
+{{!-- Sinfonia das Almas — Ficha de Personagem --}}
+<form class="sinfonia-sheet personagem {{cssClass}}" autocomplete="off">
+
+  {{!-- ═══ HEADER ═══ --}}
+  <header class="sheet-header">
+    <img class="actor-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Avatar"/>
+    <div class="header-fields">
+      <div class="header-top">
+        <input class="actor-name" type="text" name="name" value="{{actor.name}}" placeholder="Nome do Personagem"/>
+        <div class="header-badges">
+          <div class="badge pv" title="Pontos de Vida">
+            <span class="badge-label">♥ PV</span>
+            <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0" max="{{system.recursos.pv.max}}"/>
+            <span class="badge-sep">/</span>
+            <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
+          </div>
+          <div class="badge pe" title="Pontos de Energia">
+            <span class="badge-label">✦ PE</span>
+            <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0" max="{{system.recursos.pe.max}}"/>
+            <span class="badge-sep">/</span>
+            <input type="number" name="system.recursos.pe.max" value="{{system.recursos.pe.max}}" min="0"/>
+          </div>
+          <div class="badge pi" title="Pontos de Inventário">
+            <span class="badge-label">◈ PI</span>
+            <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0" max="{{system.recursos.pi.max}}"/>
+            <span class="badge-sep">/</span>
+            <input type="number" name="system.recursos.pi.max" value="{{system.recursos.pi.max}}" min="0"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-bottom">
+        <div class="field-group">
+          <label>Classe</label>
+          <select name="system.progressao.classe">
+            <option value="">— escolha —</option>
+            {{#each classesChoices as |label key|}}
+              <option value="{{key}}" {{#eq key ../system.progressao.classe}}selected{{/eq}}>{{label}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div class="field-group">
+          <label>Nível</label>
+          <input type="number" name="system.progressao.nivel" value="{{system.progressao.nivel}}" min="1" max="99"/>
+        </div>
+        <div class="field-group">
+          <label>Pts Habilidade</label>
+          <input type="number" name="system.progressao.pontosHabilidade" value="{{system.progressao.pontosHabilidade}}" min="0"/>
+        </div>
+        <div class="field-group">
+          <label>Deslocamento</label>
+          <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}" min="0"/>
+          <span class="unit">m</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  {{!-- ═══ ATRIBUTOS ═══ --}}
+  <section class="atributos-section">
+    {{#each atributosConfig as |cfg key|}}
+    <div class="atributo-box">
+      <span class="atrib-code">{{cfg.abbr}}</span>
+      <span class="atrib-label">{{cfg.label}}</span>
+      <select name="system.atributos.{{key}}" class="dado-select">
+        {{#each ../dadoChoices as |label dado|}}
+          <option value="{{dado}}" {{#eq dado (lookup ../../system.atributos key)}}selected{{/eq}}>{{label}}</option>
+        {{/each}}
+      </select>
+    </div>
+    {{/each}}
+  </section>
+
+  {{!-- ═══ COMBATE ═══ --}}
+  <section class="combate-section">
+    <div class="combate-box"><label>Defesa</label><input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/></div>
+    <div class="combate-box"><label>Iniciativa</label><input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/></div>
+    <div class="combate-box"><label>ND Mística</label><input type="number" name="system.combate.ndMistica" value="{{system.combate.ndMistica}}"/></div>
+    <div class="combate-box"><label>Estilhaços</label><input type="number" name="system.combate.estilhacos" value="{{system.combate.estilhacos}}" min="0"/></div>
+  </section>
+
+  {{!-- ═══ TABS ═══ --}}
+  <nav class="sheet-tabs tabs" data-group="primary">
+    <a class="item" data-tab="principal">Principal</a>
+    <a class="item" data-tab="pericias">Perícias</a>
+    <a class="item" data-tab="inventario">Inventário</a>
+    <a class="item" data-tab="alma">Alma</a>
+    <a class="item" data-tab="bio">Biografia</a>
+  </nav>
+
+  <div class="sheet-body">
+
+    {{!-- TAB: PRINCIPAL --}}
+    <div class="tab" data-group="primary" data-tab="principal">
+      {{> "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs"}}
+    </div>
+
+    {{!-- TAB: PERÍCIAS --}}
+    <div class="tab" data-group="primary" data-tab="pericias">
+      {{> "systems/sinfonia-das-almas/templates/actor/tabs/pericias.hbs"}}
+    </div>
+
+    {{!-- TAB: INVENTÁRIO --}}
+    <div class="tab" data-group="primary" data-tab="inventario">
+      {{> "systems/sinfonia-das-almas/templates/actor/tabs/inventario.hbs"}}
+    </div>
+
+    {{!-- TAB: ALMA --}}
+    <div class="tab" data-group="primary" data-tab="alma">
+      {{> "systems/sinfonia-das-almas/templates/actor/tabs/alma.hbs"}}
+    </div>
+
+    {{!-- TAB: BIO --}}
+    <div class="tab" data-group="primary" data-tab="bio">
+      {{> "systems/sinfonia-das-almas/templates/actor/tabs/bio.hbs"}}
+    </div>
+
+  </div>
+</form>

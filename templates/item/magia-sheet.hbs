@@ -1,0 +1,24 @@
+<form class="sinfonia-sheet item magia {{cssClass}}" autocomplete="off">
+  <header class="item-header">
+    <img class="item-img-edit" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
+    <div class="item-header-fields">
+      <input class="item-name" type="text" name="name" value="{{item.name}}" placeholder="Nome do Item"/>
+      <span class="item-type-badge">magia</span>
+    </div>
+  </header>
+  <nav class="sheet-tabs tabs" data-group="item">
+    <a class="item" data-tab="detalhes">Detalhes</a>
+    <a class="item" data-tab="descricao">Descrição</a>
+  </nav>
+  <div class="sheet-body">
+    <div class="tab" data-group="item" data-tab="detalhes">
+      <div class="form-grid">
+        {{!-- Campos específicos preenchidos via JS/sheet getData --}}
+        <div class="form-group"><label>Peso (kg)</label><input type="number" name="system.peso" value="{{system.peso}}" min="0" step="0.1"/></div>
+      </div>
+    </div>
+    <div class="tab" data-group="item" data-tab="descricao">
+      {{editor descricaoEnriquecida name="system.descricao" button=true editable=isOwner}}
+    </div>
+  </div>
+</form>

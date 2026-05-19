@@ -1,0 +1,79 @@
+{
+  "SINFONIA": {
+    "Atributos": {
+      "pod": "Poder",
+      "agi": "Agilidade",
+      "int": "Intelecto",
+      "car": "Carisma",
+      "mis": "Misticismo"
+    },
+    "Classes": {
+      "guerreiro": "Guerreiro",
+      "gatuno": "Gatuno",
+      "arqueiro": "Arqueiro",
+      "mago": "Mago"
+    },
+    "Escolas": {
+      "abjuracao":    "Abjuração",
+      "conjuracao":   "Conjuração",
+      "adivinhacao":  "Adivinhação",
+      "encantamento": "Encantamento",
+      "evocacao":     "Evocação",
+      "ilusao":       "Ilusão",
+      "necromancia":  "Necromancia",
+      "transmutacao": "Transmutação",
+      "divina":       "Divina"
+    },
+    "Pericias": {
+      "armasBrancas":   "Armas Brancas",
+      "armasDeFogo":    "Armas de Fogo",
+      "atletismo":      "Atletismo",
+      "briga":          "Briga",
+      "conducao":       "Condução",
+      "furtividade":    "Furtividade",
+      "fortitude":      "Fortitude",
+      "forcaDeVontade": "Força de Vontade",
+      "reflexos":       "Reflexos",
+      "ladinagem":      "Ladinagem",
+      "oficios":        "Ofícios",
+      "sobrevivencia":  "Sobrevivência",
+      "empatiaAnimais": "Empatia c/ Animais",
+      "etiqueta":       "Etiqueta",
+      "intimidacao":    "Intimidação",
+      "lideranca":      "Liderança",
+      "malandragem":    "Malandragem",
+      "performance":    "Performance",
+      "persuasao":      "Persuasão",
+      "intuicao":       "Intuição",
+      "subterfugio":    "Subterfúgio",
+      "ciencia":        "Ciência",
+      "erudicao":       "Erudição",
+      "financas":       "Finanças",
+      "investigacao":   "Investigação",
+      "medicina":       "Medicina",
+      "arcanismo":      "Arcanismo",
+      "percepcao":      "Percepção",
+      "politica":       "Política",
+      "tecnologia":     "Tecnologia"
+    },
+    "Maestria": {
+      "":          "—",
+      "iniciante": "Iniciante (+2)",
+      "treinado":  "Treinado (+4)",
+      "experiente":"Experiente (+6)"
+    }
+  },
+  "DOCUMENT": {
+    "Actor": {
+      "personagem": "Personagem",
+      "npc": "NPC"
+    },
+    "Item": {
+      "habilidade": "Habilidade",
+      "magia":      "Magia",
+      "arma":       "Arma",
+      "armadura":   "Armadura",
+      "inventario": "Item de Inventário"
+    }
+  }
+}

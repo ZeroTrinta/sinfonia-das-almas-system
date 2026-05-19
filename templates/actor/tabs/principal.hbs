@@ -1,0 +1,106 @@
+{{!-- TAB PRINCIPAL: Habilidades, Magias, Armas, Origens --}}
+<div class="principal-layout">
+
+  {{!-- ORIGENS --}}
+  <section class="panel origens-panel">
+    <h3 class="panel-title">Origens</h3>
+    <div class="origem-item">
+      <label>Evento Marcante</label>
+      <input type="text" name="system.origem.eventoMarcante.descricao" value="{{system.origem.eventoMarcante.descricao}}" placeholder="Ex: Sobrevivente de uma tragédia..."/>
+      <label class="origem-check">
+        <input type="checkbox" name="system.origem.eventoMarcante.usadoNaSessao"
+          {{#if system.origem.eventoMarcante.usadoNaSessao}}checked{{/if}}
+          class="origem-toggle" data-tipo="eventoMarcante"/>
+        Usado nesta sessão
+      </label>
+    </div>
+    <div class="origem-item">
+      <label>Ocupação</label>
+      <input type="text" name="system.origem.ocupacao.descricao" value="{{system.origem.ocupacao.descricao}}" placeholder="Ex: Guerreiro Amargurado"/>
+      <label class="origem-check">
+        <input type="checkbox" name="system.origem.ocupacao.usadoNaSessao"
+          {{#if system.origem.ocupacao.usadoNaSessao}}checked{{/if}}
+          class="origem-toggle" data-tipo="ocupacao"/>
+        Usado nesta sessão
+      </label>
+    </div>
+  </section>
+
+  {{!-- HABILIDADES --}}
+  <section class="panel itens-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Habilidades</h3>
+      <a class="item-create" data-tipo="habilidade" title="Adicionar Habilidade"><i class="fas fa-plus"></i></a>
+    </div>
+    <ul class="items-list">
+      {{#each habilidades as |item|}}
+      <li class="item" data-item-id="{{item.id}}">
+        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          {{#if item.system.custoPE}}<span class="item-custo">{{item.system.custoPE}} PE</span>{{/if}}
+        </div>
+        <div class="item-controls">
+          <a class="item-usar" title="Usar"><i class="fas fa-bolt"></i></a>
+          <a class="item-edit" title="Editar"><i class="fas fa-edit"></i></a>
+          <a class="item-delete" title="Deletar"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">Nenhuma habilidade. <a class="item-create" data-tipo="habilidade">Adicionar</a></li>
+      {{/each}}
+    </ul>
+  </section>
+
+  {{!-- MAGIAS --}}
+  <section class="panel itens-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Magias</h3>
+      <a class="item-create" data-tipo="magia" title="Adicionar Magia"><i class="fas fa-plus"></i></a>
+    </div>
+    <ul class="items-list">
+      {{#each magias as |item|}}
+      <li class="item magia-item circulo-{{item.system.circulo}}" data-item-id="{{item.id}}">
+        <div class="magia-circulo">{{item.system.circulo}}º</div>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          <span class="item-sub">{{item.system.custoPE}} PE · {{item.system.alcance}}</span>
+        </div>
+        <div class="item-controls">
+          <a class="item-usar" title="Conjurar"><i class="fas fa-magic"></i></a>
+          <a class="item-edit" title="Editar"><i class="fas fa-edit"></i></a>
+          <a class="item-delete" title="Deletar"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">Nenhuma magia. <a class="item-create" data-tipo="magia">Adicionar</a></li>
+      {{/each}}
+    </ul>
+  </section>
+
+  {{!-- ARMAS --}}
+  <section class="panel itens-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Armas</h3>
+      <a class="item-create" data-tipo="arma" title="Adicionar Arma"><i class="fas fa-plus"></i></a>
+    </div>
+    <ul class="items-list">
+      {{#each armas as |item|}}
+      <li class="item" data-item-id="{{item.id}}">
+        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          <span class="item-sub">{{item.system.dano}} {{item.system.tipoDano}}</span>
+        </div>
+        <div class="item-controls">
+          <a class="item-edit" title="Editar"><i class="fas fa-edit"></i></a>
+          <a class="item-delete" title="Deletar"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">Nenhuma arma.</li>
+      {{/each}}
+    </ul>
+  </section>
+
+</div>
