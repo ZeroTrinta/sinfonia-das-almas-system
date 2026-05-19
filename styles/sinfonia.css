@@ -1,7 +1,53 @@
 /* ================================================================
    SINFONIA DAS ALMAS — Foundry VTT System Stylesheet
-   Estilo dark fantasy inspirado no visual do site
+   v2 — Correções de UI: dropdown, barras brancas, layout header
 ================================================================ */
+
+/* ── Reset geral da janela do Foundry ── */
+.app.sheet.actor.sinfonia-das-almas,
+.app.sheet.item.sinfonia-das-almas {
+  background: #06080d !important;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8) !important;
+}
+
+/* Remove bordas/fundos brancos que o Foundry injeta */
+.app.sheet.actor.sinfonia-das-almas .window-content,
+.app.sheet.item.sinfonia-das-almas .window-content {
+  background: #06080d !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+}
+
+/* Barra de título da janela */
+.app.sheet.actor.sinfonia-das-almas .window-header,
+.app.sheet.item.sinfonia-das-almas .window-header {
+  background: #0d1020 !important;
+  border-bottom: 1px solid rgba(200,151,42,0.4) !important;
+  color: #f0c060 !important;
+}
+
+.app.sheet.actor.sinfonia-das-almas .window-header .window-title,
+.app.sheet.item.sinfonia-das-almas .window-header .window-title {
+  color: #f0c060 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 13px !important;
+  letter-spacing: 2px !important;
+}
+
+.app.sheet.actor.sinfonia-das-almas .window-header a,
+.app.sheet.item.sinfonia-das-almas .window-header a {
+  color: #7888a0 !important;
+}
+.app.sheet.actor.sinfonia-das-almas .window-header a:hover,
+.app.sheet.item.sinfonia-das-almas .window-header a:hover {
+  color: #f0c060 !important;
+}
+
+/* Scrollbar da sheet */
+.sinfonia-sheet ::-webkit-scrollbar { width: 4px; height: 4px; }
+.sinfonia-sheet ::-webkit-scrollbar-track { background: transparent; }
+.sinfonia-sheet ::-webkit-scrollbar-thumb { background: #6b4e12; border-radius: 2px; }
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
 
@@ -78,10 +124,57 @@
 }
 
 /* ── Badges PV/PE/PI ── */
+/* ── Header layout fix ── */
+.header-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.header-top {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.header-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 8px;
+  align-items: end;
+}
+
+.header-bottom .field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.header-bottom .field-group label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+
+.header-bottom .field-group input,
+.header-bottom .field-group select {
+  width: 100% !important;
+}
+
+.unit {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  color: var(--silver-dim);
+  margin-top: 2px;
+}
+
 .header-badges {
   display: flex;
   gap: 8px;
-  margin-top: 8px;
   flex-wrap: wrap;
 }
 
@@ -152,14 +245,27 @@
 }
 
 .dado-select {
-  background: rgba(0,0,0,0.5);
-  border: 1px solid var(--gold-dim);
-  color: var(--gold-light);
-  font-family: 'Cinzel', serif;
-  font-size: 12px;
-  text-align: center;
-  cursor: pointer;
-  width: 100%;
+  background: #0d1020 !important;
+  border: 1px solid var(--gold-dim) !important;
+  color: var(--gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 12px !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.dado-select option {
+  background: #0d1020 !important;
+  color: var(--gold-light) !important;
+}
+
+.dado-select:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(200,151,42,0.3) !important;
+  outline: none !important;
 }
 
 /* ── Combate ── */
@@ -274,25 +380,45 @@
   align-items: center;
 }
 
-/* ── Inputs globais na ficha ── */
+/* ── Inputs globais na ficha — força override no Foundry ── */
 .sinfonia-sheet input[type="text"],
 .sinfonia-sheet input[type="number"],
-.sinfonia-sheet textarea,
+.sinfonia-sheet textarea {
+  background: rgba(0,0,0,0.4) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 15px !important;
+  padding: 4px 8px !important;
+}
+
 .sinfonia-sheet select {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid var(--border);
-  color: var(--text);
-  font-family: 'EB Garamond', serif;
-  font-size: 15px;
-  padding: 4px 8px;
+  background: #0d1020 !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 15px !important;
+  padding: 4px 8px !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.sinfonia-sheet select option {
+  background: #0d1020 !important;
+  color: var(--text) !important;
+}
+
+.sinfonia-sheet select optgroup {
+  background: #0d1020 !important;
+  color: var(--silver-dim) !important;
 }
 
 .sinfonia-sheet input:focus,
 .sinfonia-sheet textarea:focus,
 .sinfonia-sheet select:focus {
-  outline: none;
-  border-color: var(--gold);
-  box-shadow: 0 0 8px rgba(200,151,42,0.2);
+  outline: none !important;
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(200,151,42,0.2) !important;
 }
 
 /* ── Items List ── */
@@ -385,14 +511,24 @@
 .pericia-bonus { font-family: 'Cinzel', serif; font-size: 9px; color: var(--silver-dim); min-width: 22px; text-align: right; }
 
 .maestria-sel {
-  background: rgba(0,0,0,0.4);
-  border: 1px solid rgba(255,255,255,0.08);
-  color: var(--silver-dim);
-  font-family: 'Cinzel', serif;
-  font-size: 8px;
-  padding: 2px 4px;
-  cursor: pointer;
+  background: #0d1020 !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: var(--silver-dim) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 8px !important;
+  padding: 3px 6px !important;
+  cursor: pointer !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
 }
+
+.maestria-sel option {
+  background: #0d1020 !important;
+  color: var(--text) !important;
+}
+
+.maestria-sel.treinado   { border-color: #40a0b0 !important; color: #40a0b0 !important; }
+.maestria-sel.experiente { border-color: #40a060 !important; color: #40a060 !important; }
 
 .pericia-roll {
   color: var(--silver-dim);
