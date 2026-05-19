@@ -34,9 +34,10 @@
           <label>Classe</label>
           <select name="system.progressao.classe">
             <option value="">— escolha —</option>
-            {{#each classesChoices as |label key|}}
-              <option value="{{key}}" {{#eq key ../system.progressao.classe}}selected{{/eq}}>{{label}}</option>
-            {{/each}}
+            <option value="guerreiro" {{#eq "guerreiro" system.progressao.classe}}selected{{/eq}}>Guerreiro</option>
+            <option value="gatuno"    {{#eq "gatuno"    system.progressao.classe}}selected{{/eq}}>Gatuno</option>
+            <option value="arqueiro"  {{#eq "arqueiro"  system.progressao.classe}}selected{{/eq}}>Arqueiro</option>
+            <option value="mago"      {{#eq "mago"      system.progressao.classe}}selected{{/eq}}>Mago</option>
           </select>
         </div>
         <div class="field-group">
@@ -62,9 +63,10 @@
       <span class="atrib-code">{{cfg.abbr}}</span>
       <span class="atrib-label">{{cfg.label}}</span>
       <select name="system.atributos.{{key}}" class="dado-select">
-        {{#each ../dadoChoices as |label dado|}}
-          <option value="{{dado}}" {{#eq dado (lookup ../../system.atributos key)}}selected{{/eq}}>{{label}}</option>
-        {{/each}}
+        <option value="d6"  {{#eq "d6"  (lookup ../system.atributos key)}}selected{{/eq}}>d6</option>
+        <option value="d8"  {{#eq "d8"  (lookup ../system.atributos key)}}selected{{/eq}}>d8</option>
+        <option value="d10" {{#eq "d10" (lookup ../system.atributos key)}}selected{{/eq}}>d10</option>
+        <option value="d12" {{#eq "d12" (lookup ../system.atributos key)}}selected{{/eq}}>d12</option>
       </select>
     </div>
     {{/each}}
