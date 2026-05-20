@@ -2,14 +2,18 @@
 <div class="bio-layout">
   <section class="panel">
     <h3 class="panel-title">Biografia</h3>
-    <div class="editor-container">
-      {{editor bioEnriquecida name="system.biografia" button=true editable=isEditable}}
-    </div>
+    <textarea
+      class="bio-textarea"
+      name="system.biografia"
+      placeholder="Escreva a história do personagem, sua origem, motivações, segredos..."
+    >{{system.biografia}}</textarea>
   </section>
   <section class="panel">
     <h3 class="panel-title">Notas</h3>
-    <div class="editor-container">
-      {{editor notasEnriquecidas name="system.notas" button=true editable=isEditable}}
-    </div>
+    <textarea
+      class="bio-textarea"
+      name="system.notas"
+      placeholder="Anotações de sessão, contatos, missões em andamento, itens buscados..."
+    >{{system.notas}}</textarea>
   </section>
 </div>
