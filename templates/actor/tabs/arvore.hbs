@@ -1,0 +1,36 @@
+{{!-- Sinfonia das Almas — Janela da Árvore de Habilidades --}}
+<div class="arvore-wrapper">
+
+  <div class="arvore-topbar">
+    <div class="arvore-tabs">
+      <button class="arvore-tab active" data-cls="all">Todas</button>
+      <button class="arvore-tab" data-cls="guerreiro">Guerreiro</button>
+      <button class="arvore-tab" data-cls="gatuno">Gatuno</button>
+      <button class="arvore-tab" data-cls="arqueiro">Arqueiro</button>
+      <button class="arvore-tab" data-cls="mago">Mago</button>
+    </div>
+    <span class="arvore-actor-name">{{actorName}}</span>
+    <button id="arvore-reset" class="arvore-reset-btn">Resetar</button>
+  </div>
+
+  <div class="arvore-canvas-container">
+    <canvas id="arvore-canvas"></canvas>
+  </div>
+
+  <div class="arvore-bottombar">
+    <span class="arvore-hint">Scroll: zoom &nbsp;|&nbsp; Drag: mover &nbsp;|&nbsp; Click: ativar nó</span>
+  </div>
+
+</div>
+
+<div id="arvore-tooltip" style="display:none;">
+  <div class="tt-top"></div>
+  <div class="tt-body">
+    <span class="tt-cls"></span>
+    <span class="tt-name"></span>
+    <span class="tt-type"></span>
+    <span class="tt-desc"></span>
+    <span class="tt-cost"></span>
+    <span class="tt-status"></span>
+  </div>
+</div>

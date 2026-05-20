@@ -92,6 +92,12 @@ export class SinfoniaActorSheet extends ActorSheet {
     // Origem toggle
     html.find(".origem-toggle").click(this._onToggleOrigem.bind(this));
 
+    // Abrir Árvore de Habilidades
+    html.find(".btn-arvore").click(() => {
+      const arvore = new ArvoreHabilidades(this.actor);
+      arvore.render(true);
+    });
+
     // Drag & drop de itens
     html.find(".item").each((i, li) => {
       li.setAttribute("draggable", true);
