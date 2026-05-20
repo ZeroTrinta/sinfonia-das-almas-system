@@ -69,18 +69,28 @@ export class SinfoniaActorSheet extends ActorSheet {
 
   /** Registra os event listeners */
   activateListeners(html) {
+    // IMPORTANTE: não chamamos super.activateListeners antes dos nossos
+    // listeners customizados para evitar duplo disparo no v13
     super.activateListeners(html);
     if (!this.isEditable) return;
 
-    // Fix: salva o select de classe manualmente (Foundry v13 compat)
-    html.find("select[name='system.progressao.classe']").on("change", async (e) => {
-      await this.actor.update({ "system.progressao.classe": e.target.value });
-    });
+    // Fix duplo clique: intercepta ANTES do Foundry processar
+    // Usa capture:true para pegar o evento primeiro
+    const classeEl = html.find("select[name='system.progressao.classe']")[0];
+    if (classeEl) {
+      classeEl.addEventListener("change", async (e) => {
+        e.stopImmediatePropagation();
+        await this.actor.update({ "system.progressao.classe": e.target.value });
+      }, { capture: true });
+    }
 
-    // Fix: salva os selects de dado de atributo manualmente
-    html.find(".dado-select").on("change", async (e) => {
-      const name = e.target.getAttribute("name");
-      if (name) await this.actor.update({ [name]: e.target.value });
+    // Fix dados de atributo: mesmo tratamento
+    html.find(".dado-select").each((i, el) => {
+      el.addEventListener("change", async (e) => {
+        e.stopImmediatePropagation();
+        const name = e.target.getAttribute("name");
+        if (name) await this.actor.update({ [name]: e.target.value });
+      }, { capture: true });
     });
 
     // Rolls de perícia
