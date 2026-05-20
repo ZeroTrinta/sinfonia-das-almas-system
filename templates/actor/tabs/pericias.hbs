@@ -2,22 +2,23 @@
 <div class="pericias-layout">
   <div class="pericias-grid">
     {{#each periciasConfig as |cfg key|}}
-    <div class="pericia-row" data-pericia="{{key}}">
+    <div class="pericia-row">
       <div class="pericia-info">
         <span class="pericia-nome">{{cfg.label}}</span>
         <span class="pericia-comb">{{cfg.atribA}} + {{cfg.atribB}}</span>
       </div>
-      <span class="pericia-bonus">
-        +{{maestriaBonus (lookup ../system.pericias key)}}
-      </span>
+      <span class="pericia-bonus">+{{maestriaBonus (lookup ../system.pericias key)}}</span>
       <select name="system.pericias.{{key}}" class="maestria-sel">
-        <option value="" {{#eq "" (lookup ../system.pericias key)}}selected{{/eq}}>—</option>
-        <option value="iniciante"  {{#eq "iniciante"  (lookup ../system.pericias key)}}selected{{/eq}}>Iniciante  +2</option>
-        <option value="treinado"   {{#eq "treinado"   (lookup ../system.pericias key)}}selected{{/eq}}>Treinado   +4</option>
-        <option value="experiente" {{#eq "experiente" (lookup ../system.pericias key)}}selected{{/eq}}>Experiente +6</option>
+        <option value=""          {{#eq ""          (lookup ../system.pericias key)}}selected{{/eq}}>—</option>
+        <option value="iniciante" {{#eq "iniciante" (lookup ../system.pericias key)}}selected{{/eq}}>Iniciante +2</option>
+        <option value="treinado"  {{#eq "treinado"  (lookup ../system.pericias key)}}selected{{/eq}}>Treinado +4</option>
+        <option value="experiente"{{#eq "experiente"(lookup ../system.pericias key)}}selected{{/eq}}>Experiente +6</option>
       </select>
-      <a class="pericia-roll" title="Rolar {{cfg.label}}"
-         data-pericia="{{key}}" data-atrib-a="{{cfg.atribA}}" data-atrib-b="{{cfg.atribB}}">
+      <a data-action="rolarPericia"
+         data-pericia="{{key}}"
+         data-atrib-a="{{cfg.atribA}}"
+         data-atrib-b="{{cfg.atribB}}"
+         title="Rolar {{cfg.label}}">
         <i class="fas fa-dice"></i>
       </a>
     </div>

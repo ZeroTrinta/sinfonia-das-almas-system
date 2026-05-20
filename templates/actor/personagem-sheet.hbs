@@ -1,5 +1,5 @@
-{{!-- Sinfonia das Almas — Ficha de Personagem --}}
-<form class="sinfonia-sheet personagem {{cssClass}}" autocomplete="off">
+{{!-- Sinfonia das Almas — Ficha de Personagem (DocumentSheetV2) --}}
+<div class="sinfonia-sheet personagem">
 
   {{!-- ═══ HEADER ═══ --}}
   <header class="sheet-header">
@@ -10,19 +10,19 @@
         <div class="header-badges">
           <div class="badge pv" title="Pontos de Vida">
             <span class="badge-label">♥ PV</span>
-            <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0" max="{{system.recursos.pv.max}}"/>
+            <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0"/>
             <span class="badge-sep">/</span>
             <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
           </div>
           <div class="badge pe" title="Pontos de Energia">
             <span class="badge-label">✦ PE</span>
-            <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0" max="{{system.recursos.pe.max}}"/>
+            <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0"/>
             <span class="badge-sep">/</span>
             <input type="number" name="system.recursos.pe.max" value="{{system.recursos.pe.max}}" min="0"/>
           </div>
           <div class="badge pi" title="Pontos de Inventário">
             <span class="badge-label">◈ PI</span>
-            <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0" max="{{system.recursos.pi.max}}"/>
+            <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0"/>
             <span class="badge-sep">/</span>
             <input type="number" name="system.recursos.pi.max" value="{{system.recursos.pi.max}}" min="0"/>
           </div>
@@ -32,7 +32,7 @@
       <div class="header-bottom">
         <div class="field-group">
           <label>Classe</label>
-          <select name="system.progressao.classe" data-dtype="String">
+          <select name="system.progressao.classe">
             <option value="" {{#eq "" system.progressao.classe}}selected{{/eq}}>— escolha —</option>
             <option value="guerreiro" {{#eq "guerreiro" system.progressao.classe}}selected{{/eq}}>Guerreiro</option>
             <option value="gatuno"    {{#eq "gatuno"    system.progressao.classe}}selected{{/eq}}>Gatuno</option>
@@ -82,42 +82,42 @@
 
   {{!-- ═══ TABS ═══ --}}
   <div class="sheet-tabs-row">
-    <nav class="sheet-tabs tabs" data-group="primary">
+    <nav class="sheet-tabs">
       <a class="item" data-tab="principal">Principal</a>
       <a class="item" data-tab="pericias">Perícias</a>
       <a class="item" data-tab="inventario">Inventário</a>
       <a class="item" data-tab="alma">Alma</a>
       <a class="item" data-tab="bio">Biografia</a>
     </nav>
-    <button type="button" class="btn-arvore">✶ Árvore de Habilidades</button>
+    <button type="button" data-action="abrirArvore" class="btn-arvore">✶ Árvore de Habilidades</button>
   </div>
 
   <div class="sheet-body">
 
     {{!-- TAB: PRINCIPAL --}}
-    <div class="tab" data-group="primary" data-tab="principal">
+    <div class="tab" data-tab="principal">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs"}}
     </div>
 
     {{!-- TAB: PERÍCIAS --}}
-    <div class="tab" data-group="primary" data-tab="pericias">
+    <div class="tab" data-tab="pericias">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/pericias.hbs"}}
     </div>
 
     {{!-- TAB: INVENTÁRIO --}}
-    <div class="tab" data-group="primary" data-tab="inventario">
+    <div class="tab" data-tab="inventario">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/inventario.hbs"}}
     </div>
 
     {{!-- TAB: ALMA --}}
-    <div class="tab" data-group="primary" data-tab="alma">
+    <div class="tab" data-tab="alma">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/alma.hbs"}}
     </div>
 
     {{!-- TAB: BIO --}}
-    <div class="tab" data-group="primary" data-tab="bio">
+    <div class="tab" data-tab="bio">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/bio.hbs"}}
     </div>
 
   </div>
-</form>
+</div>

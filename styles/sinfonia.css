@@ -86,6 +86,13 @@
   overflow: hidden;
 }
 
+/* V2: window-content precisa de overflow oculto */
+.app.sinfonia-das-almas.sheet .window-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: var(--bg) !important;
+}
+
 /* ── Sheet Header layout ── */
 .sinfonia-sheet .sheet-header {
   display: flex;
