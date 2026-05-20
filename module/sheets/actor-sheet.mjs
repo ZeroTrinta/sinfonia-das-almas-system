@@ -72,6 +72,17 @@ export class SinfoniaActorSheet extends ActorSheet {
     super.activateListeners(html);
     if (!this.isEditable) return;
 
+    // Fix: salva o select de classe manualmente (Foundry v13 compat)
+    html.find("select[name='system.progressao.classe']").on("change", async (e) => {
+      await this.actor.update({ "system.progressao.classe": e.target.value });
+    });
+
+    // Fix: salva os selects de dado de atributo manualmente
+    html.find(".dado-select").on("change", async (e) => {
+      const name = e.target.getAttribute("name");
+      if (name) await this.actor.update({ [name]: e.target.value });
+    });
+
     // Rolls de perícia
     html.find(".pericia-roll").click(this._onRolarPericia.bind(this));
 

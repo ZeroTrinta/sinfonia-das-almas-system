@@ -116,9 +116,10 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
   }
 
   _onRender(context, options) {
-    // Chamado pelo ApplicationV2 após cada render
     const html = this.element;
-    const canvas = html.querySelector("#arvore-canvas");
+    // ApplicationV2: element pode ser o .window-content ou o próprio root
+    const canvas = html.querySelector("#arvore-canvas")
+               ?? document.getElementById("arvore-canvas");
     if (!canvas) return;
 
     this._canvas = canvas;
@@ -183,6 +184,8 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
       });
       if (ok) {
         await this.actor.setFlag("sinfonia-das-almas", "arvoreAtiva", {});
+        this._particles = [];
+        this._beams = [];
         this._soundReset();
         this._render();
       }
@@ -405,6 +408,9 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
       const tailT = Math.max(0, b.tEased - 0.18);
       const tailX = sa.x + (sb.x - sa.x) * tailT;
       const tailY = sa.y + (sb.y - sa.y) * tailT;
+      // Guarda contra coordenadas não-finitas
+      if (!isFinite(tx) || !isFinite(ty) || !isFinite(tailX) || !isFinite(tailY)) continue;
+      if (Math.hypot(tx - tailX, ty - tailY) < 1) continue;
       ctx.save();
       const g = ctx.createLinearGradient(tailX, tailY, tx, ty);
       g.addColorStop(0, b.col + "00"); g.addColorStop(0.4, b.col + "88"); g.addColorStop(1, b.glow + "ff");

@@ -165,8 +165,12 @@
 .header-bottom .field-group input,
 .header-bottom .field-group select {
   width: 100% !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   padding: 3px 6px !important;
+  height: 28px !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
 }
 
 /* ── Badges PV/PE/PI ── */
@@ -790,6 +794,14 @@
   font-family: 'Cinzel', serif !important;
   color: #f0c060 !important;
   letter-spacing: 2px !important;
+}
+
+.arvore-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .arvore-wrapper {
