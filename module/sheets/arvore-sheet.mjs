@@ -185,6 +185,20 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
 
     if (!this._animId) this._startAnim();
     this._render();
+
+    // Garante que o tooltip esteja no body, não dentro da janela
+    let tip = document.getElementById("arvore-tooltip");
+    if (!tip) {
+      tip = document.createElement("div");
+      tip.id = "arvore-tooltip";
+      tip.style.display = "none";
+      tip.innerHTML = `<div class="tt-top"></div><div class="tt-body">
+        <span class="tt-cls"></span><span class="tt-name"></span>
+        <span class="tt-type"></span><span class="tt-desc"></span>
+        <span class="tt-cost"></span><span class="tt-status"></span>
+      </div>`;
+      document.body.appendChild(tip);
+    }
   }
 
   async close(options = {}) {
