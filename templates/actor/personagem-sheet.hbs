@@ -32,8 +32,8 @@
       <div class="header-bottom">
         <div class="field-group">
           <label>Classe</label>
-          <select name="system.progressao.classe">
-            <option value="">— escolha —</option>
+          <select name="system.progressao.classe" data-dtype="String">
+            <option value="" {{#eq "" system.progressao.classe}}selected{{/eq}}>— escolha —</option>
             <option value="guerreiro" {{#eq "guerreiro" system.progressao.classe}}selected{{/eq}}>Guerreiro</option>
             <option value="gatuno"    {{#eq "gatuno"    system.progressao.classe}}selected{{/eq}}>Gatuno</option>
             <option value="arqueiro"  {{#eq "arqueiro"  system.progressao.classe}}selected{{/eq}}>Arqueiro</option>

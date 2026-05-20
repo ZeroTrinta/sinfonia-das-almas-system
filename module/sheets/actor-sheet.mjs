@@ -32,9 +32,10 @@ export class SinfoniaActorSheet extends ActorSheet {
     context.isEditable = this.isEditable;
     context.rollData  = this.actor.getRollData();
 
-    // Enriquece campos HTML
-    context.bioEnriquecida   = await TextEditor.enrichHTML(sys.biografia  ?? "", { async: true });
-    context.notasEnriquecidas = await TextEditor.enrichHTML(sys.notas     ?? "", { async: true });
+    // Enriquece campos HTML (compatível v12 e v13)
+    const enricher = foundry.applications?.ux?.TextEditor?.implementation ?? TextEditor;
+    context.bioEnriquecida    = await enricher.enrichHTML(sys.biografia ?? "", { async: true });
+    context.notasEnriquecidas = await enricher.enrichHTML(sys.notas     ?? "", { async: true });
 
     // Labels de perícias
     context.periciasConfig = SINFONIA.PERICIAS;

@@ -767,7 +767,8 @@
   border-left-color: rgba(200,151,42,0.5);
 }
 
-/* ── Janela da Árvore ── */
+/* ── Janela da Árvore (ApplicationV2) ── */
+.arvore-window,
 .app.sinfonia-das-almas.arvore-window .window-content {
   background: #06080d !important;
   padding: 0 !important;
@@ -775,11 +776,13 @@
   overflow: hidden !important;
 }
 
+.arvore-window .window-header,
 .app.sinfonia-das-almas.arvore-window .window-header {
   background: #0d1020 !important;
   border-bottom: 1px solid rgba(200,151,42,0.4) !important;
 }
 
+.arvore-window .window-title,
 .app.sinfonia-das-almas.arvore-window .window-title {
   font-family: 'Cinzel', serif !important;
   color: #f0c060 !important;

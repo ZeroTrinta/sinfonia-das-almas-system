@@ -1,9 +1,10 @@
 /**
  * Sinfonia das Almas — Árvore de Habilidades
- * Application separada que renderiza um canvas interativo
- * dentro do Foundry, vinculada ao Actor.
+ * Usa ApplicationV2 (Foundry v13+)
  */
-export class ArvoreHabilidades extends Application {
+const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2) {
 
   constructor(actor, options = {}) {
     super(options);
@@ -20,19 +21,23 @@ export class ArvoreHabilidades extends Application {
     this._lastTime  = 0;
   }
 
-  static get defaultOptions() {
-    return foundry.utils.mergeObject(super.defaultOptions, {
-      id:       "sinfonia-arvore",
+  static DEFAULT_OPTIONS = {
+    id:       "sinfonia-arvore",
+    window: {
       title:    "Árvore de Habilidades",
-      template: "systems/sinfonia-das-almas/templates/actor/tabs/arvore.hbs",
-      width:    1000,
-      height:   700,
-      resizable: true,
-      classes:  ["sinfonia-das-almas", "arvore-window"]
-    });
-  }
+      resizable: true
+    },
+    position: { width: 1000, height: 700 },
+    classes:  ["sinfonia-das-almas", "arvore-window"]
+  };
 
-  getData() {
+  static PARTS = {
+    main: {
+      template: "systems/sinfonia-das-almas/templates/actor/tabs/arvore.hbs"
+    }
+  };
+
+  async _prepareContext() {
     return {
       actorName: this.actor.name,
       pts: this.actor.system.progressao.pontosHabilidade,
@@ -110,15 +115,21 @@ export class ArvoreHabilidades extends Application {
       .some(e => this._isNodeActive(e[0]));
   }
 
-  activateListeners(html) {
-    super.activateListeners(html);
-
-    const canvas = html.find("#arvore-canvas")[0];
+  _onRender(context, options) {
+    // Chamado pelo ApplicationV2 após cada render
+    const html = this.element;
+    const canvas = html.querySelector("#arvore-canvas");
     if (!canvas) return;
 
     this._canvas = canvas;
     this._ctx    = canvas.getContext("2d");
     this._resizeCanvas();
+
+    // Limpa listeners antigos para evitar duplicatas em re-renders
+    if (this._boundMouseMove) window.removeEventListener("mousemove", this._boundMouseMove);
+    if (this._boundMouseUp)   window.removeEventListener("mouseup",   this._boundMouseUp);
+    this._boundMouseMove = e => this._onMouseMove(e);
+    this._boundMouseUp   = () => { this._drag = false; canvas.style.cursor = "crosshair"; };
 
     canvas.addEventListener("mousedown", e => {
       this._drag = true;
@@ -127,11 +138,8 @@ export class ArvoreHabilidades extends Application {
       this._movedDist = 0;
       canvas.style.cursor = "grabbing";
     });
-    window.addEventListener("mouseup", () => {
-      this._drag = false;
-      canvas.style.cursor = "crosshair";
-    });
-    window.addEventListener("mousemove", e => this._onMouseMove(e));
+    window.addEventListener("mouseup",   this._boundMouseUp);
+    window.addEventListener("mousemove", this._boundMouseMove);
 
     canvas.addEventListener("wheel", e => {
       e.preventDefault();
@@ -152,23 +160,25 @@ export class ArvoreHabilidades extends Application {
       if (node) this._toggleNode(node);
     });
 
-    html.find(".arvore-tab").click(e => {
-      html.find(".arvore-tab").removeClass("active");
-      $(e.currentTarget).addClass("active");
-      this._filter = e.currentTarget.dataset.cls;
-      const cm = SINFONIA.CLS_META[this._filter];
-      if (cm) {
-        this._cam.x = -cm.cx * this._cam.zoom;
-        this._cam.y = -cm.cy * this._cam.zoom;
-      } else {
-        this._cam.x = 0; this._cam.y = 0; this._cam.zoom = 1;
-      }
-      this._render();
+    html.querySelectorAll(".arvore-tab").forEach(tab => {
+      tab.addEventListener("click", e => {
+        html.querySelectorAll(".arvore-tab").forEach(t => t.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+        this._filter = e.currentTarget.dataset.cls;
+        const cm = SINFONIA.CLS_META[this._filter];
+        if (cm) {
+          this._cam.x = -cm.cx * this._cam.zoom;
+          this._cam.y = -cm.cy * this._cam.zoom;
+        } else {
+          this._cam.x = 0; this._cam.y = 0; this._cam.zoom = 1;
+        }
+        this._render();
+      });
     });
 
-    html.find("#arvore-reset").click(async () => {
-      const ok = await Dialog.confirm({
-        title: "Resetar Árvore",
+    html.querySelector("#arvore-reset")?.addEventListener("click", async () => {
+      const ok = await foundry.applications.api.DialogV2.confirm({
+        window: { title: "Resetar Árvore" },
         content: "<p>Desativar todos os nós?</p>"
       });
       if (ok) {
@@ -178,20 +188,24 @@ export class ArvoreHabilidades extends Application {
       }
     });
 
+    if (this._resizeObserver) this._resizeObserver.disconnect();
     this._resizeObserver = new ResizeObserver(() => {
       this._resizeCanvas();
       this._render();
     });
     this._resizeObserver.observe(canvas.parentElement);
 
-    this._startAnim();
+    // Só inicia o loop de animação uma vez
+    if (!this._animId) this._startAnim();
     this._render();
   }
 
-  close(...args) {
-    if (this._animId) cancelAnimationFrame(this._animId);
-    if (this._resizeObserver) this._resizeObserver.disconnect();
-    return super.close(...args);
+  async close(options = {}) {
+    if (this._animId) { cancelAnimationFrame(this._animId); this._animId = null; }
+    if (this._resizeObserver) { this._resizeObserver.disconnect(); this._resizeObserver = null; }
+    if (this._boundMouseMove) window.removeEventListener("mousemove", this._boundMouseMove);
+    if (this._boundMouseUp)   window.removeEventListener("mouseup",   this._boundMouseUp);
+    return super.close(options);
   }
 
   _resizeCanvas() {
