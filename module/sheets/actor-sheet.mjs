@@ -120,29 +120,35 @@ export class SinfoniaActorSheet extends ActorSheet {
 
   async _dialogND() {
     return new Promise(resolve => {
-      new Dialog({
-        title: "Nível de Dificuldade",
-        content: `
-          <form>
-            <div class="form-group">
-              <label>ND</label>
-              <input type="number" id="nd-value" value="12" min="1" max="30" autofocus/>
-            </div>
-          </form>
-        `,
-        buttons: {
-          rolar: {
-            icon: "<i class='fas fa-dice'></i>",
-            label: "Rolar",
-            callback: html => resolve(parseInt(html.find("#nd-value").val()) || 12)
+      // Usa DialogV2 se disponível (v13+), senão Dialog (v12)
+      if (foundry.applications?.api?.DialogV2) {
+        foundry.applications.api.DialogV2.prompt({
+          window: { title: "Nível de Dificuldade" },
+          content: `<div style="padding:8px">
+            <label style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:1px">ND</label>
+            <input type="number" name="nd" value="12" min="1" max="30" autofocus
+              style="width:100%;margin-top:4px;font-size:18px;text-align:center;"/>
+          </div>`,
+          ok: { label: "Rolar", icon: "fa-dice",
+            callback: (event, button) => resolve(parseInt(button.form.elements.nd.value) || 12)
           },
-          cancelar: {
-            label: "Cancelar",
-            callback: () => resolve(null)
-          }
-        },
-        default: "rolar"
-      }).render(true);
+          cancel: { label: "Cancelar", callback: () => resolve(null) }
+        });
+      } else {
+        new Dialog({
+          title: "Nível de Dificuldade",
+          content: `<form><div class="form-group">
+            <label>ND</label>
+            <input type="number" id="nd-value" value="12" min="1" max="30" autofocus/>
+          </div></form>`,
+          buttons: {
+            rolar:   { icon: "<i class='fas fa-dice'></i>", label: "Rolar",
+              callback: html => resolve(parseInt(html.find("#nd-value").val()) || 12) },
+            cancelar: { label: "Cancelar", callback: () => resolve(null) }
+          },
+          default: "rolar"
+        }).render(true);
+      }
     });
   }
 
@@ -168,10 +174,19 @@ export class SinfoniaActorSheet extends ActorSheet {
     const itemId = li.dataset.itemId;
     const item   = this.actor.items.get(itemId);
     if (!item) return;
-    const confirmed = await Dialog.confirm({
-      title: "Deletar Item",
-      content: `<p>Deletar <strong>${item.name}</strong>?</p>`
-    });
+    // Usa DialogV2 se disponível (v13+)
+    let confirmed;
+    if (foundry.applications?.api?.DialogV2) {
+      confirmed = await foundry.applications.api.DialogV2.confirm({
+        window: { title: "Deletar Item" },
+        content: `<p>Deletar <strong>${item.name}</strong>?</p>`
+      });
+    } else {
+      confirmed = await Dialog.confirm({
+        title: "Deletar Item",
+        content: `<p>Deletar <strong>${item.name}</strong>?</p>`
+      });
+    }
     if (confirmed) await item.delete();
   }
 
