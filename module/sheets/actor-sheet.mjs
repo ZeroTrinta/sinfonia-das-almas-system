@@ -23,7 +23,10 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       deletarItem:  SinfoniaActorSheet._onDeletarItem,
       editarItem:   SinfoniaActorSheet._onEditarItem,
       alternarDet:  SinfoniaActorSheet._onAlternarDet,
-      abrirArvore:  SinfoniaActorSheet._onAbrirArvore
+      abrirArvore:  SinfoniaActorSheet._onAbrirArvore,
+      corromper:    SinfoniaActorSheet._onCorromper,
+      descansar:    SinfoniaActorSheet._onDescansar,
+      resetEstilhacos: SinfoniaActorSheet._onResetEstilhacos
     }
   };
 
@@ -141,22 +144,115 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   // ── Actions ────────────────────────────────────────────────
   static async _onRolarPericia(event, target) {
     const { pericia, atribA, atribB } = target.dataset;
-    const nd = await SinfoniaActorSheet._dialogND();
-    if (nd === null) return;
-    await this.document.rolarPericia(pericia, atribA, atribB, nd);
+    const opcoes = await SinfoniaActorSheet._dialogND(this.document);
+    if (!opcoes) return;
+    await this.document.rolarPericia(pericia, atribA, atribB, opcoes.nd, opcoes);
   }
 
-  static async _dialogND() {
+  /**
+   * Dialog rico para rolagem de perícia.
+   * Permite escolher: ND, penalidade, Empenho, Perseverança, Origem, Corrupção.
+   *
+   * Retorna um objeto { nd, penalidade, empenho, perseveranca, origem, origemTipo, corrupcao }
+   * ou null se cancelado.
+   */
+  static async _dialogND(actor) {
+    const sys = actor.system;
+    const det = sys.alma.determinacao;
+    const cor = sys.alma.corrupcao;
+    const eventoUsado   = sys.origem?.eventoMarcante?.usadoNaSessao;
+    const ocupacaoUsada = sys.origem?.ocupacao?.usadoNaSessao;
+
+    // Helper pra desabilitar option de origem se já usada ou não definida
+    const eventoDesc   = sys.origem?.eventoMarcante?.descricao || "";
+    const ocupacaoDesc = sys.origem?.ocupacao?.descricao || "";
+    const eventoDisabled   = eventoUsado   || !eventoDesc;
+    const ocupacaoDisabled = ocupacaoUsada || !ocupacaoDesc;
+
+    const content = `
+      <div class="sinfonia-dialog-rolagem">
+        <div class="linha">
+          <label>ND (dificuldade)</label>
+          <input type="number" name="nd" value="12" min="1" max="40" autofocus/>
+        </div>
+        <div class="linha">
+          <label>Penalidade do Mestre</label>
+          <input type="number" name="penalidade" value="0" min="0" max="20"/>
+        </div>
+
+        <fieldset class="alma-bloco">
+          <legend>★ Determinação (${det} disponíveis)</legend>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="empenho" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho</b> — 1 Det: dado extra em cada atributo, usa o maior
+          </label>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="perseveranca" ${det < 1 ? 'disabled' : ''}/>
+            <b>Perseverança</b> — 1 Det: ignora a penalidade acima
+          </label>
+          <p class="aviso">Falha após usar Determinação = +1 Corrupção (exceto se usar Origem).</p>
+        </fieldset>
+
+        <fieldset class="alma-bloco">
+          <legend>⚭ Origem (−1 sessão cada)</legend>
+          <label class="radio">
+            <input type="radio" name="origem" value="" checked/>
+            Nenhuma
+          </label>
+          <label class="radio ${eventoDisabled ? 'disabled' : ''}">
+            <input type="radio" name="origem" value="eventoMarcante" ${eventoDisabled ? 'disabled' : ''}/>
+            <b>Evento Marcante</b>${eventoDesc ? `: <em>${eventoDesc}</em>` : ' (não definido)'}
+            ${eventoUsado ? ' <span class="used">(usado)</span>' : ''}
+          </label>
+          <label class="radio ${ocupacaoDisabled ? 'disabled' : ''}">
+            <input type="radio" name="origem" value="ocupacao" ${ocupacaoDisabled ? 'disabled' : ''}/>
+            <b>Ocupação</b>${ocupacaoDesc ? `: <em>${ocupacaoDesc}</em>` : ' (não definida)'}
+            ${ocupacaoUsada ? ' <span class="used">(usada)</span>' : ''}
+          </label>
+          <p class="aviso">ND reduzida em 5. Falha NÃO causa corrupção.</p>
+        </fieldset>
+
+        <fieldset class="alma-bloco">
+          <legend>☠ Corrupção (${cor}/10)</legend>
+          <label class="radio"><input type="radio" name="corrupcao" value="" checked/> Nenhuma</label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="+5" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>+5 no teste</b> (gasta 1 Det → 1 Cor)
+          </label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="rerolar" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>Rerolar</b> (rola de novo, fica com o maior total)
+          </label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="passoDado" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>Passo de Dado</b> (sobe 1 passo em cada atributo desta rolagem)
+          </label>
+        </fieldset>
+      </div>
+    `;
+
     return new Promise(resolve => {
       foundry.applications.api.DialogV2.prompt({
-        window: { title: "Nível de Dificuldade" },
-        content: `<div style="padding:8px">
-          <label style="font-family:'Cinzel',serif;font-size:11px">ND</label>
-          <input type="number" name="nd" value="12" min="1" max="30" autofocus
-            style="width:100%;margin-top:4px;font-size:18px;text-align:center;"/>
-        </div>`,
-        ok:     { label:"Rolar",    icon:"fa-dice", callback: (ev,btn) => resolve(parseInt(btn.form.elements.nd.value)||12) },
-        cancel: { label:"Cancelar",                callback: () => resolve(null) }
+        window: { title: "Rolagem de Perícia" },
+        content,
+        ok: {
+          label: "Rolar",
+          icon: "fa-dice",
+          callback: (ev, btn) => {
+            const f = btn.form.elements;
+            const origemValor = f.origem.value;
+            resolve({
+              nd:           parseInt(f.nd.value)         || 12,
+              penalidade:   parseInt(f.penalidade.value) || 0,
+              empenho:      f.empenho.checked,
+              perseveranca: f.perseveranca.checked,
+              origem:       !!origemValor,
+              origemTipo:   origemValor || null,
+              corrupcao:    f.corrupcao.value || null
+            });
+          }
+        },
+        cancel: { label: "Cancelar", callback: () => resolve(null) }
       });
     });
   }
@@ -188,6 +284,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   }
 
   static async _onAlternarDet(event, target) {
+    // Ajuste manual de Determinação (setas +/-). NÃO dispara Estilhaço automático
+    // — esse é considerado ajuste do Mestre. Para corrupção que conta no cabo de
+    // guerra, use o botão "Corromper Alma" (chama document.corromper()).
     const det  = this.document.system.alma.determinacao;
     const novo = Math.clamp(det + (parseInt(target.dataset.delta)||0), 0, 10);
     // {render:false} é essencial: sem ele, clicar nas setas refaz o HTML
@@ -214,6 +313,47 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
   static _onAbrirArvore(event, target) {
     new ArvoreHabilidades(this.document).render(true);
+  }
+
+  static async _onCorromper(event, target) {
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Corromper a Alma" },
+      content: `<p>Você irá corromper sua alma em <b>1 ponto</b>.</p>
+               <p>Se a Determinação zerar, você recebe um <b>Estilhaço da Alma</b>.</p>
+               <p>Continuar?</p>`
+    });
+    if (ok) await this.document.corromper();
+  }
+
+  static async _onDescansar(event, target) {
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Descanso Longo" },
+      content: `<p>Restaurar PV, PE e usos de Origem ao máximo?</p>
+               <p><em>Estilhaços da Alma permanecem.</em></p>`
+    });
+    if (ok) await this.document.descansar();
+  }
+
+  /**
+   * Reseta os Estilhaços — deve ser usado APENAS pelo Mestre em casos excepcionais
+   * (reset de personagem, ritual narrativo de redencão, etc).
+   */
+  static async _onResetEstilhacos(event, target) {
+    if (!game.user.isGM) {
+      ui.notifications.warn("Apenas o Mestre pode resetar Estilhaços da Alma.");
+      return;
+    }
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Resetar Estilhaços (GM)" },
+      content: `<p><b>Ação de Mestre.</b> Zerar os Estilhaços da Alma deste personagem?</p>
+               <p>Isso reabre o teto máximo da Determinação.</p>`
+    });
+    if (!ok) return;
+    await this.document.update({
+      "system.alma.estilhacos": 0,
+      "system.alma.determinacao": 7
+    }, { render: false });
+    ui.notifications.info(`${this.document.name}: Estilhaços resetados.`);
   }
 }
 

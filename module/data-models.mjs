@@ -87,6 +87,8 @@ export class PersonagemDataModel extends BaseActorModel {
       alma: new SchemaField({
         determinacao: new NumberField({ required: true, integer: true, min: 0, max: 10, initial: 7 }),
         corrupcao:    new NumberField({ required: true, integer: true, min: 0, max: 10, initial: 3 }),
+        // Estilhaços acumulados — cada um abaixa o teto da Determinação em 1.
+        estilhacos:   new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
         pilar:      new StringField({ required: true, blank: true, initial: "" }),
         qualidades: new StringField({ required: true, blank: true, initial: "" }),
         defeitos:   new StringField({ required: true, blank: true, initial: "" })

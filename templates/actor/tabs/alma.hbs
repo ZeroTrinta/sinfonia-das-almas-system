@@ -35,6 +35,28 @@
       </div>
 
     </div>
+
+    <div class="alma-acoes">
+      <button type="button" data-action="corromper" class="btn-corromper">☠ Corromper Alma</button>
+      <button type="button" data-action="descansar" class="btn-descansar">☾ Descanso Longo</button>
+    </div>
+  </section>
+
+  <section class="panel estilhacos-panel">
+    <h3 class="panel-title">Estilhaços da Alma</h3>
+    <div class="estilhacos-display">
+      <span class="estilhacos-valor">{{system.alma.estilhacos}}</span>
+      <span class="estilhacos-label">cicatriz{{#if (gt system.alma.estilhacos 1)}}es{{/if}} permanente{{#if (gt system.alma.estilhacos 1)}}s{{/if}}</span>
+    </div>
+    {{#if (gt system.alma.estilhacos 0)}}
+      <p class="estilhacos-aviso">
+        Cada Estilhaço reduz o teto máximo da Determinação e adiciona uma mutação
+        (benigna ou maligna, definida pelo Mestre).
+      </p>
+      <button type="button" data-action="resetEstilhacos" class="btn-reset-estilhacos">
+        Resetar (GM)
+      </button>
+    {{/if}}
   </section>
 
   <section class="panel">
@@ -42,6 +64,39 @@
     <input type="text" name="system.alma.pilar"
       value="{{system.alma.pilar}}"
       placeholder="O que sustenta sua vontade de continuar..."/>
+  </section>
+
+  <section class="panel origens-panel">
+    <h3 class="panel-title">Origens da Alma</h3>
+    <p class="origens-hint">Cada Origem reduz a ND em 5 em rolagens conectadas. Uso único por sessão. Falha não gera corrupção.</p>
+
+    <div class="origem-bloco {{#if system.origem.eventoMarcante.usadoNaSessao}}usado{{/if}}">
+      <div class="origem-header">
+        <span class="origem-tipo">Evento Marcante</span>
+        <label class="origem-check">
+          <input type="checkbox" name="system.origem.eventoMarcante.usadoNaSessao"
+            {{#if system.origem.eventoMarcante.usadoNaSessao}}checked{{/if}}/>
+          usado nesta sessão
+        </label>
+      </div>
+      <input type="text" name="system.origem.eventoMarcante.descricao"
+        value="{{system.origem.eventoMarcante.descricao}}"
+        placeholder="A cicatriz ou troféu que sua alma carrega..."/>
+    </div>
+
+    <div class="origem-bloco {{#if system.origem.ocupacao.usadoNaSessao}}usado{{/if}}">
+      <div class="origem-header">
+        <span class="origem-tipo">Ocupação</span>
+        <label class="origem-check">
+          <input type="checkbox" name="system.origem.ocupacao.usadoNaSessao"
+            {{#if system.origem.ocupacao.usadoNaSessao}}checked{{/if}}/>
+          usada nesta sessão
+        </label>
+      </div>
+      <input type="text" name="system.origem.ocupacao.descricao"
+        value="{{system.origem.ocupacao.descricao}}"
+        placeholder="Como você se empenha (ex: Estudante Curioso)..."/>
+    </div>
   </section>
 
   <div class="qual-def-grid">

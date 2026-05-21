@@ -973,3 +973,314 @@
 #arvore-tooltip .tt-status.locked    { color: #664433; }
 #arvore-tooltip .tt-status.available { color: #c8972a; }
 #arvore-tooltip .tt-status.active    { color: #60c860; }
+
+/* ================================================================
+   FASE 1: A ALMA EM JOGO
+   Estilhacos, Origens, Corromper/Descansar e dialog rico de rolagem
+================================================================ */
+
+/* ── Botões de ação na aba Alma ── */
+.alma-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(200,151,42,0.15);
+}
+
+.alma-acoes button {
+  flex: 1;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-corromper {
+  border-color: rgba(200,64,64,0.5);
+  color: #c87070;
+}
+.btn-corromper:hover {
+  background: rgba(200,64,64,0.1);
+  border-color: #c84040;
+  color: #ff7060;
+  text-shadow: 0 0 6px rgba(255,80,80,0.4);
+}
+
+.btn-descansar {
+  border-color: rgba(120,140,180,0.5);
+  color: #a0b0d0;
+}
+.btn-descansar:hover {
+  background: rgba(120,140,180,0.08);
+  border-color: #8090b0;
+  color: #d0e0ff;
+}
+
+/* ── Painel de Estilhaços ── */
+.estilhacos-panel {
+  border-left: 3px solid var(--cor-color);
+}
+
+.estilhacos-display {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.estilhacos-valor {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  color: var(--cor-color);
+  text-shadow: 0 0 10px rgba(200,64,64,0.4);
+}
+
+.estilhacos-label {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: var(--silver-dim);
+  font-size: 13px;
+}
+
+.estilhacos-aviso {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #aa8080;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.btn-reset-estilhacos {
+  margin-top: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid #441111;
+  color: #804040;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-reset-estilhacos:hover {
+  border-color: #c84040;
+  color: #ff6060;
+  background: rgba(200,64,64,0.08);
+}
+
+/* ── Painel de Origens ── */
+.origens-panel {
+  border-left: 3px solid var(--gold);
+}
+
+.origens-hint {
+  font-size: 11px;
+  color: var(--silver-dim);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.origem-bloco {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,151,42,0.2);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.origem-bloco.usado {
+  opacity: 0.55;
+  border-color: rgba(120,120,120,0.2);
+}
+
+.origem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.origem-tipo {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.origem-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  cursor: pointer;
+}
+
+.origem-check input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--gold);
+}
+
+/* ── Dialog rico de rolagem de perícia ── */
+.sinfonia-dialog-rolagem {
+  font-family: 'EB Garamond', serif;
+  color: var(--text, #ddd0b8);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.sinfonia-dialog-rolagem .linha {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  align-items: center;
+  gap: 10px;
+}
+
+.sinfonia-dialog-rolagem .linha label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c8972a;
+}
+
+.sinfonia-dialog-rolagem .linha input {
+  width: 100%;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  padding: 4px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(200,151,42,0.35);
+  color: #f0c060;
+}
+
+.sinfonia-dialog-rolagem .alma-bloco {
+  border: 1px solid rgba(200,151,42,0.25);
+  padding: 8px 10px 6px;
+  margin: 0;
+  background: rgba(0,0,0,0.25);
+}
+
+.sinfonia-dialog-rolagem .alma-bloco legend {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #f0c060;
+  padding: 0 6px;
+}
+
+.sinfonia-dialog-rolagem label.check,
+.sinfonia-dialog-rolagem label.radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.sinfonia-dialog-rolagem label.check input,
+.sinfonia-dialog-rolagem label.radio input {
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: #c8972a;
+}
+
+.sinfonia-dialog-rolagem label.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sinfonia-dialog-rolagem .used {
+  color: #c84040;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.sinfonia-dialog-rolagem .aviso {
+  font-size: 11px;
+  font-style: italic;
+  color: #8090a0;
+  margin: 4px 0 0;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── Tags na mensagem de chat (Empenho/Origem/Corrupção) ── */
+.roll-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(200,151,42,0.1);
+}
+
+.roll-tags .tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+  border-radius: 0;
+}
+
+.tag-det     { border-color: var(--det-color); color: var(--det-color); }
+.tag-origem  { border-color: #80a0c0;        color: #80a0c0; }
+.tag-cor     { border-color: var(--cor-color); color: var(--cor-color); }
+
+/* ── Mensagens novas de chat (Estilhaço, Descanso) ── */
+.sinfonia-estilhaco {
+  padding: 12px;
+  border: 1px solid var(--cor-color);
+  background: linear-gradient(135deg, #1a0808, #0a0506);
+  font-family: 'EB Garamond', serif;
+  color: #ddd0b8;
+}
+
+.sinfonia-estilhaco h3 {
+  margin: 0 0 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--cor-color);
+  text-align: center;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px rgba(200,64,64,0.5);
+}
+
+.sinfonia-estilhaco p {
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sinfonia-estilhaco em {
+  color: #aa8080;
+  font-size: 12px;
+}
+
+.sinfonia-descanso {
+  padding: 8px 12px;
+  border: 1px solid #8090b0;
+  background: rgba(80,100,140,0.05);
+  font-family: 'EB Garamond', serif;
+  color: #b0c0d8;
+  font-size: 14px;
+}

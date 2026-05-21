@@ -49,35 +49,142 @@ export class SinfoniaActor extends Actor {
   }
 
   /**
-   * Rola uma perícia: dadoA + dadoB + modificador vs ND
-   * @param {string} pericia  - chave da perícia (ex: "armasBrancas")
-   * @param {string} atribA   - atributo A (ex: "pod")
-   * @param {string} atribB   - atributo B (ex: "agi")
-   * @param {number} nd       - nível de dificuldade
+   * Rola uma perícia com modificadores da Alma.
+   *
+   * @param {string} pericia
+   * @param {string} atribA
+   * @param {string} atribB
+   * @param {number} nd
+   * @param {object} [opts]
+   * @param {boolean} [opts.empenho]       Gasta 1 Det — rola dado extra e usa o maior em CADA atributo
+   * @param {boolean} [opts.perseveranca]  Gasta 1 Det — ignora penalidade externa (informativo no chat)
+   * @param {boolean} [opts.origem]        Ativa uma Origem — reduz ND em 5, sem corrupção em falha
+   * @param {string}  [opts.origemTipo]    "eventoMarcante" | "ocupacao" (qual marcar como usada)
+   * @param {string}  [opts.corrupcao]     null | "+5" | "rerolar" | "passoDado"
+   * @param {number}  [opts.penalidade]    Penalidade numérica imposta pelo Mestre (0 se nenhuma)
    */
-  async rolarPericia(pericia, atribA, atribB, nd = 12) {
+  async rolarPericia(pericia, atribA, atribB, nd = 12, opts = {}) {
     if (this.type !== "personagem") return;
     const sys = this.system;
 
-    const dadoA = sys.atributos[atribA] ?? "d6";
-    const dadoB = sys.atributos[atribB] ?? "d6";
-    const maestria = sys.pericias[pericia] ?? "";
-    const modMap = { iniciante: 2, treinado: 4, experiente: 6 };
-    const mod = modMap[maestria] ?? 0;
+    const empenho      = !!opts.empenho;
+    const perseveranca = !!opts.perseveranca;
+    const origem       = !!opts.origem;
+    const origemTipo   = opts.origemTipo ?? null;
+    const corrupcao    = opts.corrupcao ?? null;   // "+5" | "rerolar" | "passoDado" | null
+    const penalidade   = Math.max(0, Number(opts.penalidade) || 0);
 
-    const formula = `${dadoA} + ${dadoB} + ${mod}`;
-    const roll = new Roll(formula);
+    // ── Valida ───────────────────────────────────────────────────────
+    const usosDet = (empenho ? 1 : 0) + (perseveranca ? 1 : 0);
+    if (usosDet > 0 && sys.alma.determinacao < usosDet) {
+      ui.notifications.warn(`${this.name} não tem Determinação suficiente.`);
+      return;
+    }
+    if (origem && origemTipo) {
+      if (sys.origem?.[origemTipo]?.usadoNaSessao) {
+        ui.notifications.warn(`Esta Origem já foi usada nesta sessão.`);
+        return;
+      }
+    }
+    if (corrupcao && sys.alma.corrupcao >= 10) {
+      ui.notifications.warn(`${this.name} já está totalmente corrompido.`);
+      return;
+    }
+
+    // ── Aplica gastos ──────────────────────────────────────────────
+    if (usosDet > 0) {
+      await this.update({
+        "system.alma.determinacao": sys.alma.determinacao - usosDet
+      }, { render: false });
+    }
+    if (origem && origemTipo) {
+      await this.update({
+        [`system.origem.${origemTipo}.usadoNaSessao`]: true
+      }, { render: false });
+    }
+
+    // ── Calcula ND efetiva ───────────────────────────────────────────
+    let ndEfetivo = nd;
+    if (origem) ndEfetivo = Math.max(1, ndEfetivo - 5);
+    if (!perseveranca) ndEfetivo += penalidade; // Perseverança anula a penalidade
+
+    // ── Monta os dados (com Empenho e Passo de Corrupção) ───────────────────
+    const passoDado = (dado) => {
+      // Corrupção "passoDado": sobe 1 passo em cada atributo, teto d12
+      const seq = ["d6", "d8", "d10", "d12"];
+      const i = seq.indexOf(dado);
+      return i === -1 ? dado : seq[Math.min(i + 1, seq.length - 1)];
+    };
+
+    let dadoA = sys.atributos[atribA] ?? "d6";
+    let dadoB = sys.atributos[atribB] ?? "d6";
+    if (corrupcao === "passoDado") {
+      dadoA = passoDado(dadoA);
+      dadoB = passoDado(dadoB);
+    }
+
+    // Empenho: "rola um dado extra e usa o maior dos dois" — aplico em cada atributo.
+    // Sintaxe Foundry: `2d8kh1` = rola 2d8 e mantém o maior 1.
+    const fmtAtrib = (dado) => empenho ? `2${dado}kh1` : `1${dado}`;
+
+    const maestria = sys.pericias[pericia] ?? "";
+    const modMap   = { iniciante: 2, treinado: 4, experiente: 6 };
+    const mod      = modMap[maestria] ?? 0;
+    const bonusCorrupcao = corrupcao === "+5" ? 5 : 0;
+
+    const formula = `${fmtAtrib(dadoA)} + ${fmtAtrib(dadoB)} + ${mod}${bonusCorrupcao ? ` + ${bonusCorrupcao}` : ""}`;
+    let roll = new Roll(formula);
     await roll.evaluate();
 
-    const total = roll.total;
-    const sucesso = total >= nd;
+    // Corrupção "rerolar": rola de novo e fica com o maior total
+    if (corrupcao === "rerolar") {
+      const roll2 = new Roll(formula);
+      await roll2.evaluate();
+      if (roll2.total > roll.total) roll = roll2;
+    }
 
+    const total   = roll.total;
+    const sucesso = total >= ndEfetivo;
+
+    // ── Corrupção automática em falha pós-Determinação (regra do doc) ────────────────
+    // Origem é "Segurança da Alma": falha pós-Origem NÃO gera corrupção.
+    let ganhouCorrupcao = false;
+    if (!sucesso && usosDet > 0 && !origem) {
+      const det = this.system.alma.determinacao; // após o gasto anterior
+      await this.update({
+        "system.alma.determinacao": Math.max(0, det - 1)
+      }, { render: false });
+      ganhouCorrupcao = true;
+    }
+
+    // Aplica corrupção explicitamente escolhida (botoes) — 1 ponto por uso
+    if (corrupcao) {
+      const det = this.system.alma.determinacao;
+      if (det > 0) {
+        await this.update({
+          "system.alma.determinacao": Math.max(0, det - 1)
+        }, { render: false });
+      }
+    }
+
+    // ── Monta chat ────────────────────────────────────────────────────
     const nomePericia = game.i18n.localize(`SINFONIA.Pericias.${pericia}`) || pericia;
-    const nomeAtribA  = atribA.toUpperCase();
-    const nomeAtribB  = atribB.toUpperCase();
-    const maestriaLabel = maestria
+    const labelMaestria = maestria
       ? `<span class="maestria">${maestria} (+${mod})</span>`
       : `<span class="maestria sem-maestria">sem maestria</span>`;
+
+    const tags = [];
+    if (empenho)        tags.push(`<span class="tag tag-det">★ Empenho</span>`);
+    if (perseveranca)   tags.push(`<span class="tag tag-det">★ Perseverança</span>`);
+    if (origem)         tags.push(`<span class="tag tag-origem">⚭ Origem</span>`);
+    if (corrupcao === "+5")        tags.push(`<span class="tag tag-cor">☠ +5</span>`);
+    if (corrupcao === "rerolar")   tags.push(`<span class="tag tag-cor">☠ Rerolar</span>`);
+    if (corrupcao === "passoDado") tags.push(`<span class="tag tag-cor">☠ Passo de Dado</span>`);
+    if (ganhouCorrupcao)           tags.push(`<span class="tag tag-cor">+1 Corrupção (falha)</span>`);
+
+    const ndLabel = nd === ndEfetivo
+      ? `ND ${nd}`
+      : `ND ${nd} → <b>${ndEfetivo}</b>`;
 
     const content = `
       <div class="sinfonia-roll ${sucesso ? 'sucesso' : 'falha'}">
@@ -85,10 +192,11 @@ export class SinfoniaActor extends Actor {
           <span class="actor-name">${this.name}</span>
           <span class="pericia-nome">${nomePericia}</span>
         </div>
-        <div class="roll-formula">${nomeAtribA} + ${nomeAtribB} ${maestriaLabel}</div>
+        <div class="roll-formula">${atribA.toUpperCase()} + ${atribB.toUpperCase()} ${labelMaestria}</div>
+        ${tags.length ? `<div class="roll-tags">${tags.join(" ")}</div>` : ""}
         <div class="roll-resultado">
           <span class="total">${total}</span>
-          <span class="nd">ND ${nd}</span>
+          <span class="nd">${ndLabel}</span>
           <span class="resultado-label">${sucesso ? '✦ Sucesso' : '✕ Falha'}</span>
         </div>
       </div>
@@ -101,7 +209,7 @@ export class SinfoniaActor extends Actor {
       type: CONST.CHAT_MESSAGE_TYPES.ROLL
     });
 
-    return { roll, sucesso, total };
+    return { roll, sucesso, total, ndEfetivo, ganhouCorrupcao };
   }
 
   /**
@@ -117,17 +225,81 @@ export class SinfoniaActor extends Actor {
   }
 
   /**
-   * Corrompe a alma em 1 ponto
+   * Corrompe a alma em 1 ponto. Detecta Estilhaço da Alma se Det chegar a 0.
+   * Quando isso acontece, o cabo de guerra reinicia favorecendo a Corrupção:
+   * Determinação cai para (10 − estilhacos − 1) e Corrupção sobe pra (estilhacos + 1).
    */
   async corromper() {
     if (this.type !== "personagem") return;
     const det = this.system.alma.determinacao;
     if (det <= 0) {
-      ui.notifications.warn(`${this.name} não tem Determinação para corromper!`);
-      return;
+      // Já zerada — estilhaço imediato
+      return this._estilhacarAlma();
     }
-    await this.gastarDeterminacao(1);
-    ui.notifications.warn(`${this.name} corrompe a alma! Determinação: ${det - 1} | Corrupção: ${10 - (det - 1)}`);
+    const novaDet = det - 1;
+    await this.update({ "system.alma.determinacao": novaDet }, { render: false });
+
+    if (novaDet === 0) {
+      await this._estilhacarAlma();
+    } else {
+      ui.notifications.warn(
+        `${this.name} corrompe a alma! Determinação: ${novaDet} | Corrupção: ${10 - novaDet}`
+      );
+    }
+  }
+
+  /**
+   * Aplica um Estilhaço da Alma e reinicia o cabo de guerra pendendo pra Corrupção.
+   * Conforme o doc: exemplo de 7–3 que vira 6–4 após 1 estilhaço.
+   * Generalizando: após N estilhaços, o novo ponto de partida é (7−N) Det / (3+N) Cor,
+   * clamped a 0–10.
+   */
+  async _estilhacarAlma() {
+    const sys = this.system;
+    const novoEstilhacos = (sys.alma.estilhacos ?? 0) + 1;
+    const novaDet = Math.max(0, 7 - novoEstilhacos);
+
+    await this.update({
+      "system.alma.estilhacos":   novoEstilhacos,
+      "system.alma.determinacao": novaDet
+    }, { render: false });
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: `
+        <div class="sinfonia-estilhaco">
+          <h3>☠ Estilhaço da Alma ☠</h3>
+          <p><b>${this.name}</b> sucumbe à corrupção. A alma se quebra, e algo se perde.</p>
+          <p>Estilhaços acumulados: <b>${novoEstilhacos}</b></p>
+          <p>O cabo de guerra recomeça com Determinação ${novaDet} / Corrupção ${10 - novaDet}.</p>
+          <p><em>O Mestre deve aplicar uma mutação (benigna ou maligna) ao personagem.</em></p>
+        </div>
+      `
+    });
+
+    ui.notifications.error(`☠ ${this.name} ganhou um Estilhaço da Alma! Total: ${novoEstilhacos}`);
+  }
+
+  /**
+   * Descanso longo: restaura PV/PE ao máximo e devolve os usos de Origem.
+   * NÃO zera Estilhaços nem altera o cabo de guerra — esses são cicatrizes permanentes.
+   */
+  async descansar() {
+    if (this.type !== "personagem") return;
+    const sys = this.system;
+    await this.update({
+      "system.recursos.pv.value": sys.recursos.pv.max,
+      "system.recursos.pe.value": sys.recursos.pe.max,
+      "system.recursos.pv.temp": 0,
+      "system.origem.eventoMarcante.usadoNaSessao": false,
+      "system.origem.ocupacao.usadoNaSessao":      false
+    }, { render: false });
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: `<div class="sinfonia-descanso"><b>${this.name}</b> descansa. PV, PE e usos de Origem restaurados.</div>`
+    });
+    ui.notifications.info(`${this.name} descansou.`);
   }
 
   /**
