@@ -11,7 +11,11 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     classes: ["sinfonia-das-almas", "sheet", "actor"],
     position: { width: 800, height: 900 },
     window: { resizable: true },
-    form: { submitOnChange: true, closeOnSubmit: false },
+    // ✦ ABORDAGEM B (ATIVA): submitOnChange desligado. Cada campo é salvo
+    //    manualmente via listener no _onRender com {render:false}.
+    //    Para usar a ABORDAGEM A: troque por { submitOnChange: true, closeOnSubmit: false }
+    //    e descomente o bloco _canRender/_processSubmitData mais abaixo.
+    form: { submitOnChange: false, closeOnSubmit: false },
     actions: {
       rolarPericia: SinfoniaActorSheet._onRolarPericia,
       usarItem:     SinfoniaActorSheet._onUsarItem,
@@ -69,67 +73,70 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       tab.addEventListener("click", () => activateTab(tab.dataset.tab));
     });
     activateTab(this._activeTab ?? "principal");
+
+    // ✦ ABORDAGEM B: salvamento manual no change SEM re-render.
+    //    {render:false} é a chave — atualiza o documento mas não recria o HTML,
+    //    então não há perda de foco, aba ativa, scroll, nem flicker.
+    this.element.querySelectorAll("input, select, textarea").forEach(el => {
+      el.addEventListener("change", async (ev) => {
+        const t = ev.currentTarget;
+        const name = t.name;
+        if (!name) return;
+        if (!name.startsWith("system.") && name !== "name") return;
+
+        let value;
+        if (t.type === "number") {
+          value = t.value === "" ? null : Number(t.value);
+          if (Number.isNaN(value)) return;
+        } else if (t.type === "checkbox") {
+          value = t.checked;
+        } else {
+          value = t.value;
+        }
+
+        try {
+          await this.document.update({ [name]: value }, { render: false });
+        } catch (err) {
+          console.error("Sinfonia | Falha ao salvar campo", name, err);
+          ui.notifications.error(`Não foi possível salvar ${name}.`);
+        }
+      });
+    });
   }
 
-  // ── Bloqueia re-render ao salvar campos locais ─────────────
-  // O Foundry chama render() quando o documento é atualizado.
-  // Interceptamos aqui: se a mudança veio do próprio usuário,
-  // apenas patchamos os valores sem recriar o HTML.
-  _onChangeDocument(change, options, userId) {
-    if (userId === game.user.id) {
-      // Mudança local — só atualiza valores dinâmicos
-      this._patchValues();
-    } else {
-      // Mudança de outro usuário — re-render normal
-      super._onChangeDocument?.(change, options, userId);
-    }
-  }
-
-  _patchValues() {
-    const el  = this.element;
-    const sys = this.document.system;
-    if (!el) return;
-
-    // Atualiza inputs sem tirar o foco do usuário
-    const patch = (name, val) => {
-      const inp = el.querySelector(`input[name="${name}"]`);
-      if (inp && document.activeElement !== inp) inp.value = val;
-    };
-    const patchSel = (name, val) => {
-      const sel = el.querySelector(`select[name="${name}"]`);
-      if (sel && document.activeElement !== sel) sel.value = val;
-    };
-
-    patch("system.recursos.pv.value", sys.recursos.pv.value);
-    patch("system.recursos.pv.max",   sys.recursos.pv.max);
-    patch("system.recursos.pe.value", sys.recursos.pe.value);
-    patch("system.recursos.pe.max",   sys.recursos.pe.max);
-    patch("system.recursos.pi.value", sys.recursos.pi.value);
-    patch("system.recursos.pi.max",   sys.recursos.pi.max);
-    patch("system.combate.estilhacos", sys.combate.estilhacos);
-    patch("system.progressao.pontosHabilidade", sys.progressao.pontosHabilidade);
-    patch("system.combate.defesa",     sys.combate.defesa);
-    patch("system.combate.iniciativa", sys.combate.iniciativa);
-    patch("system.combate.ndMistica",  sys.combate.ndMistica);
-    patch("system.alma.determinacao",  sys.alma.determinacao);
-
-    patchSel("system.progressao.classe", sys.progressao.classe);
-    Object.keys(sys.atributos ?? {}).forEach(k =>
-      patchSel(`system.atributos.${k}`, sys.atributos[k])
-    );
-
-    // Barras de alma
-    const det = sys.alma?.determinacao ?? 7;
-    const cor = sys.alma?.corrupcao    ?? 3;
-    const detBar = el.querySelector(".det-fill");
-    const corBar = el.querySelector(".cor-fill");
-    const detVal = el.querySelector(".det-lado .alma-valor");
-    const corVal = el.querySelector(".cor-lado .alma-valor");
-    if (detBar) detBar.style.width = (det * 10) + "%";
-    if (corBar) corBar.style.width = (cor * 10) + "%";
-    if (detVal) detVal.textContent = det;
-    if (corVal) corVal.textContent = cor;
-  }
+  // ─────────────────────────────────────────────────────────────────
+  // ✦ ABORDAGEM A — ALTERNATIVA (comentada).
+  //
+  // Se você quiser voltar ao modelo clássico de "o próprio Foundry submete
+  // o form a cada change", basta:
+  //   1. Em DEFAULT_OPTIONS, trocar:
+  //        form: { submitOnChange: false, closeOnSubmit: false }
+  //      por:
+  //        form: { submitOnChange: true,  closeOnSubmit: false }
+  //   2. Remover (ou comentar) o listener de "change" no _onRender que
+  //      faz update manual com {render:false}.
+  //   3. Descomentar os dois métodos abaixo. Eles funcionam assim:
+  //      • _processSubmitData levanta uma flag antes do submit ocorrer.
+  //      • _canRender vê a flag e cancela o próximo render automático.
+  //      • Depois de 100ms a flag baixa, de forma que renders
+  //        legítimos (mudança de outro usuário, tôpicos do GM, etc) voltem.
+  //
+  // /** Cancela re-render quando ele veio do nosso próprio submit */
+  // _canRender(options) {
+  //   if (this._submitting) return false;
+  //   return super._canRender?.(options) ?? true;
+  // }
+  //
+  // /** Marca a flag _submitting antes/depois do submit */
+  // async _processSubmitData(event, form, submitData) {
+  //   this._submitting = true;
+  //   try {
+  //     await super._processSubmitData(event, form, submitData);
+  //   } finally {
+  //     setTimeout(() => { this._submitting = false; }, 100);
+  //   }
+  // }
+  // ─────────────────────────────────────────────────────────────────
 
   // ── Actions ────────────────────────────────────────────────
   static async _onRolarPericia(event, target) {
@@ -183,7 +190,26 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   static async _onAlternarDet(event, target) {
     const det  = this.document.system.alma.determinacao;
     const novo = Math.clamp(det + (parseInt(target.dataset.delta)||0), 0, 10);
-    await this.document.update({ "system.alma.determinacao": novo });
+    // {render:false} é essencial: sem ele, clicar nas setas refaz o HTML
+    // e a barra "piscaria". O _onRender já redesenha as barras manualmente
+    // via Handlebars na próxima abertura, e enquanto isso o valor já está
+    // persistido. Se quiser feedback visual imediato, atualize as barras
+    // aqui manualmente antes do update.
+    await this.document.update({ "system.alma.determinacao": novo }, { render: false });
+
+    // Atualiza as barras de alma na hora, sem re-render da ficha inteira
+    const el = this.element;
+    if (el) {
+      const cor = 10 - novo;
+      const detBar = el.querySelector(".det-fill");
+      const corBar = el.querySelector(".cor-fill");
+      const detVal = el.querySelector(".det-lado .alma-valor");
+      const corVal = el.querySelector(".cor-lado .alma-valor");
+      if (detBar) detBar.style.width = (novo * 10) + "%";
+      if (corBar) corBar.style.width = (cor  * 10) + "%";
+      if (detVal) detVal.textContent = novo;
+      if (corVal) corVal.textContent = cor;
+    }
   }
 
   static _onAbrirArvore(event, target) {

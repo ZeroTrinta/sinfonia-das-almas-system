@@ -168,14 +168,17 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
         window: { title: "Resetar Árvore" },
         content: "<p>Desativar todos os nós e devolver os pontos?</p>"
       });
-      if (ok) {
-        await this.actor.setFlag("sinfonia-das-almas", "arvoreAtiva", {});
-        this._particles = [];
-        this._beams     = [];
-        this._soundReset();
-        // Pequeno delay para a flag ser lida depois do setFlag
-        setTimeout(() => this._render(), 50);
-      }
+      if (!ok) return;
+
+      // ✦ FIX: setFlag(scope, key, {}) faz merge e NÃO limpa nada.
+      // unsetFlag remove a flag inteira; o código já cobre a flag ausente
+      // via `?? {}` em _getAtivos(), então não precisamos recriá-la.
+      await this.actor.unsetFlag("sinfonia-das-almas", "arvoreAtiva");
+
+      this._particles = [];
+      this._beams     = [];
+      this._soundReset();
+      this._render();
     });
 
     // ResizeObserver
