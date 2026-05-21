@@ -77,34 +77,63 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     });
     activateTab(this._activeTab ?? "principal");
 
-    // ✦ ABORDAGEM B: salvamento manual no change SEM re-render.
-    //    {render:false} é a chave — atualiza o documento mas não recria o HTML,
-    //    então não há perda de foco, aba ativa, scroll, nem flicker.
+    // ── Salvamento manual (sem re-render) ──────────────────────────────────
+    // Helper que lê o valor de um input e persiste no documento.
+    const salvarCampo = async (t) => {
+      const name = t.name;
+      if (!name) return;
+      if (!name.startsWith("system.") && name !== "name") return;
+
+      let value;
+      if (t.type === "number") {
+        value = t.value === "" ? null : Number(t.value);
+        if (Number.isNaN(value)) return;
+      } else if (t.type === "checkbox") {
+        value = t.checked;
+      } else {
+        value = t.value;
+      }
+
+      // Evita updates redundantes (lendo o valor atual do documento).
+      const atual = foundry.utils.getProperty(this.document, name);
+      if (atual === value) return;
+
+      try {
+        await this.document.update({ [name]: value }, { render: false });
+      } catch (err) {
+        console.error("Sinfonia | Falha ao salvar campo", name, err);
+        ui.notifications.error(`Não foi possível salvar ${name}.`);
+      }
+    };
+
+    // Persiste em DOIS gatilhos para cobrir todos os casos:
+    //   • change — dispara quando o input perde o foco (clique fora).
+    //   • input — dispara a cada tecla; necessário porque se o usuário digita
+    //     num input e clica direto em "Abrir Árvore" ou fecha a janela, o
+    //     navegador pode NÃO disparar change a tempo. Usamos debounce em input
+    //     pra não spammar o servidor.
+    const debouncers = new WeakMap();
     this.element.querySelectorAll("input, select, textarea").forEach(el => {
-      el.addEventListener("change", async (ev) => {
+      el.addEventListener("change", (ev) => salvarCampo(ev.currentTarget));
+      el.addEventListener("input",  (ev) => {
         const t = ev.currentTarget;
-        const name = t.name;
-        if (!name) return;
-        if (!name.startsWith("system.") && name !== "name") return;
-
-        let value;
-        if (t.type === "number") {
-          value = t.value === "" ? null : Number(t.value);
-          if (Number.isNaN(value)) return;
-        } else if (t.type === "checkbox") {
-          value = t.checked;
-        } else {
-          value = t.value;
-        }
-
-        try {
-          await this.document.update({ [name]: value }, { render: false });
-        } catch (err) {
-          console.error("Sinfonia | Falha ao salvar campo", name, err);
-          ui.notifications.error(`Não foi possível salvar ${name}.`);
-        }
+        clearTimeout(debouncers.get(t));
+        debouncers.set(t, setTimeout(() => salvarCampo(t), 150));
       });
     });
+
+    // Guarda referência ao helper para reaproveitá-lo em _preClose.
+    this._salvarCampo = salvarCampo;
+  }
+
+  // ── PreClose: salva qualquer campo pendente antes da janela fechar ─────────────
+  // Cobre o caso onde o usuário digita e clica direto no X sem disparar blur.
+  async _preClose(options) {
+    if (this._salvarCampo && this.element) {
+      const inputs = this.element.querySelectorAll("input, select, textarea");
+      await Promise.all(Array.from(inputs).map(el => this._salvarCampo(el)));
+    }
+    return super._preClose?.(options);
   }
 
   // ─────────────────────────────────────────────────────────────────
@@ -144,7 +173,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   // ── Actions ────────────────────────────────────────────────
   static async _onRolarPericia(event, target) {
     const { pericia, atribA, atribB } = target.dataset;
-    const opcoes = await SinfoniaActorSheet._dialogND(this.document);
+    const opcoes = await SinfoniaActorSheet._dialogND(this.document, atribA, atribB);
     if (!opcoes) return;
     await this.document.rolarPericia(pericia, atribA, atribB, opcoes.nd, opcoes);
   }
@@ -156,10 +185,12 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
    * Retorna um objeto { nd, penalidade, empenho, perseveranca, origem, origemTipo, corrupcao }
    * ou null se cancelado.
    */
-  static async _dialogND(actor) {
+  static async _dialogND(actor, atribA, atribB) {
     const sys = actor.system;
     const det = sys.alma.determinacao;
     const cor = sys.alma.corrupcao;
+    const atribAUpper = (atribA || "A").toUpperCase();
+    const atribBUpper = (atribB || "B").toUpperCase();
     const eventoUsado   = sys.origem?.eventoMarcante?.usadoNaSessao;
     const ocupacaoUsada = sys.origem?.ocupacao?.usadoNaSessao;
 
@@ -183,8 +214,12 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         <fieldset class="alma-bloco">
           <legend>★ Determinação (${det} disponíveis)</legend>
           <label class="check ${det < 1 ? 'disabled' : ''}">
-            <input type="checkbox" name="empenho" ${det < 1 ? 'disabled' : ''}/>
-            <b>Empenho</b> — 1 Det: dado extra em cada atributo, usa o maior
+            <input type="checkbox" name="empenhoA" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho em ${atribAUpper}</b> — 1 Det: dado extra no atributo A, usa o maior
+          </label>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="empenhoB" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho em ${atribBUpper}</b> — 1 Det: dado extra no atributo B, usa o maior
           </label>
           <label class="check ${det < 1 ? 'disabled' : ''}">
             <input type="checkbox" name="perseveranca" ${det < 1 ? 'disabled' : ''}/>
@@ -244,7 +279,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
             resolve({
               nd:           parseInt(f.nd.value)         || 12,
               penalidade:   parseInt(f.penalidade.value) || 0,
-              empenho:      f.empenho.checked,
+              empenhoA:     f.empenhoA.checked,
+              empenhoB:     f.empenhoB.checked,
               perseveranca: f.perseveranca.checked,
               origem:       !!origemValor,
               origemTipo:   origemValor || null,
@@ -311,7 +347,14 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     }
   }
 
-  static _onAbrirArvore(event, target) {
+  static async _onAbrirArvore(event, target) {
+    // Força salvamento de qualquer campo pendente antes de abrir a árvore,
+    // senão uma digitação ainda no debounce de 150ms pode se perder
+    // quando o foco for pra outra janela.
+    if (this._salvarCampo && this.element) {
+      const inputs = this.element.querySelectorAll("input, select, textarea");
+      await Promise.all(Array.from(inputs).map(el => this._salvarCampo(el)));
+    }
     new ArvoreHabilidades(this.document).render(true);
   }
 

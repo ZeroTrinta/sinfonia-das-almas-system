@@ -67,7 +67,8 @@ export class SinfoniaActor extends Actor {
     if (this.type !== "personagem") return;
     const sys = this.system;
 
-    const empenho      = !!opts.empenho;
+    const empenhoA     = !!opts.empenhoA;
+    const empenhoB     = !!opts.empenhoB;
     const perseveranca = !!opts.perseveranca;
     const origem       = !!opts.origem;
     const origemTipo   = opts.origemTipo ?? null;
@@ -75,7 +76,7 @@ export class SinfoniaActor extends Actor {
     const penalidade   = Math.max(0, Number(opts.penalidade) || 0);
 
     // ── Valida ───────────────────────────────────────────────────────
-    const usosDet = (empenho ? 1 : 0) + (perseveranca ? 1 : 0);
+    const usosDet = (empenhoA ? 1 : 0) + (empenhoB ? 1 : 0) + (perseveranca ? 1 : 0);
     if (usosDet > 0 && sys.alma.determinacao < usosDet) {
       ui.notifications.warn(`${this.name} não tem Determinação suficiente.`);
       return;
@@ -123,16 +124,16 @@ export class SinfoniaActor extends Actor {
       dadoB = passoDado(dadoB);
     }
 
-    // Empenho: "rola um dado extra e usa o maior dos dois" — aplico em cada atributo.
-    // Sintaxe Foundry: `2d8kh1` = rola 2d8 e mantém o maior 1.
-    const fmtAtrib = (dado) => empenho ? `2${dado}kh1` : `1${dado}`;
+    // Empenho por atributo: "2dN kh1" rola 2 dados e mantém o maior 1.
+    const fmtA = empenhoA ? `2${dadoA}kh1` : `1${dadoA}`;
+    const fmtB = empenhoB ? `2${dadoB}kh1` : `1${dadoB}`;
 
     const maestria = sys.pericias[pericia] ?? "";
     const modMap   = { iniciante: 2, treinado: 4, experiente: 6 };
     const mod      = modMap[maestria] ?? 0;
     const bonusCorrupcao = corrupcao === "+5" ? 5 : 0;
 
-    const formula = `${fmtAtrib(dadoA)} + ${fmtAtrib(dadoB)} + ${mod}${bonusCorrupcao ? ` + ${bonusCorrupcao}` : ""}`;
+    const formula = `${fmtA} + ${fmtB} + ${mod}${bonusCorrupcao ? ` + ${bonusCorrupcao}` : ""}`;
     let roll = new Roll(formula);
     await roll.evaluate();
 
@@ -174,7 +175,8 @@ export class SinfoniaActor extends Actor {
       : `<span class="maestria sem-maestria">sem maestria</span>`;
 
     const tags = [];
-    if (empenho)        tags.push(`<span class="tag tag-det">★ Empenho</span>`);
+    if (empenhoA)       tags.push(`<span class="tag tag-det">★ Empenho ${atribA.toUpperCase()}</span>`);
+    if (empenhoB)       tags.push(`<span class="tag tag-det">★ Empenho ${atribB.toUpperCase()}</span>`);
     if (perseveranca)   tags.push(`<span class="tag tag-det">★ Perseverança</span>`);
     if (origem)         tags.push(`<span class="tag tag-origem">⚭ Origem</span>`);
     if (corrupcao === "+5")        tags.push(`<span class="tag tag-cor">☠ +5</span>`);
