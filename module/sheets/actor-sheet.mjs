@@ -26,7 +26,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       abrirArvore:  SinfoniaActorSheet._onAbrirArvore,
       corromper:    SinfoniaActorSheet._onCorromper,
       descansar:    SinfoniaActorSheet._onDescansar,
-      resetEstilhacos: SinfoniaActorSheet._onResetEstilhacos
+      resetEstilhacos: SinfoniaActorSheet._onResetEstilhacos,
+      verTodasPericias: SinfoniaActorSheet._onVerTodasPericias
     }
   };
 
@@ -43,6 +44,15 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   async _prepareContext(options) {
     const doc = this.document;
     const sys = doc.system;
+
+    // Resumo de perícias com maestria (Iniciante/Treinado/Experiente).
+    // Cada entrada inclui o config (label, atribA, atribB) pra montar o botão de rolar.
+    const periciasComMaestria = [];
+    for (const [key, cfg] of Object.entries(SINFONIA.PERICIAS)) {
+      const maestria = sys.pericias?.[key];
+      if (maestria) periciasComMaestria.push({ key, maestria, ...cfg });
+    }
+
     return {
       actor:           doc,
       system:          sys,
@@ -50,6 +60,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       isEditable:      this.isEditable,
       atributosConfig: SINFONIA.ATRIBUTOS,
       periciasConfig:  SINFONIA.PERICIAS,
+      periciasComMaestria,
       habilidades:     doc.items.filter(i => i.type === "habilidade"),
       magias:          doc.items.filter(i => i.type === "magia").sort((a,b) => a.system.circulo - b.system.circulo),
       armas:           doc.items.filter(i => i.type === "arma"),
@@ -377,10 +388,6 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     if (ok) await this.document.descansar();
   }
 
-  /**
-   * Reseta os Estilhaços — deve ser usado APENAS pelo Mestre em casos excepcionais
-   * (reset de personagem, ritual narrativo de redencão, etc).
-   */
   static async _onResetEstilhacos(event, target) {
     if (!game.user.isGM) {
       ui.notifications.warn("Apenas o Mestre pode resetar Estilhaços da Alma.");
@@ -397,6 +404,58 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       "system.alma.determinacao": 7
     }, { render: false });
     ui.notifications.info(`${this.document.name}: Estilhaços resetados.`);
+  }
+
+  /**
+   * Abre um dialog com todas as perícias, agrupadas pelo grau de maestria.
+   * Cada linha permite rolar diretamente.
+   */
+  static async _onVerTodasPericias(event, target) {
+    const actor = this.document;
+    const sys = actor.system;
+
+    const linhas = Object.entries(SINFONIA.PERICIAS).map(([key, cfg]) => {
+      const m = sys.pericias?.[key] || "";
+      const cls = m ? `maestria-${m}` : "sem-maestria";
+      const tag = m ? `<span class="tag-m ${cls}">${m}</span>` : `<span class="tag-m sem-maestria">—</span>`;
+      return `
+        <tr class="pericia-row ${cls}" data-key="${key}" data-atriba="${cfg.atribA}" data-atribb="${cfg.atribB}">
+          <td class="col-nome">${cfg.label}</td>
+          <td class="col-atrib">${cfg.atribA.toUpperCase()} + ${cfg.atribB.toUpperCase()}</td>
+          <td class="col-maestria">${tag}</td>
+          <td class="col-acao"><button type="button" class="btn-rolar-pericia">⚂</button></td>
+        </tr>`;
+    }).join("");
+
+    const content = `
+      <div class="sinfonia-todas-pericias">
+        <table>
+          <thead>
+            <tr><th>Perícia</th><th>Atributos</th><th>Maestria</th><th></th></tr>
+          </thead>
+          <tbody>${linhas}</tbody>
+        </table>
+      </div>
+    `;
+
+    const dlg = new foundry.applications.api.DialogV2({
+      window: { title: "Todas as Perícias", resizable: true },
+      content,
+      buttons: [{ action: "fechar", label: "Fechar", default: true }],
+      position: { width: 520 }
+    });
+    await dlg.render(true);
+
+    // Anexa os listeners de rolar diretamente no DOM do dialog recém-renderizado.
+    dlg.element.querySelectorAll(".btn-rolar-pericia").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const tr = btn.closest(".pericia-row");
+        const { key, atriba, atribb } = tr.dataset;
+        const opcoes = await SinfoniaActorSheet._dialogND(actor, atriba, atribb);
+        if (!opcoes) return;
+        await actor.rolarPericia(key, atriba, atribb, opcoes.nd, opcoes);
+      });
+    });
   }
 }
 

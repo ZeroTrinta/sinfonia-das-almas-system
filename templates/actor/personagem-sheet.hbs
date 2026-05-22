@@ -5,32 +5,47 @@
   <header class="sheet-header">
     <img class="actor-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Avatar"/>
     <div class="header-fields">
-      <div class="header-top">
+
+      {{!-- Linha 1: nome + nível destacado --}}
+      <div class="header-row-1">
         <input class="actor-name" type="text" name="name" value="{{actor.name}}" placeholder="Nome do Personagem"/>
-        <div class="header-badges">
-          <div class="badge pv" title="Pontos de Vida">
-            <span class="badge-label">♥ PV</span>
-            <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0"/>
-            <span class="badge-sep">/</span>
-            <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
+        <div class="nivel-bloco" title="Nível e Pontos de Habilidade">
+          <div class="nivel-display">
+            <span class="nivel-label">Nível</span>
+            <input type="number" class="nivel-input" name="system.progressao.nivel" value="{{system.progressao.nivel}}" min="1" max="99"/>
           </div>
-          <div class="badge pe" title="Pontos de Energia">
-            <span class="badge-label">✦ PE</span>
-            <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0"/>
-            <span class="badge-sep">/</span>
-            <input type="number" name="system.recursos.pe.max" value="{{system.recursos.pe.max}}" min="0"/>
-          </div>
-          <div class="badge pi" title="Pontos de Inventário">
-            <span class="badge-label">◈ PI</span>
-            <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0"/>
-            <span class="badge-sep">/</span>
-            <input type="number" name="system.recursos.pi.max" value="{{system.recursos.pi.max}}" min="0"/>
+          <div class="ptshab-display">
+            <span class="ptshab-label">Pts Hab.</span>
+            <input type="number" class="ptshab-input" name="system.progressao.pontosHabilidade" value="{{system.progressao.pontosHabilidade}}" min="0"/>
           </div>
         </div>
       </div>
 
-      <div class="header-bottom">
-        <div class="field-group">
+      {{!-- Linha 2: badges PV/PE/PI --}}
+      <div class="header-badges">
+        <div class="badge pv" title="Pontos de Vida">
+          <span class="badge-label">♥ PV</span>
+          <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0"/>
+          <span class="badge-sep">/</span>
+          <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
+        </div>
+        <div class="badge pe" title="Pontos de Energia">
+          <span class="badge-label">✦ PE</span>
+          <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0"/>
+          <span class="badge-sep">/</span>
+          <input type="number" name="system.recursos.pe.max" value="{{system.recursos.pe.max}}" min="0"/>
+        </div>
+        <div class="badge pi" title="Pontos de Inventário">
+          <span class="badge-label">◈ PI</span>
+          <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0"/>
+          <span class="badge-sep">/</span>
+          <input type="number" name="system.recursos.pi.max" value="{{system.recursos.pi.max}}" min="0"/>
+        </div>
+      </div>
+
+      {{!-- Linha 3: classe + deslocamento compacto --}}
+      <div class="header-row-3">
+        <div class="field-group classe-group">
           <label>Classe</label>
           <select name="system.progressao.classe">
             <option value="" {{#eq "" system.progressao.classe}}selected{{/eq}}>— escolha —</option>
@@ -40,19 +55,15 @@
             <option value="mago"      {{#eq "mago"      system.progressao.classe}}selected{{/eq}}>Mago</option>
           </select>
         </div>
-        <div class="field-group">
-          <label>Nível</label>
-          <input type="number" name="system.progressao.nivel" value="{{system.progressao.nivel}}" min="1" max="99"/>
-        </div>
-        <div class="field-group">
-          <label>Pts Hab.</label>
-          <input type="number" name="system.progressao.pontosHabilidade" value="{{system.progressao.pontosHabilidade}}" min="0"/>
-        </div>
-        <div class="field-group">
-          <label>Desl. (m)</label>
-          <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}" min="0"/>
+        <div class="field-group desl-group">
+          <label>Desloc.</label>
+          <div class="desl-wrap">
+            <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}" min="0"/>
+            <span class="desl-sufixo">m</span>
+          </div>
         </div>
       </div>
+
     </div>
   </header>
 
@@ -84,7 +95,6 @@
   <div class="sheet-tabs-row">
     <nav class="sheet-tabs">
       <a class="item" data-tab="principal">Principal</a>
-      <a class="item" data-tab="pericias">Perícias</a>
       <a class="item" data-tab="inventario">Inventário</a>
       <a class="item" data-tab="alma">Alma</a>
       <a class="item" data-tab="bio">Biografia</a>
@@ -97,11 +107,6 @@
     {{!-- TAB: PRINCIPAL --}}
     <div class="tab" data-tab="principal">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs"}}
-    </div>
-
-    {{!-- TAB: PERÍCIAS --}}
-    <div class="tab" data-tab="pericias">
-      {{> "systems/sinfonia-das-almas/templates/actor/tabs/pericias.hbs"}}
     </div>
 
     {{!-- TAB: INVENTÁRIO --}}

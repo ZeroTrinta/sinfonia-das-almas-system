@@ -168,6 +168,18 @@ export class SinfoniaActor extends Actor {
       }
     }
 
+    // ── Monta detalhamento visual dos dados caídos ───────────────────────────────────
+    // Cada termo de dado (DiceTerm) tem `.results[]` com {result, active, discarded}.
+    // Em "2d8kh1" o dado descartado fica com active:false e discarded:true.
+    const dadosHtml = roll.dice.map(term => {
+      const faces = term.faces;
+      const pills = term.results.map(r => {
+        const cls = r.active ? "dado-pill ativo" : "dado-pill descartado";
+        return `<span class="${cls}" title="d${faces}">${r.result}</span>`;
+      }).join("");
+      return `<span class="dado-grupo"><span class="dado-tipo">d${faces}</span>${pills}</span>`;
+    }).join("");
+
     // ── Monta chat ────────────────────────────────────────────────────
     const nomePericia = game.i18n.localize(`SINFONIA.Pericias.${pericia}`) || pericia;
     const labelMaestria = maestria
@@ -195,6 +207,7 @@ export class SinfoniaActor extends Actor {
           <span class="pericia-nome">${nomePericia}</span>
         </div>
         <div class="roll-formula">${atribA.toUpperCase()} + ${atribB.toUpperCase()} ${labelMaestria}</div>
+        <div class="roll-dados">${dadosHtml}${mod ? `<span class="dado-mod">+${mod}</span>` : ""}${bonusCorrupcao ? `<span class="dado-mod cor">+${bonusCorrupcao}</span>` : ""}</div>
         ${tags.length ? `<div class="roll-tags">${tags.join(" ")}</div>` : ""}
         <div class="roll-resultado">
           <span class="total">${total}</span>

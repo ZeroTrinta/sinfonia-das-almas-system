@@ -1,5 +1,32 @@
-{{!-- TAB PRINCIPAL: Habilidades, Magias, Armas, Origens --}}
+{{!-- TAB PRINCIPAL: Perícias, Origens, Habilidades, Magias, Armas --}}
 <div class="principal-layout">
+
+  {{!-- PERÍCIAS COM MAESTRIA --}}
+  <section class="panel pericias-resumo-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Perícias</h3>
+      <a data-action="verTodasPericias" title="Ver todas as perícias">
+        <i class="fas fa-list"></i> ver todas
+      </a>
+    </div>
+    {{#if periciasComMaestria.length}}
+    <ul class="pericias-resumo">
+      {{#each periciasComMaestria as |p|}}
+      <li class="pericia-resumo-item maestria-{{p.maestria}}">
+        <a class="pericia-rolar" data-action="rolarPericia"
+           data-pericia="{{p.key}}" data-atrib-a="{{p.atribA}}" data-atrib-b="{{p.atribB}}"
+           title="Rolar {{p.label}}">
+          <span class="pericia-nome">{{p.label}}</span>
+          <span class="pericia-atribs">{{upper p.atribA}}+{{upper p.atribB}}</span>
+          <span class="pericia-maestria-tag">{{p.maestria}}</span>
+        </a>
+      </li>
+      {{/each}}
+    </ul>
+    {{else}}
+    <p class="items-vazio">Nenhuma perícia com maestria. Clique em “ver todas” para definir.</p>
+    {{/if}}
+  </section>
 
   {{!-- ORIGENS --}}
   <section class="panel origens-panel">

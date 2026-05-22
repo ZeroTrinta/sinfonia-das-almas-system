@@ -316,6 +316,9 @@ Hooks.once("init", () => {
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("gt", (a, b) => a > b);
 
+  // Uppercase para abreviar atributos no template
+  Handlebars.registerHelper("upper", (str) => String(str ?? "").toUpperCase());
+
   // Concatenar strings
   Handlebars.registerHelper("concat", (...args) => args.slice(0, -1).join(""));
 

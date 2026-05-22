@@ -67,9 +67,9 @@
   --silver:      #c8d0e0;
   --silver-dim:  #7888a0;
   --heart:       #d43060;
-  --pv-color:    #e05050;
-  --pe-color:    #7070e0;
-  --pi-color:    #50b870;
+  --pv-color:    #4caf50;
+  --pe-color:    #4a9eff;
+  --pi-color:    #f0c060;
   --det-color:   #c8972a;
   --cor-color:   #c84040;
 }
@@ -117,8 +117,8 @@
 }
 
 .sinfonia-sheet .actor-avatar {
-  width: 72px;
-  height: 72px;
+  width: 110px;
+  height: 110px;
   object-fit: cover;
   border: 1px solid var(--border);
   cursor: pointer;
@@ -1284,3 +1284,287 @@
   color: #b0c0d8;
   font-size: 14px;
 }
+
+/* ================================================================
+   v0.3.1 — Header reestruturado, perícias na principal, dados caídos
+================================================================ */
+
+/* ── Linhas do header ── */
+.header-row-1 {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.header-row-1 .actor-name { flex: 1; margin-bottom: 0; }
+
+.header-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 8px;
+  align-items: end;
+  margin-top: 6px;
+}
+.header-row-3 .field-group { display: flex; flex-direction: column; gap: 2px; }
+.header-row-3 .field-group label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+.header-row-3 .field-group select,
+.header-row-3 .field-group input {
+  width: 100% !important;
+  height: 28px !important;
+  padding: 3px 6px !important;
+  font-size: 13px !important;
+  box-sizing: border-box !important;
+}
+
+/* ── Bloco de Nível e Pts Hab. (canto direito do header) ── */
+.nivel-bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--gold);
+  background: rgba(200,151,42,0.06);
+  min-width: 80px;
+}
+.nivel-display, .ptshab-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.nivel-label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+.nivel-input {
+  width: 60px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 0 !important;
+  text-shadow: 0 0 12px rgba(240,192,96,0.4);
+  -moz-appearance: textfield;
+}
+.nivel-input::-webkit-outer-spin-button,
+.nivel-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ptshab-label {
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+.ptshab-input {
+  width: 60px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--silver) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  padding: 0 !important;
+}
+
+/* ── Deslocamento compacto (input + sufixo "m") ── */
+.desl-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.desl-wrap input {
+  padding-right: 18px !important;
+  text-align: center;
+}
+.desl-sufixo {
+  position: absolute;
+  right: 6px;
+  pointer-events: none;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: var(--silver-dim);
+}
+
+/* ── Perícias — resumo na aba Principal ── */
+.pericias-resumo-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.pericias-resumo-panel .panel-header a {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  cursor: pointer;
+}
+.pericias-resumo-panel .panel-header a:hover { color: var(--gold-light); }
+
+.pericias-resumo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+.pericia-resumo-item .pericia-rolar {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,151,42,0.18);
+  border-left-width: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.pericia-resumo-item .pericia-rolar:hover {
+  background: rgba(200,151,42,0.08);
+  border-color: var(--gold);
+}
+.pericia-resumo-item.maestria-iniciante  .pericia-rolar { border-left-color: #80a8c0; }
+.pericia-resumo-item.maestria-treinado   .pericia-rolar { border-left-color: var(--gold); }
+.pericia-resumo-item.maestria-experiente .pericia-rolar { border-left-color: #d8a040; }
+.pericia-resumo-item .pericia-nome {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: var(--text);
+}
+.pericia-resumo-item .pericia-atribs {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+}
+.pericia-resumo-item .pericia-maestria-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+.pericia-resumo-item.maestria-iniciante  .pericia-maestria-tag { color: #80a8c0; border-color: #80a8c0; }
+.pericia-resumo-item.maestria-treinado   .pericia-maestria-tag { color: var(--gold); border-color: var(--gold); }
+.pericia-resumo-item.maestria-experiente .pericia-maestria-tag { color: #d8a040; border-color: #d8a040; }
+
+/* ── Dialog "Todas as Perícias" ── */
+.sinfonia-todas-pericias table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'EB Garamond', serif;
+}
+.sinfonia-todas-pericias th {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.sinfonia-todas-pericias td {
+  padding: 4px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.sinfonia-todas-pericias .col-atrib { color: var(--silver-dim); font-size: 11px; }
+.sinfonia-todas-pericias .col-acao { text-align: center; width: 36px; }
+.sinfonia-todas-pericias .btn-rolar-pericia {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  width: 28px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+.sinfonia-todas-pericias .btn-rolar-pericia:hover {
+  background: rgba(200,151,42,0.15);
+}
+.sinfonia-todas-pericias .tag-m {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+.sinfonia-todas-pericias .tag-m.maestria-iniciante  { color: #80a8c0; border-color: #80a8c0; }
+.sinfonia-todas-pericias .tag-m.maestria-treinado   { color: var(--gold); border-color: var(--gold); }
+.sinfonia-todas-pericias .tag-m.maestria-experiente { color: #d8a040; border-color: #d8a040; }
+.sinfonia-todas-pericias .tag-m.sem-maestria       { color: #555; border-color: #333; }
+
+/* ── Dados caídos no chat (pílulas com cada resultado) ── */
+.roll-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 4px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(200,151,42,0.08);
+}
+.dado-grupo {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.dado-tipo {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+  margin-right: 2px;
+}
+.dado-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid;
+  background: rgba(0,0,0,0.3);
+}
+.dado-pill.ativo {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+.dado-pill.descartado {
+  border-color: #555;
+  color: #555;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.dado-mod {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--silver-dim);
+  margin-left: 2px;
+}
+.dado-mod.cor { color: var(--cor-color); }
