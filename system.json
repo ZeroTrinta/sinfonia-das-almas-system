@@ -14,7 +14,7 @@
     }
   ],
   "esmodules": ["sinfonia.mjs"],
-  "styles": ["styles/sinfonia.css"],
+  "styles": ["styles/sinfonia.css", "styles/sinfonia-ui.css"],
   "languages": [
     {
       "lang": "pt-BR",

@@ -1,0 +1,398 @@
+/* ================================================================
+   SINFONIA DAS ALMAS — UI Theme (Foundry global)
+   Estiliza chat, sidebar, hotbar, controls, players, dialogs.
+   Carregado via system.json além do sinfonia.css principal.
+================================================================ */
+
+/* ── Tokens globais (espelho do sinfonia.css pra esses elementos terem acesso) ── */
+:root {
+  --sn-bg:          #06080d;
+  --sn-bg-panel:    #0b0f18;
+  --sn-bg-header:   #0d1020;
+  --sn-border:      rgba(200,151,42,0.35);
+  --sn-border-soft: rgba(200,151,42,0.15);
+  --sn-gold:        #c8972a;
+  --sn-gold-light:  #f0c060;
+  --sn-gold-dim:    #6b4e12;
+  --sn-text:        #ddd0b8;
+  --sn-silver:      #c8d0e0;
+  --sn-silver-dim:  #7888a0;
+}
+
+/* ================================================================
+   SIDEBAR (chat + abas laterais)
+================================================================ */
+#sidebar,
+#sidebar-tabs,
+#sidebar #sidebar-content,
+#sidebar .tab {
+  background: var(--sn-bg) !important;
+  color: var(--sn-text) !important;
+  border-color: var(--sn-border) !important;
+}
+
+#sidebar-tabs {
+  border-bottom: 1px solid var(--sn-border) !important;
+}
+
+#sidebar-tabs > .item {
+  color: var(--sn-silver-dim) !important;
+  border-color: var(--sn-border-soft) !important;
+}
+
+#sidebar-tabs > .item.active,
+#sidebar-tabs > .item:hover {
+  color: var(--sn-gold-light) !important;
+  border-color: var(--sn-gold) !important;
+  text-shadow: 0 0 8px rgba(240,192,96,0.4);
+}
+
+#sidebar h3,
+#sidebar h4,
+#sidebar .directory-header,
+#sidebar .header-search,
+#sidebar .header-actions {
+  background: var(--sn-bg-header) !important;
+  color: var(--sn-gold-light) !important;
+  border-color: var(--sn-border) !important;
+}
+
+#sidebar input[type="text"],
+#sidebar input[type="search"],
+#sidebar input[type="number"],
+#sidebar select,
+#sidebar textarea {
+  background: rgba(0,0,0,0.4) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+}
+
+#sidebar .directory-list {
+  background: var(--sn-bg) !important;
+}
+
+#sidebar .directory-item,
+#sidebar .folder header {
+  background: var(--sn-bg-panel) !important;
+  color: var(--sn-text) !important;
+  border-color: var(--sn-border-soft) !important;
+}
+
+#sidebar .directory-item:hover {
+  background: rgba(200,151,42,0.08) !important;
+  border-color: var(--sn-gold) !important;
+}
+
+#sidebar .folder > header {
+  color: var(--sn-gold-light) !important;
+}
+
+/* ================================================================
+   CHAT
+================================================================ */
+#chat,
+#chat-log,
+#chat-controls,
+#chat-form {
+  background: var(--sn-bg) !important;
+  color: var(--sn-text) !important;
+}
+
+#chat-log {
+  border-top: 1px solid var(--sn-border) !important;
+  border-bottom: 1px solid var(--sn-border) !important;
+}
+
+#chat-message {
+  background: rgba(0,0,0,0.4) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+  font-family: 'EB Garamond', 'Times New Roman', serif !important;
+}
+
+#chat-controls {
+  border-top: 1px solid var(--sn-border-soft) !important;
+}
+
+#chat-controls .roll-type-select,
+#chat-controls select {
+  background: rgba(0,0,0,0.4) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+}
+
+/* ── Mensagens de chat ── */
+#chat-log .message,
+.chat-message {
+  background: var(--sn-bg-panel) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+  border-radius: 0 !important;
+  margin: 4px 6px !important;
+}
+
+#chat-log .message .message-header,
+.chat-message .message-header {
+  background: var(--sn-bg-header) !important;
+  color: var(--sn-gold-light) !important;
+  border-bottom: 1px solid var(--sn-border-soft) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  letter-spacing: 1px !important;
+  padding: 4px 8px !important;
+}
+
+#chat-log .message .message-sender,
+.chat-message .message-sender {
+  color: var(--sn-gold-light) !important;
+  font-weight: 600 !important;
+}
+
+#chat-log .message .message-metadata,
+.chat-message .message-metadata {
+  color: var(--sn-silver-dim) !important;
+  font-size: 9px !important;
+}
+
+#chat-log .message .message-content,
+.chat-message .message-content {
+  background: transparent !important;
+  color: var(--sn-text) !important;
+  padding: 6px 8px !important;
+}
+
+/* Rolagens nativas do Foundry (não nossas, vêm de macros, /r, etc) */
+#chat-log .message .dice-roll,
+.chat-message .dice-roll {
+  background: rgba(0,0,0,0.3) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+}
+
+#chat-log .message .dice-roll .dice-formula,
+.chat-message .dice-roll .dice-formula,
+#chat-log .message .dice-roll .dice-total,
+.chat-message .dice-roll .dice-total {
+  background: rgba(0,0,0,0.5) !important;
+  color: var(--sn-gold-light) !important;
+  border-color: var(--sn-border-soft) !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+#chat-log .message .dice-tooltip,
+.chat-message .dice-tooltip {
+  background: rgba(0,0,0,0.7) !important;
+  color: var(--sn-text) !important;
+  border-color: var(--sn-border) !important;
+}
+
+/* Sussurros / whispers */
+#chat-log .message.whisper,
+.chat-message.whisper {
+  background: rgba(80,60,140,0.15) !important;
+  border-color: rgba(150,120,200,0.4) !important;
+}
+
+/* Emote / OOC */
+#chat-log .message.emote,
+.chat-message.emote { font-style: italic !important; }
+
+#chat-log .message.ooc,
+.chat-message.ooc { color: var(--sn-silver) !important; }
+
+/* ================================================================
+   HOTBAR (barra de macros)
+================================================================ */
+#hotbar {
+  background: var(--sn-bg-header) !important;
+  border: 1px solid var(--sn-border) !important;
+}
+
+#hotbar .bar-controls,
+#hotbar #macro-list {
+  background: transparent !important;
+}
+
+#hotbar .macro {
+  background: var(--sn-bg-panel) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+  color: var(--sn-text) !important;
+}
+
+#hotbar .macro:hover {
+  border-color: var(--sn-gold) !important;
+  box-shadow: 0 0 8px rgba(200,151,42,0.3);
+}
+
+#hotbar .macro .macro-key {
+  color: var(--sn-gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+/* ================================================================
+   SCENE NAVIGATION (topo)
+================================================================ */
+#navigation {
+  background: transparent !important;
+}
+
+#navigation #scene-list .scene {
+  background: var(--sn-bg-header) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border-soft) !important;
+}
+
+#navigation #scene-list .scene.active {
+  background: rgba(200,151,42,0.15) !important;
+  border-color: var(--sn-gold) !important;
+  color: var(--sn-gold-light) !important;
+  text-shadow: 0 0 6px rgba(240,192,96,0.4);
+}
+
+#navigation #scene-list .scene:hover {
+  border-color: var(--sn-gold-dim) !important;
+}
+
+/* ================================================================
+   CONTROLS (esquerda) — token tools, walls, lighting etc.
+================================================================ */
+#controls,
+#controls .scene-control,
+#controls .control-tool {
+  background: var(--sn-bg-header) !important;
+  border-color: var(--sn-border-soft) !important;
+  color: var(--sn-silver) !important;
+}
+
+#controls .scene-control.active,
+#controls .control-tool.active {
+  background: rgba(200,151,42,0.15) !important;
+  border-color: var(--sn-gold) !important;
+  color: var(--sn-gold-light) !important;
+  box-shadow: inset 0 0 6px rgba(200,151,42,0.3);
+}
+
+#controls .scene-control:hover,
+#controls .control-tool:hover {
+  border-color: var(--sn-gold) !important;
+  color: var(--sn-gold-light) !important;
+}
+
+/* ================================================================
+   PLAYERS LIST (canto inferior esquerdo)
+================================================================ */
+#players {
+  background: var(--sn-bg-header) !important;
+  border: 1px solid var(--sn-border) !important;
+  color: var(--sn-text) !important;
+}
+
+#players h3 {
+  color: var(--sn-gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 10px !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+  border-bottom: 1px solid var(--sn-border-soft) !important;
+}
+
+#players .player {
+  color: var(--sn-text) !important;
+  border-color: var(--sn-border-soft) !important;
+}
+
+#players .player .player-name {
+  color: var(--sn-text) !important;
+}
+
+#players .player.active .player-name,
+#players .player.self .player-name {
+  color: var(--sn-gold-light) !important;
+}
+
+/* ================================================================
+   DIALOGS / APPLICATIONS V1 (módulos que ainda usam o sistema antigo)
+================================================================ */
+.window-app:not(.sinfonia-das-almas) {
+  background: var(--sn-bg) !important;
+  border: 1px solid var(--sn-border) !important;
+}
+
+.window-app:not(.sinfonia-das-almas) .window-header {
+  background: var(--sn-bg-header) !important;
+  color: var(--sn-gold-light) !important;
+  border-bottom: 1px solid var(--sn-border) !important;
+}
+
+.window-app:not(.sinfonia-das-almas) .window-header .window-title {
+  color: var(--sn-gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+}
+
+.window-app:not(.sinfonia-das-almas) .window-content {
+  background: var(--sn-bg) !important;
+  color: var(--sn-text) !important;
+}
+
+/* Dialog padrão do Foundry (avisos, prompts) */
+.dialog .dialog-content,
+.dialog .window-content {
+  background: var(--sn-bg) !important;
+  color: var(--sn-text) !important;
+}
+
+.dialog button,
+.dialog .dialog-button {
+  background: rgba(0,0,0,0.4) !important;
+  color: var(--sn-text) !important;
+  border: 1px solid var(--sn-border) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  letter-spacing: 1px !important;
+}
+
+.dialog button:hover,
+.dialog .dialog-button:hover {
+  background: rgba(200,151,42,0.15) !important;
+  border-color: var(--sn-gold) !important;
+  color: var(--sn-gold-light) !important;
+}
+
+/* ================================================================
+   NOTIFICATIONS (toasts no canto)
+================================================================ */
+#notifications .notification {
+  background: var(--sn-bg-header) !important;
+  color: var(--sn-text) !important;
+  border-left: 3px solid var(--sn-gold) !important;
+}
+
+#notifications .notification.info     { border-left-color: var(--sn-gold-light) !important; }
+#notifications .notification.warning  { border-left-color: #d8a040 !important; }
+#notifications .notification.error    { border-left-color: #c84040 !important; }
+
+/* ================================================================
+   SCROLLBARS GLOBAIS DA UI
+================================================================ */
+#sidebar ::-webkit-scrollbar,
+#chat-log::-webkit-scrollbar,
+.window-app ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+#sidebar ::-webkit-scrollbar-track,
+#chat-log::-webkit-scrollbar-track,
+.window-app ::-webkit-scrollbar-track { background: transparent; }
+
+#sidebar ::-webkit-scrollbar-thumb,
+#chat-log::-webkit-scrollbar-thumb,
+.window-app ::-webkit-scrollbar-thumb {
+  background: var(--sn-gold-dim);
+  border-radius: 2px;
+}
+
+#sidebar ::-webkit-scrollbar-thumb:hover,
+#chat-log::-webkit-scrollbar-thumb:hover,
+.window-app ::-webkit-scrollbar-thumb:hover {
+  background: var(--sn-gold);
+}
