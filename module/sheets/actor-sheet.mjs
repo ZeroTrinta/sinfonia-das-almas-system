@@ -53,6 +53,28 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       if (maestria) periciasComMaestria.push({ key, maestria, ...cfg });
     }
 
+    // ── Aba Habilidades: agrupa nós ativos da árvore por classe ──────────────
+    const ativos = doc.getFlag("sinfonia-das-almas", "arvoreAtiva") ?? {};
+    const nodesAtivos = (SINFONIA.NODES || []).filter(n => ativos[n.id] === true);
+    const ptsUsados = nodesAtivos.reduce((acc, n) => acc + (n.cost || 0), 0);
+    const ptsTotal = sys.progressao?.pontosHabilidade ?? 0;
+    // Agrupa por classe usando CLS_META (label, color)
+    const ordemClasses = ["guerreiro", "gatuno", "arqueiro", "mago"];
+    const porClasse = ordemClasses
+      .map(cls => {
+        const meta = SINFONIA.CLS_META?.[cls] ?? { label: cls, color: "#888" };
+        const nodes = nodesAtivos
+          .filter(n => n.cls === cls)
+          .map(n => ({ ...n, color: meta.color }));
+        return { cls, label: meta.label, color: meta.color, nodes };
+      })
+      .filter(g => g.nodes.length > 0);
+    const habArvore = {
+      ptsUsados,
+      ptsLivres: Math.max(0, ptsTotal - ptsUsados),
+      porClasse
+    };
+
     return {
       actor:           doc,
       system:          sys,
@@ -61,6 +83,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       atributosConfig: SINFONIA.ATRIBUTOS,
       periciasConfig:  SINFONIA.PERICIAS,
       periciasComMaestria,
+      habArvore,
       habilidades:     doc.items.filter(i => i.type === "habilidade"),
       magias:          doc.items.filter(i => i.type === "magia").sort((a,b) => a.system.circulo - b.system.circulo),
       armas:           doc.items.filter(i => i.type === "arma"),
@@ -417,12 +440,19 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     const linhas = Object.entries(SINFONIA.PERICIAS).map(([key, cfg]) => {
       const m = sys.pericias?.[key] || "";
       const cls = m ? `maestria-${m}` : "sem-maestria";
-      const tag = m ? `<span class="tag-m ${cls}">${m}</span>` : `<span class="tag-m sem-maestria">—</span>`;
+      const optSel = (v) => m === v ? "selected" : "";
       return `
         <tr class="pericia-row ${cls}" data-key="${key}" data-atriba="${cfg.atribA}" data-atribb="${cfg.atribB}">
           <td class="col-nome">${cfg.label}</td>
           <td class="col-atrib">${cfg.atribA.toUpperCase()} + ${cfg.atribB.toUpperCase()}</td>
-          <td class="col-maestria">${tag}</td>
+          <td class="col-maestria">
+            <select class="sel-maestria" data-key="${key}">
+              <option value=""           ${optSel("")}>—</option>
+              <option value="iniciante"  ${optSel("iniciante")}>Iniciante (+2)</option>
+              <option value="treinado"   ${optSel("treinado")}>Treinado (+4)</option>
+              <option value="experiente" ${optSel("experiente")}>Experiente (+6)</option>
+            </select>
+          </td>
           <td class="col-acao"><button type="button" class="btn-rolar-pericia">⚂</button></td>
         </tr>`;
     }).join("");
@@ -446,7 +476,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     });
     await dlg.render(true);
 
-    // Anexa os listeners de rolar diretamente no DOM do dialog recém-renderizado.
+    // Listener: botões de rolar
     dlg.element.querySelectorAll(".btn-rolar-pericia").forEach(btn => {
       btn.addEventListener("click", async () => {
         const tr = btn.closest(".pericia-row");
@@ -454,6 +484,21 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         const opcoes = await SinfoniaActorSheet._dialogND(actor, atriba, atribb);
         if (!opcoes) return;
         await actor.rolarPericia(key, atriba, atribb, opcoes.nd, opcoes);
+      });
+    });
+
+    // Listener: select de maestria
+    dlg.element.querySelectorAll(".sel-maestria").forEach(sel => {
+      sel.addEventListener("change", async (ev) => {
+        const t = ev.currentTarget;
+        const key = t.dataset.key;
+        const valor = t.value;
+        await actor.update({ [`system.pericias.${key}`]: valor }, { render: false });
+
+        // Atualiza a classe da linha para refletir a nova cor visual
+        const tr = t.closest(".pericia-row");
+        tr.classList.remove("sem-maestria", "maestria-iniciante", "maestria-treinado", "maestria-experiente");
+        tr.classList.add(valor ? `maestria-${valor}` : "sem-maestria");
       });
     });
   }

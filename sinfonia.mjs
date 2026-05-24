@@ -269,6 +269,7 @@ Hooks.once("init", () => {
     "systems/sinfonia-das-almas/templates/actor/tabs/alma.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/bio.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/arvore.hbs",
+    "systems/sinfonia-das-almas/templates/actor/tabs/habilidades-arvore.hbs",
     "systems/sinfonia-das-almas/templates/item/habilidade-sheet.hbs",
     "systems/sinfonia-das-almas/templates/item/magia-sheet.hbs",
     "systems/sinfonia-das-almas/templates/item/arma-sheet.hbs",

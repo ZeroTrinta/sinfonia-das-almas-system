@@ -95,6 +95,7 @@
   <div class="sheet-tabs-row">
     <nav class="sheet-tabs">
       <a class="item" data-tab="principal">Principal</a>
+      <a class="item" data-tab="habilidades">Habilidades</a>
       <a class="item" data-tab="inventario">Inventário</a>
       <a class="item" data-tab="alma">Alma</a>
       <a class="item" data-tab="bio">Biografia</a>
@@ -107,6 +108,11 @@
     {{!-- TAB: PRINCIPAL --}}
     <div class="tab" data-tab="principal">
       {{> "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs"}}
+    </div>
+
+    {{!-- TAB: HABILIDADES (árvore) --}}
+    <div class="tab" data-tab="habilidades">
+      {{> "systems/sinfonia-das-almas/templates/actor/tabs/habilidades-arvore.hbs"}}
     </div>
 
     {{!-- TAB: INVENTÁRIO --}}
