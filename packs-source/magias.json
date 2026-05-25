@@ -1,0 +1,1123 @@
+[
+  {
+    "name": "Dardo de Fogo",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você canaliza uma fagulha volátil na ponta dos dedos ou no topo do seu conduíte e a arremessa como um projétil veloz contra uma criatura ou objeto dentro do alcance. Faça um ataque de <strong>Conjuração Arcana</strong> contra a Defesa do alvo. Em caso de acerto, o alvo sofre <strong>1d10 de dano de fogo + o Valor Fixo do seu Conduíte Arcano</strong> equipado.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Borrifo de Ácido",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "conjuracao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta e arremessa uma bolha de fluido altamente corrosiva no campo de batalha. Escolha uma criatura visível dentro do alcance, ou duas criaturas visíveis dentro do alcance que estejam adjacentes a uma distância de até <strong>1,5 metros (1 quadrado)</strong> uma da outra. Cada alvo escolhido deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível dificuldade. Em caso de falha o alvo é atingido em cheio e sofre <strong>1d6 de dano de ácido + o Valor Fixo do seu Conduíte Arcano</strong> equipado.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Toque Gélido",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "necromancia",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "1 rodada",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você cria uma mão esquelética e fantasmagórica no espaço de uma criatura dentro do alcance para assolá-la com o frio sepulcral. Faça um teste de acerto místico (Inteligência + Misticismo) contra a Defesa do alvo.</p>\n<p>Em caso de acerto, o alvo sofre <strong>1d8 de dano necrótico + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>1d8</strong> de dano bruto se estiver sem conduíte). Além disso, a mão fantasmagórica se agarra ao alvo, impedindo-o completamente de recuperar Pontos de Vida (PV) por qualquer meio até o início do seu próximo turno.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Luzes Dançantes",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 1 hora",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você manifesta até quatro luzes flutuantes do tamanho de tochas, lanternas ou esferas incandescentes dentro do alcance, que pairam no ar pela duração do feitiço. Se preferir, você pode combinar as quatro luzes em uma única forma luminosa e vagamente humanóide de tamanho médio. Qualquer que seja a forma escolhida, cada ponto de luz projeta uma iluminação suave em um raio de <strong>3 metros (2 quadrados)</strong> ao seu redor.</p>\n<p>Como uma <strong>Ação Parcial</strong> no seu turno, você pode mover as luzes por até <strong>9 metros (6 quadrados)</strong> para um novo local dentro do alcance da magia. Cada luz deve sempre permanecer a uma distância máxima de até <strong>3 metros (2 quadrados)</strong> de pelo menos uma outra luz gerada por este mesmo feitiço, e qualquer uma delas se apagará imediatamente caso saia do alcance máximo de 18 metros a partir de você.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Mão Mágica",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "conjuracao",
+      "custoPE": 5,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "10 Minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Uma mão espectral e flutuante surge em um ponto escolhido por você dentro do alcance. A mão permanece ativa pela duração do feitiço ou até você dissipá-la voluntariamente gastando 1 Ação. Ela desaparece imediatamente caso se afaste mais de 9 metros de você ou se você conjurar este feitiço novamente.</p>\n<p>Você pode usar sua <strong>Ação</strong> no seu turno para controlar os movimentos da mão. A cada vez que a controlar, você pode movê-la por até <strong>9 metros (6 quadrados)</strong> e interagir com o ambiente para realizar tarefas como:</p>\n<ul>\n<li>Manipular um objeto simples.</li>\n<li>Abrir uma porta ou recipiente que esteja destrancado.</li>\n<li>Guardar ou retirar um item de um compartimento ou mochila aberta.</li>\n<li>Despejar o conteúdo de um frasco ou poção.</li>\n</ul>\n<p><strong>Restrições:</strong> Por ser uma manifestação puramente utilitária, a mão não possui massa corpórea ou força de combate. Ela não pode desferir ataques, ativar propriedades de itens mágicos ou carregar objetos que pesem mais de 5 kg.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Lâmina Estrondosa",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Pessoal (alvo adjacente a até 1,5 metros)",
+      "duracao": "1 rodada",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você imbui a arma corpo a corpo ou o conduíte arcano que está empunhando com uma energia sônica altamente instável e realiza um ataque físico ou místico padrão contra uma criatura a até 1,5 metros (1 quadrado) de você. Faça o teste de acerto contra a Defesa do oponente.</p>\n<p>Em caso de acerto, o alvo sofre os efeitos e o dano normal do ataque da arma utilizada e fica completamente envolto por uma aura vibratória até o início do seu próximo turno. Se o alvo se mover por 1,5 metros (1 quadrado) ou mais antes desse prazo, a energia acumulada colapsa violentamente, fazendo com que ele sofra <strong>1d8 de dano de Raio + o Valor Fixo do seu Conduíte Arcano</strong> equipado, encerrando o feitiço.</p>\n<p>Caso você esteja desferindo este ataque sem um conduíte arcano equipado (apenas com uma arma comum), o dano sônico por movimento será de apenas <strong>1d8</strong> de dano bruto.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Lâmina de Chamas Verdes",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "Pessoal (alvo adjacente a até 1,5 metros)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você imbui a arma corpo a corpo ou o conduíte arcano que está empunhando com labaredas de um fogo verde místico e realiza um ataque físico ou místico padrão contra uma criatura a até 1,5 metros (1 quadrado) de você. Faça o teste de acerto contra a Defesa do oponente.</p>\n<p>Em caso de acerto, o alvo sofre os efeitos e o dano normal do ataque da arma utilizada. Além disso, você faz com que chamas esmeraldas saltem do corpo do alvo original para uma segunda criatura à sua escolha que você possa ver e que esteja adjacente a ele a uma distância de até <strong>1,5 metros (1 quadrado)</strong> do primeiro alvo. Essa segunda criatura sofre dano de fogo igual ao seu Dado de Misticismo<strong> + o Valor Fixo do seu Conduíte Arcano</strong> equipado.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Lasca Mental",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "encantamento",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "1 rodada",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você finca uma farpa desorientadora de pura energia psíquica diretamente na mente de uma criatura que possa ver dentro do alcance. O alvo deve realizar um teste de <strong>Vontade</strong> contra o seu Nível de Dificuldade Mística Em caso de falha o alvo sofre <strong>1d6 de dano psíquico + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>1d6</strong> de dano bruto caso esteja sem conduíte).</p>\n<p>Além disso, a dor dilacerante estilhaça temporariamente o foco do inimigo, fazendo com que ele precise <strong>subtrair 1d4</strong> do próximo teste de perícia (seja de Fortitude, Reflexos ou Vontade) que for obrigado a realizar antes do final do seu próximo turno, se obtiver sucesso só recebe o dano normalmente.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Prestidigitação",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "transmutacao",
+      "custoPE": 5,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "3 metros (2 quadrados)",
+      "duracao": "Até 1 hora (veja o texto)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Esta magia é um truque místico menor que os conjuradores aprendem logo no início de seus estudos para praticar a manipulação da realidade. Você pode criar um dos seguintes efeitos mágicos simples dentro do alcance:</p>\n<ul>\n<li><strong>Efeito Sensorial:</strong> Cria um efeito sensorial instantâneo e totalmente inofensivo, como uma chuva de faíscas coloridas, uma lufada de vento suave, notas musicais ecoando fracamente ou um odor incomum.</li>\n<li><strong>Manipulação de Chamas:</strong> Acende ou apaga instantaneamente uma vela, uma tocha ou uma pequena fogueira de acampamento.</li>\n<li><strong>Limpeza Espiritual:</strong> Limpa ou suja instantaneamente um objeto pequeno que não ocupe mais do que o espaço de um cubo de 30 centímetros (como uma peça de roupa, uma arma ou um utensílio culinário).</li>\n<li><strong>Alteração de Matéria:</strong> Resfria, aquece ou dá sabor a uma porção de matéria não-viva (como água, rações ou bebidas) de até 30 centímetros cúbicos por 1 hora.</li>\n<li><strong>Marca Mística:</strong> Faz com que uma cor diferente, uma pequena marca ou um símbolo arbitrário surja em um objeto ou superfície plana por 1 hora.</li>\n<li><strong>Materialização Menor:</strong> Cria uma bugiganga não-mágica ou uma imagem ilusória efêmera que caiba na palma da sua mão. Esse objeto ou ilusão dura apenas até o final do seu próximo turno.</li>\n</ul>\n<p>Se você conjurar esta magia várias vezes seguidas, você pode manter ativos até <strong>três de seus efeitos não-instantâneos</strong> simultaneamente no campo. Você pode dissipar qualquer um desses ativos voluntariamente gastando 1 Ação livre.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Raio de Gelo",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Um feixe gélido de luz azul-esbranquiçada dispara violentamente em direção a uma criatura dentro do alcance. Faça um teste de acerto místico (Inteligência + Misticismo) contra a Defesa do alvo.</p>\n<p>Em caso de acerto, o alvo sofre <strong>1d8 de dano de gelo + o Valor Fixo do seu Conduíte Arcano</strong> equipado. Caso você esteja conjurando sem um conduíte místico em mãos, o feitiço causa apenas <strong>1d8</strong> de dano bruto. Além disso, o frio extremo da rajada congela parcialmente as pernas ou articulações do alvo, reduzindo o deslocamento dele em <strong>3 metros (2 quadrados)</strong> até o início do seu próximo turno.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Estrondo Trovejante",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Pessoal (raio de 1,5 metros / todos os quadrados adjacentes)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você bate as mãos ou bate seu conduíte no chão, criando um estalo massivo de som trovejante que emana do seu corpo e pode ser ouvido nitidamente a até 30 metros de distância. Cada criatura dentro do alcance (todos os quadrados adjacentes ao seu redor), exceto você mesmo, deve realizar um teste de <strong>Fortitude</strong> contra o seu Nível de Dificuldade Mística.</p>\n<p>Em caso de falha os alvos são atingidos em cheio pela onda de choque sônica e sofre <strong>1d6 de dano trovejante + o Valor Fixo do seu Conduíte Arcano</strong> equipado</p>\n<p>. Se você estiver conjurando sem um conduíte em mãos, o feitiço causa apenas <strong>1d6</strong> de dano bruto. Em caso de sucessos, os alvos conseguem resistir à pressão do impacto acústico e não sofrem nenhum dano.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Alarme",
+    "type": "magia",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "abjuracao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 minuto",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "8 horas",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você tece uma sutil teia mágica invisível para se prevenir contra intrusões indesejadas. Escolha uma porta, uma janela ou uma área dentro do alcance que não seja maior do que um <strong>cubo de 6 metros (4 quadrados)</strong>. Até que o feitiço termine, um sinal de alerta é disparado sempre que uma criatura de tamanho Miúdo ou maior tocar ou adentrar a área protegida.</p>\n<p>No momento em que conjurar esta magia, você pode designar especificamente quais criaturas (como seus aliados) não ativarão o alarme. Você também deve escolher, no ato da conjuração, se o aviso será mental ou sonoro:</p>\n<p><strong>Alarme Mental:</strong> O sinal envia um estalo ou \"ping\" diretamente para a sua mente, desde que você esteja a uma distância máxima de até 1,5 quilômetro da área guardada. Esse efeito mental é invasivo o suficiente para despertá-lo instantaneamente caso você esteja em sono profundo.</p>\n<p><strong>Alarme Sonoro:</strong> A área protegida manifesta o som físico e ecoante de um sino de mão durante 10 segundos. Esse som pode ser ouvido nitidamente por qualquer criatura em um raio de <strong>18 metros (12 quadrados)</strong> a partir do ponto de origem.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Atração",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "encantamento",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "1 minuto (10 rodadas) ou até sofrer dano",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta um poderoso pulso de magnetismo mental e fascínio em direção a uma criatura dentro do alcance que seja capaz de ver você. O alvo deve realizar um teste de <strong>Vontade</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Memória de Hostilidade:</strong> Se você ou qualquer membro do seu grupo tiver atacado esta criatura desde o seu último descanso completo, a mente dela estará em guarda e hostil. Nesse caso, ela realiza o teste de Vontade com <strong>Vantagem</strong>.</li>\n<li><strong>Falha no Teste:</strong> O alvo é dominado por um forte sentimento de atração por você. Enquanto o feitiço durar, você recebe <strong>Vantagem</strong> em todos os seus testes de acerto contra ele.</li>\n</ul>\n<p>Além disso, o alvo fica <strong>Debilitado</strong><strong> sempre</strong> que estiver a uma distância maior do que <strong>4,5 metros (3 quadrados)</strong> de você, sabotado pela distração e pela ansiedade de querer se aproximar. O efeito se encerra imediatamente se o alvo sofrer qualquer tipo de dano vindo de você ou de seus aliados.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Causar Medo",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "necromancia",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você desperta uma percepção visceral e paralisante da mortalidade no âmago de uma criatura que possa ver dentro do alcance. O alvo deve realizar um teste de <strong>Vontade</strong> contra o seu Nível de Dificuldade.</p>\n<p>Em caso de falha o alvo sucumbe ao pavor sepulcral e recebe a condição <strong>Amedrontado</strong> por você pela duração da magia.</p>\n<p>Ao final de cada um de seus turnos, a criatura afetada pode gastar suas forças para repetir o teste de <strong>Vontade</strong> contra a sua ND Mística. Se passar, ela se livra do choque psicológico e encerra o efeito imediatamente.</p>\n<p><strong>Construtos</strong> e <strong>Mortos-Vivos</strong> são completamente imunes a este feitiço.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Vida Falsa",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "necromancia",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Pessoal",
+      "duracao": "1 hora",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você envolve a si mesmo com um simulacro necromântico de força vital, tecendo uma energia sombria e persistente ao redor da sua própria alma para mitigar danos. Você recebe imediatamente <strong>1d4 + o Valor Fixo do seu Conduíte Arcano</strong> equipado de Pontos de vida Temporários.</p>\n<p>Caso você esteja conjurando este feitiço sem um conduíte místico empunhado, você recebe apenas os <strong>1d4 de Pontos de vida Temporário</strong></p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Queda Suave",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "transmutacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Reação (ativada imediatamente quando você ou uma criatura dentro do alcance começa a cair)",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você altera instantaneamente a densidade do ar e a força da gravidade ao redor de alvos em queda livre. Escolha até <strong>cinco criaturas em queda</strong> que você possa ver dentro do alcance.</p>\n<p>A velocidade de descida de cada criatura afetada é drasticamente desacelerada para <strong>18 metros (12 quadrados) por rodada</strong> até o término da magia. Se um dos alvos atingir o solo antes do fim da duração, ele <strong>não sofre nenhum dano de queda</strong>, aterrissa perfeitamente de pé e o efeito é encerrado para aquela criatura específica.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Barreira Arcana",
+    "type": "magia",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "abjuracao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Reação (ativada imediatamente quando você é atingido por um ataque ou se torna alvo do feitiço *Mísseis Mágicos*)",
+      "alcance": "Pessoal",
+      "duracao": "1 rodada (até o início do seu próximo turno)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Uma barreira invisível de força mística surge instantaneamente para proteger o seu corpo no momento exato de um impacto iminente. Até o início do seu próximo turno, você recebe um bônus de <strong>+5 na sua Defesa Passiva</strong>, inclusive contra o ataque que engatilhou esta reação, o que significa que, se o bônus fizer o ataque não atingir mais o seu valor de Defesa, o golpe inimigo erra você retroativamente.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Sono",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "encantamento",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados) — Ponto de origem",
+      "duracao": "1 minuto (10 rodadas) ou até ser desperto",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta uma onda invisível de letargia e torpor místico que colapsa a consciência dos inimigos no campo de batalha. Escolha um ponto visível dentro do alcance para ser o centro da explosão de sonolência.</p>\n<p>Role <strong>5d10 + o Valor Fixo do seu Conduíte Arcano</strong> equipado. O resultado final dessa rolagem define a quantidade máxima de Pontos de Vida (PV) atuais que a magia consegue afetar. Caso esteja conjurando sem um conduíte místico, o pool de afetação será composto apenas pelos <strong>5d8</strong> brutos.</p>\n<p>As criaturas dentro da área de efeito são afetadas em <strong>ordem crescente de seus Pontos de Vida atuais</strong> (ignorando criaturas que já estejam inconscientes ou mortas), seguindo as seguintes regras:</p>\n<p><strong>Mecânica de Afetação:</strong> Começando pela criatura que tiver menos PV atuais dentro do raio, o feitiço drena sua resistência e a mergulha na condição <strong>Inconsciente</strong> (Dormindo). Subtraia os PV atuais desse alvo do valor total do seu pool rolado e passe para a próxima criatura com a menor quantidade de PV.</p>\n<p><strong>Limite do Pool:</strong> Para que uma criatura seja afetada e caia no sono, o valor de PV atuais dela deve ser igual ou menor do que o saldo restante no seu pool de energia da magia.</p>\n<p><strong>Quebrando o Efeito:</strong> O feitiço se encerra imediatamente para um alvo se ele sofrer qualquer tipo de dano ou se outra criatura adjacente gastar uma <strong>Ação</strong> Inicial para chacoalhar, empurrar ou estapear o adormecido para acordá-lo.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Detectar Magia",
+    "type": "magia",
+    "img": "icons/magic/perception/eye-ringed-glow-angled-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "adivinhacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Pessoal",
+      "duracao": "Até 10 minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Seus olhos e sentidos se sintonizam com as correntes invisíveis da realidade. Pela duração do feitiço, você passa a sentir a presença de energia mística em um raio de <strong>9 metros (6 quadrados)</strong> a partir de você.</p>\n<p>Se você detectar a presença de fluxos arcanos dessa forma, você pode gastar <strong>1 Ação</strong> no seu turno para abrir sua visão espiritual. Ao fazer isso, você passa a enxergar uma aura luminosa tênue ao redor de qualquer criatura ou objeto visível na área que carregue propriedades mágicas, além de discernir instantaneamente a qual <strong>escola de magia</strong> (Abjuração, Evocação, Transmutação, etc.) aquele efeito pertence.</p>\n<p><strong>Barreiras Físicas:</strong> A percepção desta magia consegue atravessar a maior parte dos obstáculos cotidianos, mas é completamente bloqueada por:</p>\n<ul>\n<li>30 centímetros de pedra.</li>\n<li>2,5 centímetros de metal comum.</li>\n<li>Uma fina folha de chumbo.</li>\n<li>1 metro de madeira ou terra.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Identificar",
+    "type": "magia",
+    "img": "icons/magic/perception/eye-ringed-glow-angled-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "adivinhacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 minuto",
+      "alcance": "Toque",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você estende suas mãos e mantém contato físico contínuo com o alvo durante todo o tempo de conjuração, decodificando profundamente as linhas de energia, runas ocultas ou assinaturas de alma ali presentes.</p>\n<p>Dependendo do tipo de alvo escolhido, você adquire as seguintes informações:</p>\n<ul>\n<li><strong>Em Objetos:</strong> Se o alvo for um artefato, equipamento ou objeto imbuído de propriedades místicas, você descobre imediatamente todas as suas propriedades, seus efeitos práticos, as instruções narrativas ou mecânicas de como utilizá-lo, se ele exige <strong>Sintonização (Vínculo)</strong> para funcionar e quantas <strong>Cargas</strong> restam nele (se houver). Além disso, você descobre se existem feitiços ativos afetando o item no momento e quais são; caso o próprio objeto tenha sido manifestado por uma magia, você descobre qual feitiço o criou.</li>\n<li><strong>Em Criaturas:</strong> Se você mantiver o toque sobre uma criatura viva, construída ou morta-vivo durante o processo, você discerne instantaneamente quais magias, maldições ou efeitos místicos ativos estão afetando o corpo ou a mente dela no momento atual.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Absorver Elementos",
+    "type": "magia",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "abjuracao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Reação (ativada imediatamente quando você sofre dano de ácido, fogo, gelo, eletricidade ou trovão)",
+      "alcance": "Pessoal",
+      "duracao": "1 rodada (até o início do seu próximo turno)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>O feitiço captura e dissipa parte da energia elemental desferida contra você, mitigando o impacto imediato no seu corpo físico e armazenando essa força instável para o seu próximo contra-ataque.</p>\n<p>Você recebe <strong>Resistência</strong> (sofre apenas metade do dano) ao tipo de dano elemental que ativou o gatilho desta reação. Essa proteção permanece ativa até o início do seu próximo turno.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Corte de Ar",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "transmutacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você molda uma lâmina giratória feita de pura pressão de ar comprimido e a lança para golpear uma criatura ou objeto visível dentro do alcance. Faça um teste de acerto místico contra a Defesa do alvo.</p>\n<ul>\n<li><strong>Versatilidade de Combate:</strong> Se o alvo estiver adjacente a você, a até <strong>1,5 metros (1 quadrado)</strong>, você pode optar por realizar este teste como um ataque místico corpo a corpo em vez de um ataque à distância (evitando penalidades normais de proximidade).</li>\n<li><strong>Efeito de Acerto:</strong> O alvo é cortado pela lufada de vácuo e sofre <strong>1d10 de dano de Ar + o Valor Fixo do seu Conduíte Arcano</strong> equipado. Caso você esteja conjurando este feitiço sem um conduíte místico em mãos, ele causa apenas <strong>1d10</strong> de dano bruto.</li>\n</ul>\n<p>A lâmina ou esfera de ar colapsa e se dissipa completamente logo após o impacto ou ao final do turno atual.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Estilhaço de Pedra",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "12 metros (8 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você condensa a poeira e os minerais do solo instantaneamente, disparando um fragmento pontiagudo e pesado de rocha contra uma criatura dentro do alcance. Faça um teste de acerto místico contra a Defesa do oponente.</p>\n<ul>\n<li><strong>Efeito de Acerto:</strong> O alvo é impactado pela rocha e sofre <strong>1d10 de dano de impacto + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>1d10</strong> de dano bruto caso esteja sem conduíte).</li>\n<li><strong>Derrubar:</strong> Devido à força do impacto cinético, o alvo atingido deve realizar um teste de <strong>Fortitude</strong> contra o seu Nível de Dificuldade Mística. Se falhar, é jogado ao chão, recebendo a condição de Caído.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Riso Incontrolável",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "encantamento",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas) / Concentração",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta um gatilho psíquico na mente de uma criatura que possa ver dentro do alcance, fazendo com que ela passe a enxergar absolutamente tudo ao seu redor como uma piada absurdamente hilária. O alvo deve realizar um teste de <strong>Vontade</strong> contra o seu Nível de Dificuldade.</p>\n<p>Em caso de falha, o alvo sucumbe a uma crise histérica e convulsiva de gargalhadas. Ele desaba imediatamente no chão, recebendo a condição <strong>Caído</strong>, e fica completamente <strong>Incapacitado</strong> (impossibilitado de realizar ações, reações ou de se levantar) enquanto persistirem os risos.</p>\n<p>O alvo pode tentar recuperar a compostura e realizar um novo teste de <strong>Vontade</strong> contra a sua ND Mística no final de cada um de seus turnos. Além disso, <strong>sempre que sofrer dano</strong>, o choque de dor força a mente dele de volta à realidade, permitindo que ele repita o teste de Vontade imediatamente e com <strong>Vantagem</strong>. Se passar em qualquer um desses testes, a magia se encerra.</p>\n<p>O alvo acha a situação estranhamente engraçada por um milésimo de segundo, mas mantém o foco e não sofre nenhuma penalidade.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Hélice Ácida",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "conjuracao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Pessoal (Linha de 6 metros / 4 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta uma torrente espiralada e violenta de substância altamente corrosiva que avança em linha reta a partir do seu corpo na direção escolhida. A área afetada por esse jato é uma <strong>Linha de 6 metros (4 quadrados) de comprimento por 1,5 metros (1 quadrado) de largura</strong>.</p>\n<p>Cada criatura que estiver no caminho da linha deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade, em caso de falha o alvo é banhado pelo fluxo químico e sofre <strong>3d8 de dano de ácido + o Valor Fixo do seu Conduíte Arcano</strong> equipado. Se você estiver conjurando sem um conduíte místico em mãos, o feitiço causa apenas <strong>3d8</strong> de dano bruto. Em caso de sucesso recebe metade do dano.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Bolha de Ar",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "conjuracao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "24 horas",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você molda um globo espectral e translúcido de energia sutil ao redor da cabeça de uma criatura voluntária que possa ver dentro do alcance. Esse globo é preenchido instantaneamente com ar puro e renovável que se mantém fresco até o término da magia.</p>\n<p><strong>Imunidade a Sufocamento:</strong> A criatura afetada torna-se capaz de respirar normalmente em qualquer ambiente desprovido de oxigênio, como debaixo d'água, no vácuo ou em zonas saturadas por gases tóxicos, fumaça densa e vapores asfixiantes (o feitiço protege contra a inalação, mas não contra danos por contato na pele).</p>\n<p><strong>Criaturas Multicabeças:</strong> Caso o alvo possua mais de uma cabeça, a bolha se manifesta ao redor de apenas uma delas. Isso é o suficiente para evitar o sufocamento do ser, assumindo que suas cabeças compartilhem o mesmo sistema respiratório superior.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Disfarce Ilusório",
+    "type": "magia",
+    "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "ilusao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Pessoal",
+      "duracao": "1 hora (ou até ser desfeita)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você tece uma sutil trama ilusória ao redor do seu próprio corpo, fazendo com que você incluindo suas roupas, armaduras, armas e quaisquer outros pertences que esteja carregando, adquira uma aparência completamente diferente até o término da magia. O feitiço se encerra antes do tempo caso você decida dissipá-lo voluntariamente gastando 1 Ação inicial.</p>\n<ul>\n<li><strong>Limites da Ilusão:</strong> Você pode parecer até 30 centímetros mais alto ou mais baixo, além de poder se mostrar visivelmente mais magro, forte, gordo ou em qualquer meio-termo. No entanto, a magia não altera o seu tipo físico ou anatomia básica; você deve adotar uma forma que possua a mesma distribuição e quantidade de membros que o seu corpo real. Fora isso, a extensão e os detalhes estéticos do disfarce ficam a seu critério (pode mudar de raça, gênero ou se passar por alguém específico).</li>\n<li><strong>Falha na Inspeção Física:</strong> As alterações operadas por este feitiço são estritamente visuais e não resistem a um contato físico direto. Se você usar a magia para adicionar um chapéu ao seu traje, por exemplo, os objetos passarão direto por ele, e qualquer um que tente tocá-lo sentirá apenas o seu cabelo ou cabeça. Da mesma forma, se você parecer mais magro do que realmente é, a mão de alguém que estenda o braço para tocá-lo colidirá com o seu corpo real enquanto ainda estiver, aparentemente, flutuando no ar.</li>\n<li><strong>Discernindo o Disfarce:</strong> Para perceber que você está camuflado magicamente através da mera observação, uma criatura precisa gastar <strong>1 Ação</strong> para inspecionar seus detalhes e ser bem-sucedida em um teste de <strong>Investigação</strong> (Intelecto) contra o seu Nível de Dificuldade Mística.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Imagem Silenciosa",
+    "type": "magia",
+    "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 1,
+      "escola": "ilusao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 10 minutos / Concentração",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta filamentos de luz e energia mental para manifestar a imagem puramente visual de um objeto, de uma criatura ou de qualquer outro fenômeno observável em um ponto dentro do alcance. A manifestação não pode ocupar uma área maior do que um <strong>cubo de 4,5 metros (3 quadrados) de lado</strong>.</p>\n<ul>\n<li><strong>Natureza Estritamente Visual:</strong> A ilusão é uma projeção puramente óptica. Ela não emite som, cheiro, calor, alterações de temperatura ou qualquer outro tipo de estímulo sensorial além da própria imagem.</li>\n<li><strong>Manipulação e Movimento:</strong> No seu turno, você pode gastar <strong>1 Ação parcial</strong> para fazer com que a imagem se desloque para qualquer outro ponto visível dentro do alcance do feitiço. Enquanto altera a posição da ilusão, você pode mudar sua aparência de forma fluida para que o movimento pareça perfeitamente natural (por exemplo, fazer as pernas de um monstro ilusório se moverem simulando passos, ou uma chama mística tremeluzir).</li>\n<li><strong>Interação Física:</strong> Qualquer contato físico direto com a manifestação revela instantaneamente sua natureza ilusória para quem a tocou, já que objetos, ataques e criaturas passaram direto por ela sem encontrar nenhuma resistência sólida.</li>\n<li><strong>Desmascarando a Ilusão:</strong> Para discernir a falsidade da projeção apenas através da observação, uma criatura precisa gastar <strong>1 Ação</strong> do seu turno para analisar minuciosamente os detalhes dela e obter sucesso em um teste de <strong>Investigação</strong> (Intelecto) contra o seu Nível de Dificuldade Mística. Se passar, o alvo decifra as imperfeições da luz e passa a <strong>enxergar através da imagem</strong>, que se torna uma silhueta translúcida e opaca apenas para ele.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Aspecto Animal",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "transmutacao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Pessoal",
+      "duracao": "10 Minutos (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Sem alterar completamente a estrutura do seu corpo, você canaliza temporariamente os fluxos de uma essência selvagem para manifestar uma característica anatômica bestial. Cada vez que conjurar este feitiço, escolha <strong>uma</strong> das seguintes mutações para permanecer ativa pela duração do efeito:</p>\n<ul>\n<li><strong>Olhos de Gato:</strong> Suas pupilas se verticalizam e se expandem, adaptando-se instantaneamente à ausência de luz. Você recebe a capacidade de <strong>Visão no escuro de 18 Metros</strong>, ignorando completamente penalidades de acerto, testes ou camuflagem em ambientes com iluminação fraca, nublados ou sob sombras densas.</li>\n<li><strong>Garras Selvagens:</strong> Suas unhas se alongam e se transformam em garras afiadas e rígidas. Você adquire um ataque desarmado de Garras que causa <strong>1d6 de dano de corte + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>1d6</strong> bruto se estiver sem conduíte). Esse ataque possui duas propriedades especiais:</li>\n</ul>\n<p><strong>Armas mágicas:</strong> Você pode utilizar a pericia Briga com Misticismo para ataques</p>\n<ul>\n<li><strong>Mandíbula Bestial:</strong> Seus dentes se alongam em presas afiadas e sua mandíbula ganha uma força esmagadora. Você adquire um ataque desarmado de Mordida que causa <strong>1d8 de dano de perfuração + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>1d8</strong> bruto se estiver sem conduíte).</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Fogo Feérico",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "evocacao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "36 metros (24 quadrados) — Ponto de origem",
+      "duracao": "5 minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você faz brotar uma descarga de luz mística em um ponto escolhido dentro do alcance. Chamas feéricas vibrantes, coloridas e totalmente desprovidas de calor envolvem e contornam todas as criaturas e objetos que estiverem no interior da área no momento do impacto. Você escolhe a cor dessa luz no momento em que conjura o feitiço.</p>\n<p>O efeito se prende aos alvos automaticamente (sem direito a teste de resistência) e aplica as seguintes regras:</p>\n<ul>\n<li><strong>Anulação de Camuflagem:</strong> Criaturas visíveis contornadas pelo feitiço reluzem de forma nítida no cenário. Elas tornam-se completamente incapazes de se beneficiar de habilidades de furtividade, coberturas leves, penumbra, fumaça ou qualquer outra propriedade de <strong>Camuflagem</strong> que normalmente dificulta o acerto contra elas.</li>\n<li><strong>Revelação de Invisibilidade:</strong> Se uma criatura afetada estiver ou se tornar <strong>Invisível</strong>, o fogo feérico delineia perfeitamente a sua silhueta física em tempo real. Com isso, ela deixa de ser considerada totalmente indetectável no mapa.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Invisibilidade",
+    "type": "magia",
+    "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "ilusao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Toque",
+      "duracao": "10 minutos (ou até ser quebrada)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você envolve a criatura tocada com uma dobra sofisticada de luz e distorção sensorial, tornando-a completamente invisível a olho nu. O feitiço altera a percepção dos adversários seguindo as seguintes regras:</p>\n<ul>\n<li><strong>Estado Indetectável:</strong> O alvo recebe a condição <strong>Totalmente Indetectável</strong>. Isso significa que nenhuma criatura sabe a sua localização exata, tornando-o imune a ataques diretos, feitiços de alvo ou habilidades que exijam linha de visão clara. <em>Nota:</em> Magias e efeitos de área ainda podem atingi-lo normalmente, contanto que o conjurador acerte ou adivinhe o espaço onde o alvo invisível está escondido.</li>\n<li><strong>Busca e Rastreamento:</strong> Inimigos podem tentar localizar o alvo prestando atenção a ruídos, pegadas ou deslocamento de ar. Se uma criatura gastar <strong>1 Ação</strong> para buscar e obtiver sucesso em um teste de <strong>Percepção</strong> contra o seu Nível de Dificuldade Mística, o alvo passa a ser considerado apenas <strong>Oculto</strong> para aquele inimigo específico. Isso revela o quadrado exato que ele ocupa, mas ainda impõe <strong>Desvantagem</strong> em qualquer ataque desferido contra ele.</li>\n<li><strong>Quebra por Hostilidade:</strong> O fluxo da ilusão é interrompido imediatamente caso o alvo realize um ataque físico, conjure uma magia ofensiva ou tome qualquer outra <strong>Ação Hostil</strong>. O manto se desfaz no instante em que a ação é executada, revelando sua posição atual para todos.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Força Fantasmagórica",
+    "type": "magia",
+    "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "ilusao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você tece uma ilusão complexa e profundamente invasiva que se enraíza diretamente na mente de uma criatura que você possa ver dentro do alcance. O alvo deve realizar um teste de <strong>Investigação</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Imunidade Cognitiva:</strong> Por não possuírem uma psique viva ou processamento cerebral convencional, <strong>Mortos-Vivos</strong> e <strong>Construtos</strong> são totalmente imunes a este feitiço.</li>\n<li><strong>Falha no Teste:</strong> Você planta no cérebro do alvo um objeto, criatura ou fenômeno visual de sua escolha, contido dentro de um espaço máximo de um <strong>cubo de 3 metros (2 quadrados) de lado</strong>. Esta manifestação é percebida <strong>apenas</strong> por essa criatura pela duração da magia e inclui estímulos sensoriais completos gerados psicologicamente, como som, cheiro, tato e temperatura.</li>\n<li><strong>A Armadilha da Racionalização:</strong> O alvo trata o fantasma como algo absolutamente real. Caso interaja com a ilusão e ocorra um desfecho logicamente impossível no grid, a própria mente dele justificará o erro para manter a farsa. <em>Exemplo:</em> Se o alvo tentar cruzar uma ponte ilusória sobre um abismo, ele cairá no buraco assim que der o primeiro passo. Se sobreviver à queda, ele continuará crente de que a ponte é real e racionalizará que caiu porque \"escorreguei\", \"fui empurrado\" ou \"uma lufada de vento me jogou para o lado\".</li>\n<li><strong>Dano Psicossomático:</strong> Se o fantasma for criado para parecer uma ameaça lógica (um monstro atacando, uma fogueira, uma poça de lava ou ácido), o choque neural fará o alvo manifestar dores e ferimentos reais. No seu turno, o fantasma pode infligir <strong>1d6 de dano + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>1d6</strong> bruto se estiver sem conduíte) à criatura, contanto que ela esteja dentro da área da ilusão ou a até <strong>1,5 metros (1 quadrado)</strong> dela. Para o alvo, o dano é sentido como o tipo físico apropriado (fogo, ácido, corte), mas mecanicamente é computado como <strong>Dano Físico</strong>.</li>\n<li><strong>Desfazendo o Delírio:</strong> O alvo no final do turno dele para analisar minuciosamente o fenômeno. Ele deve realizar um teste de <strong>Investigação </strong>contra a sua ND Mística. Se obtiver sucesso, ele decifra as inconsistências sinápticas, compreende que tudo é um delírio e a magia se encerra imediatamente.</li>\n</ul>\n<p><strong>Além disso, caso o alvo tenha o benefício “Visão real” está magia não tem efeito.</strong></p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Prisão Glacial",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "evocacao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você condensa a umidade do ar instantaneamente em uma temperatura abaixo de zero, fazendo com que blocos de gelo maciços brotem e tentem sepultar uma criatura visível dentro do alcance. O alvo escolhido deve realizar um teste de <strong>Fortitude</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo é completamente envolvido e congelado pela estrutura. Ele sofre <strong>4d6 de dano de gelo + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>4d6</strong> de dano bruto se estiver sem conduíte) e seu <strong>deslocamento é reduzido a 0</strong> (ficando efetivamente <strong>Imobilizado</strong>) até o final do seu próximo turno.</li>\n<li><strong>Sucesso no Teste:</strong> O gelo se estilhaça antes de se fixar totalmente. O alvo consegue mitigar o impacto cinético e térmico, sofrendo apenas metade do dano total e mantendo seu deslocamento intacto.</li>\n<li><strong>Forçando a Libertação:</strong> Enquanto estiver com o deslocamento zerado pela crosta de gelo, a criatura afetada pode gastar <strong>1 Ação Inicial</strong> no turno dela para tentar romper a estrutura na força bruta. Para se libertar antes do tempo, ela deve ser bem-sucedida em um teste de <strong>Atletismo </strong>contra o seu Nível de Dificuldade Mística. Em caso de sucesso, o gelo se estilhaça e o deslocamento do alvo é totalmente restaurado.</li>\n</ul>\n<p>Se o alvo congelado for atingido por alguma magia ou objeto que contém o dano de fogo o teste é feito com Vantagem</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Ver o Invisível",
+    "type": "magia",
+    "img": "icons/magic/perception/eye-ringed-glow-angled-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "adivinhacao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Pessoal",
+      "duracao": "10 minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Seus olhos são infundidos com uma percepção sensorial perfeita, anulando completamente qualquer truque de luz ou dobra ilusória. Pela duração do feitiço, você ignora a invisibilidade alheia por completo.</p>\n<ul>\n<li><strong>Visão Total e Nítida:</strong> Criaturas e objetos invisíveis aparecem para você de forma perfeitamente clara, revelando sua forma exata. Para os seus olhos, a invisibilidade deles simplesmente não existe enquanto a magia estiver ativa.</li>\n<li><strong>Anulação Absoluta de Penalidades:</strong> Você <strong>não</strong> sofre nenhuma penalidade, Desvantagem ou restrição de alvo (como a condição <em>Oculto</em>) contra esses seres. Você pode mirá-los, atacá-los e rastreá-los no grid normalmente, como se fossem alvos comuns sob luz plena.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Imobilizar Pessoa",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "encantamento",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você projeta uma onda de energia psíquica restritiva diretamente contra as vias motoras e o sistema nervoso de um alvo visível dentro do alcance. A criatura escolhida deve realizar um teste de<strong> Força de</strong> <strong>Vontade</strong> contra o seu Nível de Dificuldade.</p>\n<ul>\n<li><strong>Restrição de Alvo:</strong> Este feitiço foi moldado especificamente para afetar a mente e a biologia de seres <strong>Humanoides</strong>. Ele não possui nenhum efeito contra bestas, monstros, mortos-vivos ou construtos.</li>\n<li><strong>Falha no Teste:</strong> O corpo do alvo trava instantaneamente e fica completamente rígido. Ele recebe a condição <strong>Paralisado</strong> pela duração do feitiço, ficando totalmente incapacitado de se mover, falar ou realizar qualquer tipo de ação ou reação.</li>\n<li><strong>Quebrando a Paralisia:</strong> O alvo pode tentar lutar contra a restrição mística no final de cada um de seus turnos, realizando um novo teste de <strong>Vontade</strong> contra a sua ND Mística. Se obtiver sucesso, ele recupera o controle dos seus membros e a magia se encerra.</li>\n<li><strong>Sucesso no Teste:</strong> O alvo sente um calafrio e uma breve rigidez muscular, mas resiste ao comando mental e não sofre nenhuma penalidade.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Teia",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "conjuracao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 1 hora / Concentração",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você conjura uma massa densa de fios pegajosos, espessos e altamente aderentes que preenche um ponto à sua escolha dentro do alcance. A teia altera as propriedades do campo de batalha seguindo as seguintes regras:</p>\n<ul>\n<li><strong>Propriedades da Área:</strong> Toda a área preenchida pelas teias é considerada <strong>Terreno Difícil</strong> (exige o dobro de deslocamento para ser atravessada).</li>\n<li><strong>Captura (Reflexos):</strong> Cada criatura que iniciar o seu turno dentro da teia, ou que entrar nela pela primeira vez durante o próprio turno, deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade. Em caso de falha, a criatura fica presa nos fios e recebe a condição <strong>E</strong><strong>nredada</strong>. O efeito dura enquanto ela permanecer na área ou até se libertar.</li>\n<li><strong>Forçando a Libertação:</strong> Uma criatura enredada pode gastar <strong>1 Ação Inicial</strong> no turno dela para tentar romper a resina na força bruta. Ela deve realizar um teste de <strong>Atletismo (Força)</strong> contra a sua ND Mística. Em caso de sucesso, ela deixa de estar enredada.</li>\n<li><strong>Combustão:</strong> A teia é extremamente inflamável. Qualquer seção correspondente a um quadrado de 1,5 metros exposto ao fogo queima completamente em 1 rodada, destruindo aquela parte da teia. Qualquer criatura que iniciar o seu turno em uma seção de teia que esteja pegando fogo sofre <strong>2d4 de dano de fogo</strong>.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Passo Nebuloso",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "conjuracao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Bônus",
+      "alcance": "Pessoal",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você é brevemente envolvido por uma névoa prateada e etérea, desfazendo sua presença física e reconstituindo-a instantaneamente em outro local.</p>\n<ul>\n<li><strong>Teletransporte:</strong> Você se teletransporta por até <strong>9 metros (6 quadrados)</strong> para um espaço desocupado que você consiga enxergar.</li>\n<li><strong>Segurança de Movimento:</strong> Por se tratar de um deslocamento místico instantâneo (teletransporte), este efeito <strong>não provoca</strong> ataques de oportunidade ou reações de aproximação dos inimigos adjacentes ao seu ponto de partida.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Distorção de Vórtice",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "conjuracao",
+      "custoPE": 0,
+      "custoContinuo": 0,
+      "tempoCon": "",
+      "alcance": "",
+      "duracao": "",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<ul>\n<li>Tempo de Conjuração: 1 Ação</li>\n<li>Alcance: 27 metros (18 quadrados)</li>\n<li>Duração: Instantânea</li>\n<li>Custo: 20 PE</li>\n</ul>\n<p>Você distorce mágicamente o tecido do espaço ao redor de uma criatura que você possa ver dentro do alcance, abrindo uma fenda dimensional efêmera para posicioná-la no campo de batalha. O alvo deve realizar um teste de Fortitude contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li>Alvos Aliados ou Voluntários: Uma criatura pode escolher falhar voluntariamente neste teste de resistência, permitindo ser teletransportada de forma automática.</li>\n<li>Efeito de Teletransporte: Em caso de falha no teste (ou falha voluntária), o alvo é transposto instantaneamente para um espaço desocupado de sua escolha que você consiga enxergar dentro do alcance total da magia.</li>\n<li>Segurança de Movimento: Por ser um deslocamento místico instantâneo, a transposição não provoca ataques de oportunidade ou reações de movimento contra o alvo, independentemente de onde ele saia ou chegue.</li>\n<li>Restrições de Destino Seguro: O espaço de destino escolhido deve ser obrigatoriamente uma superfície sólida ou um ambiente líquido capaz de suportar o peso físico do alvo, e deve possuir dimensões adequadas para acomodá-lo normalmente sem que ele precise ficar espremido. <em>Nota:</em> Esta restrição impede que você teletransporte inimigos diretamente para o meio do ar para causar dano de queda livre.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Sugestão",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "encantamento",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "Até 8 horas / Concentração",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você tece palavras imbuídas de um sutil comando místico, influenciando diretamente a linha de pensamento de uma criatura que você possa ver dentro do alcance e que seja capaz de ouvir e compreender o seu idioma. O alvo deve realizar um teste de <strong>Vontade</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Parâmetro de Razoabilidade:</strong> A sugestão de atividade deve ser limitada a uma ou duas frases e formulada de modo que a ação soe minimamente aceitável ou razoável para o alvo. Comandar a criatura a se apunhalar, pular em um fosso de lanças, se imolar ou realizar qualquer outro ato nitidamente suicida ou autodestrutivo faz com que a magia falhe e se encerre instantaneamente.</li>\n<li><strong>Imunidades:</strong> Criaturas que sejam imunes à condição <strong>Enfeitiçado</strong> ignoram completamente os efeitos deste feitiço.</li>\n<li><strong>Falha no Teste:</strong> O alvo executa a atividade proposta com o melhor de suas capacidades. A ação sugerida pode prosseguir pela duração inteira de 8 horas. Caso a tarefa seja concluída em menos tempo, o feitiço se encerra assim que o alvo terminar o que lhe foi pedido.</li>\n<li><strong>Gatilhos Condicionais:</strong> Você pode estipular uma condição específica que disparará a atividade durante o período da magia (como sugerir a um guarda que entregue as chaves da prisão para o primeiro mendigo que ele encontrar na rua). Se a condição não for cumprida antes do fim das 8 horas, a ação não é realizada.</li>\n<li><strong>Quebra do Encanto:</strong> Se você ou qualquer um de seus companheiros de grupo causarem dano de qualquer tipo ao alvo, o feitiço é quebrado imediatamente.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Lâmina Sanguinária",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 2,
+      "escola": "necromancia",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "Toque",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você profere uma prece fúnebre enquanto desliza os dedos pela lâmina ou superfície de impacto de uma arma corpo a corpo, fazendo com que o metal ou a madeira absorvam uma aura rubra e pulsante, faminta por força vital.</p>\n<ul>\n<li><strong>Conversão de Essência:</strong> Pela duração da magia, a arma imbuída passa a canalizar pura energia necrótica. Todo o dano desferido por ataques utilizando essa arma tem o seu tipo físico original inteiramente convertido para <strong>Dano de Trevas</strong>.</li>\n<li><strong>Sustento Sanguíneo:</strong> Sempre que um ataque bem-sucedido com a arma imbuída causar dano a uma criatura viva que possua sangue, as runas escarlates absorvem a essência do alvo. O conjurador desta magia manifesta um elo místico instantâneo com a arma e <strong>recupera Pontos de Vida (PV) equivalentes à metade do dano total causado</strong> pelo golpe.</li>\n<li><strong>Restrição:</strong> Esta magia não extrai cura ao desferir golpes contra alvos que não possuam força vital biológica tangível, como construtos, golens de pedra ou outros mortos-vivos.</li>\n</ul>\n<p><strong>[Logo tem mais]</strong></p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Bola de Fogo",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "evocacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "45 metros (30 quadrados) — Ponto de origem",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Um feixe brilhante de energia térmica irrompe da ponta do seu dedo em direção ao ponto escolhido dentro do alcance e se expande com um rugido avassalador em uma violenta explosão de chamas celestes. Cada criatura capturada no interior da área deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade.</p>\n<p><strong>Falha no Teste:</strong> O alvo absorve o impacto total da detonação, sofrendo <strong>8d6 de dano de fogo + o Valor Fixo do seu Conduíte Arcano</strong> equipado. Além disso, o alvo fica “Chamuscado” durante 5 rodadas.</p>\n<p><strong>Sucesso no Teste:</strong> O alvo consegue se projetar para a extremidade da explosão ou mitigar a onda de choque, sofrendo apenas metade do dano total.</p>\n<p><strong>Combustão Ambiental:</strong> A onda de calor incendeia instantaneamente qualquer objeto inflamável exposto na área que não esteja sendo ativamente vestido, empunhado ou carregado por uma criatura no momento do impacto.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Nova Congelante",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "evocacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "45 metros (30 quadrados)",
+      "duracao": "Instantânea (Efeito na área dura 1 rodada)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Uma esfera de puro zero absoluto viaja até o ponto escolhido e detona em uma explosão de estilhaços de gelo cristalino e névoa congelante. Cada criatura na área deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo sofre <strong>8d6 de dano de gelo + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>8d6</strong> de dano bruto se estiver sem conduíte).</li>\n<li><strong>Sucesso no Teste:</strong> O alvo sofre apenas metade do dano total.</li>\n<li><strong>Congelamento do solo:</strong> O impacto cobre instantaneamente todo o chão da área com uma camada de gelo liso e traiçoeiro. Até o início do seu próximo turno, toda a área da esfera é considerada <strong>Terreno Difícil</strong>. Qualquer criatura que tentar correr ou realizar uma ação de investida sobre este gelo deve passar num teste de Reflexos (CD 12) ou cairá <strong>Caída</strong> ao chão.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Ciclone Devastador",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "evocacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação inicial",
+      "alcance": "45 metros (30 quadrados) — Ponto de origem",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você condensa uma massa de ar pressurizado em um ponto visível, liberando-a instantaneamente em uma microexplosão atmosférica de força devastadora. Cada criatura na área deve realizar um teste de <strong>Fortitude</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo sofre <strong>8d6 de dano de impacto (Ar) + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>8d6</strong> de dano bruto se estiver sem conduíte) e é empurrado <strong>3 metros (2 quadrados)</strong> para longe do centro da explosão.</li>\n<li><strong>Sucesso no Teste:</strong> O alvo sofre apenas metade do dano total e não é empurrado</li>\n<li><strong>Onda de Choque:</strong> Esta magia causa o dobro de dano contra objetos mundanos e estruturas na área que não estejam sendo carregados ou vestidos.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Esfera Corrosiva",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "evocacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "45 metros (30 quadrados) — Ponto de origem",
+      "duracao": "Instantânea (Efeito secundário dura 1 rodada)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Uma bolha borbulhante de ácido verde-vômito viaja até o ponto alvo e explode em uma chuva de glóbulos viscosos e vapores tóxicos. Cada criatura na área deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo sofre <strong>8d6 de dano de ácido + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>8d6</strong> de dano bruto se estiver sem conduíte). Além disso, a viscosidade do ácido queima a pele, fazendo com que o alvo sofra <strong>2d6 de dano de ácido adicional</strong> no início do próximo turno dele.</li>\n<li><strong>Sucesso no Teste:</strong> O alvo sofre apenas metade do dano inicial e não sofre o dano adicional no turno seguinte.</li>\n<li><strong>Corrosão de Equipamento:</strong> Se o alvo falhar no teste, qualquer escudo mundano ou armadura mundana que ele esteja usando sofre uma penalidade permanente e cumulativa de <strong>-1 na Defesa</strong> devido à corrosão. O equipamento é destruído se a Defesa chegar a 5 (para armaduras) ou 0 (para escudos).</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Estilhaço Rochoso",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "evocacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "45 metros (30 quadrados) — Ponto de origem",
+      "duracao": "Instantânea (Terreno Difícil é Permanente)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você conjura uma esfera de rocha maciça e superpressurizada que se estilhaça violentamente ao atingir o ponto alvo, projetando uma saraivada de pedras afiadas e poeira sufocante. Cada criatura na área deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo sofre <strong>8d6 de dano de perfuração (Terra) + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>8d6</strong> de dano bruto se estiver sem conduíte).</li>\n<li><strong>Sucesso no Teste:</strong> O alvo sofre apenas metade do dano total.</li>\n<li><strong>Destroços Permanentes:</strong> A detonação deixa o chão da área coberto por rochas quebradas, detritos e cascalho. Toda a área da esfera torna-se <strong>Terreno Difícil Permanente</strong>, e se alguém passar por lá recebe 1d6 de dano físico por passo dado na área.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Esfera Elétrica",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "evocacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "45 metros (30 quadrados) — Ponto de origem",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Um glóbulo crepitante de plasma elétrico viaja rapidamente e explode em um vórtice de relâmpagos ramificados no ponto escolhido. Cada criatura na área deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo sofre <strong>8d6 de dano elétrico (Raio) + o Valor Fixo do seu Conduíte Arcano</strong> equipado (ou apenas <strong>8d6</strong> de dano bruto se estiver sem conduíte). Devido ao choque no sistema nervoso, o alvo fica <strong>Incapacitado</strong><strong> de realizar Reações</strong> até o início do próximo turno dele.</li>\n<li><strong>Sucesso no Teste:</strong> O alvo sofre apenas metade do dano total e mantém suas reações.</li>\n<li><strong>Condutividade:</strong> Se uma criatura na área estiver usando uma armadura feita predominantemente de metal, ou estiver imersa em água, ela realiza o teste de resistência com <strong>Desvantagem</strong>.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Velocidade",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "transmutacao",
+      "custoPE": 30,
+      "custoContinuo": 30,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas) / Duração Continua.",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você acelera drasticamente o fluxo temporal e o metabolismo de uma criatura voluntária que possa ver dentro do alcance, fazendo com que ela se mova em um ritmo frenético e ultraveloz. Pela duração da magia, o alvo recebe os seguintes benefícios:</p>\n<ul>\n<li><strong>Atributos Amplificados:</strong> O deslocamento base do alvo é <strong>dobrado</strong>, ele recebe um bônus de <strong>+2 na Defesa</strong> devido à sua esquiva sobre-humana e adquire <strong>Vantagem</strong> em todos os testes de <strong>Reflexos</strong>.</li>\n<li><strong>Ação Efêmera:</strong> No início de cada um de seus turnos, o alvo ganha <strong>1 Ação Adicional</strong> exclusiva. Essa ação mística é extremamente instável e pode ser utilizada <em>apenas</em> para realizar uma das seguintes opções mecânicas: Atacar, Disparar, Desengajar, Esconder-se e Usar um Objeto</li>\n</ul>\n<p><strong>O Preço da Sobrecarga (Letargia):</strong> O corpo mortal não foi feito para aguentar esse nível de aceleração por muito tempo. Ao final do tempo da magia ou quando ela é dispensada o alvo com efeito recebe a condição <strong>Enfraquecida</strong></p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Voo",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "transmutacao",
+      "custoPE": 0,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Toque",
+      "duracao": "Até 10 minutos /  Duração Continua.",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você toca em uma criatura voluntária, infundindo seu corpo com correntes de energia mística que desafiam a gravidade. Pela duração da magia, o alvo recebe os seguintes efeitos:</p>\n<ul>\n<li><strong>Deslocamento de Voo:</strong> O alvo adquire um deslocamento de voo de <strong>18 metros (12 quadrados)</strong> por rodada, permitindo que ele se mova livremente em três dimensões no campo de batalha.</li>\n<li><strong>A Queda Sem Sustentação:</strong> No instante em que o feitiço se encerra, seja pelo fim da duração de 10 minutos, perda de concentração ou se você optar por não manter um eventual custo, se o alvo ainda estiver flutuando no ar, ele <strong>cai imediatamente</strong> em direção ao solo, sofrendo o dano de queda padrão do sistema, a menos que possua alguma outra habilidade ou magia ativa que consiga interromper ou suavizar a descida</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Montaria Fantasma",
+    "type": "magia",
+    "img": "icons/magic/perception/silhouette-stealth-shadow.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "ilusao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Minuto",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "1 hora",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você molda o tecido ilusório para manifestar uma criatura quase real, de tamanho Grande e formato equino, em um espaço desocupado no chão dentro do alcance. Você escolhe a aparência visual exata da montaria, mas ela já surge totalmente equipada com sela, freio e rédeas mágicas.</p>\n<ul>\n<li><strong>Equipamento Ilusório:</strong> Qualquer parte dos arreios criados pela magia desaparece instantaneamente em uma lufada de fumaça caso seja afastada a mais de 3 metros (2 quadrados) da montaria.</li>\n<li><strong>Atributos de Viagem:</strong> Você ou uma criatura à sua escolha podem cavalgar a montaria. Ela utiliza a ficha e estatísticas básicas de um <em>Cavalo de Montaria</em> padrão, com as seguintes melhorias místicas: possui um deslocamento terrestre avassalador de <strong>30 metros (20 quadrados)</strong> por rodada e consegue cobrir uma distância de 16 km em uma hora (ou 20 km em ritmo acelerado).</li>\n<li><strong>Vulnerabilidade Textural:</strong> Por ser uma projeção ilusória instável, a montaria se desfaz imediatamente se sofrer <strong>qualquer quantidade de dano</strong>, ou se você gastar <strong>1 Ação</strong> para dispensá-la voluntariamente.</li>\n<li><strong>Desvanecimento Seguro:</strong> Quando a duração de 1 hora chega ao fim de forma natural, a criatura não some do nada; ela começa a esmaecer gradualmente ao longo de <strong>1 minuto (10 rodadas)</strong>, dando tempo de sobra para o cavaleiro desmontar em total segurança antes que ela desapareça por completo.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Invocação de Espírito Feérico",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-star-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "conjuracao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "27 metros (18 quadrados)",
+      "duracao": "Até 1 hora /",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você abre um portal efêmero para o reino das fadas, convocando um espírito feérico para se manifestar em um espaço desocupado que você consiga enxergar dentro do alcance. A criatura assume uma forma corpórea e utiliza o bloco de estatísticas padrão de <strong>Espírito Feérico</strong> do manual. No momento da conjuração, você deve escolher o temperamento do espírito: <em>Irado</em>, <em>Alegre</em> ou <em>Ardiloso</em>. Essa escolha define a aparência visual da criatura e ativa uma habilidade passiva especial em sua ficha. O espírito desaparece imediatamente se os PV dele caírem a 0 ou quando o feitiço se encerrar.</p>\n<ul>\n<li><strong>Diretrizes de Combate:</strong> A criatura invocada é uma aliada leal para você e seus companheiros. No combate, ela compartilha do seu mesmo valor de iniciativa, mas realiza o turno dela <strong>imediatamente após o seu</strong>.</li>\n<li><strong>Comando Verbal Sem Ação:</strong> O espírito obedece cegamente a quaisquer comandos verbais que você emitir (o que não exige que você gaste nenhuma ação ou reação no seu turno). Caso você não dê nenhuma ordem a ele, o espírito gasta o turno dele realizando a ação de <strong>Esquiva</strong> e se movendo apenas para evitar perigos óbvios no mapa.</li>\n</ul>\n<p>| <strong>Ficha do monstro na aba Bestiário em “Invocações”</strong> | | --- |</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Invocação de Espírito Morto-Vivo",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "necromancia",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "27 metros (18 quadrados)",
+      "duracao": "Até 1 hora",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você rasga a membrana entre o mundo dos vivos e o plano espiritual, moldando a energia da morte para manifestar uma criatura corpórea em um espaço desocupado que possa ver dentro do alcance. O ser evocado utiliza o bloco de estatísticas padrão de <strong>Espírito Morto-Vivo</strong> do manual. No momento em que conjura este feitiço, você deve escolher a essência que o moldará: <em>Fantasmagórico</em>, <em>Pútrido</em> ou <em>Esquelético</em>. Essa escolha define as características anatômicas da criatura e ativa traços de combate exclusivos na sua ficha. O espírito é banido instantaneamente se os seus PV caírem a 0 ou quando a magia terminar.</p>\n<ul>\n<li><strong>Diretrizes de Combate:</strong> O morto-vivo atua como um aliado leal para você e seus aliados. No campo de batalha, ele compartilha o mesmo valor de iniciativa que você, mas realiza todas as ações do turno dele <strong>imediatamente após o seu</strong>.</li>\n<li><strong>Comando Verbal Sem Ação:</strong> O espírito obedece fielmente a quaisquer ordens verbais que você emitir (o que não consome nenhuma de suas ações ou reações). Caso nenhuma ordem seja dada no início do turno dele, a criatura gasta suas capacidades realizando a ação de <strong>Esquiva</strong> e se movendo estritamente para manter-se fora de perigo</li>\n</ul>\n<p>| <strong>Ficha do monstro na aba Bestiário em “Invocações”</strong> | | --- |</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Fortaleza Intelectual",
+    "type": "magia",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "abjuracao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "Até 10 minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você ergue uma barreira psiônica invisível e impenetrável ao redor da mente de um alvo, blindando a sua consciência contra investidas mentais e traumas cognitivos. Você escolhe a si mesmo ou até 3 criaturas voluntárias que possa ver dentro do alcance para receber os seguintes benefícios pela duração da magia:</p>\n<ul>\n<li><strong>Blindagem Mental:</strong> O alvo adquire <strong>Resistência a dano de Trevas</strong></li>\n<li><strong>Fortificação Mental:</strong> A barreira estabiliza os pensamentos do alvo, concedendo <strong>+10 </strong>em todos os seus testes de resistência baseados em atributos mentais: <strong>com </strong><strong>Dados chaves</strong><strong> em Carisma e Intelecto.</strong></li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Dissipar Magia",
+    "type": "magia",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "abjuracao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "36 metros (24 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você emite uma onda de contra-energia mística projetada para desestabilizar e quebrar a estrutura de feitiços ativos. Escolha uma criatura, objeto ou efeito mágico visível dentro do alcance.</p>\n<ul>\n<li><strong>Anulação Automática:</strong> Qualquer magia ativa de <strong>3º Círculo ou inferior</strong> que esteja afetando o alvo escolhido é completamente desfeita e se encerra de forma automática e imediata.</li>\n<li><strong>Disputa contra Magias Poderosas:</strong> Para cada magia ativa de <strong>3º Círculo ou superior</strong> presente no alvo, você deve realizar um teste de Arcanismo contra uma dificuldade correspondente à força do feitiço inimigo (CD = 12 + o Círculo da Magia sendo dissipada). Em caso de sucesso no teste, aquela magia específica se encerra.</li>\n<li><strong>Limitações:</strong> Este efeito quebra apenas magias e encantamentos temporários ativos na região ou criatura. Ele não possui a capacidade de anular ou retirar as propriedades mágicas permanentes de itens mágicos ou artefatos.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Lentidão",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "arcana",
+      "circulo": 3,
+      "escola": "transmutacao",
+      "custoPE": 30,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "36 metros (24 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você altera e desacelera o fluxo do tempo ao redor de até seis criaturas à sua escolha dentro da área de efeito. Cada alvo escolhido deve realizar um teste de <strong>Vontade</strong> contra o seu Nível de Dificuldade Mística. Em caso de falha, a criatura é afetada pela distorção temporal e sofre as seguintes penalidades pela duração da magia:</p>\n<ul>\n<li><strong>Debilitada:</strong> O deslocamento base do alvo é reduzido pela <strong>metade</strong>, ele sofre uma penalidade de <strong>-2 na Defesa </strong>e tem seu Dado de Agilidade diminuido em um Passo (1d8 vai para 1d6), e fica completamente <strong>incapacitado de realizar Reações</strong>.</li>\n<li><strong>Restrição de Ações:</strong> No turno dela, a criatura afetada pode realizar apenas <strong>uma Ação Padrão ou uma Ação Bônus, nunca ambas</strong>. Além disso, independentemente de suas habilidades passivas, talentos ou itens mágicos, ela só pode desferir <strong>no máximo um único ataque</strong> físico ou místico por turno.</li>\n<li><strong>Instabilidade de Conjuração:</strong> Se o alvo afetado tentar conjurar uma magia que exija 1 Ação Inicial, o fluxo temporal atrasa o feitiço. O jogador deve rolar um <strong>d20</strong>: se o resultado for <strong>11 ou mais</strong>, a magia não se manifesta imediatamente. O conjurador deve obrigatoriamente gastar a sua Ação Inicial do <em>próximo turno</em> para concluir a execução. Se ele for impedido ou optar por não fazê-lo, a magia falha e os PE gastos são completamente desperdiçados.</li>\n<li><strong>Lutando contra o Tempo:</strong> No final de cada um de seus turnos, a criatura afetada pode realizar um novo teste de <strong>Vontade</strong> contra a sua ND Mística. Se obtiver sucesso, o efeito de lentidão se encerra especificamente para ela.</li>\n</ul>\n<p><strong>[Logo tem mais]</strong></p>\n<p># Lista de magias Sagradas</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Chama Ascendente",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 5,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Uma radiância sagrada em forma de pilar de chamas irrompe diretamente sob uma criatura que você consiga enxergar dentro do alcance. O alvo deve realizar um teste de <strong>Reflexos</strong> contra o seu Nível de Dificuldade Mística.</p>\n<ul>\n<li><strong>Falha no Teste:</strong> O alvo sofre <strong>1d6 + o Valor Fixo do seu Símbolo Sagrado de dano de Luz</strong>. A queima da essência inimiga retroalimenta a sua fé, concedendo a você <strong>Pontos de Vida Temporários equivalentes à metade do dano total causado</strong> por esta magia.</li>\n<li><strong>Sucesso no Teste:</strong> O alvo esquiva do pilar luminoso e não sofre nenhum dano ou efeito.</li>\n<li><strong>Ignorar Cobertura:</strong> Como o clarão desce ou emerge diretamente no espaço ocupado pela criatura, o alvo <strong>não recebe nenhum benefício de cobertura</strong> (seja Leve ou Pesada) para este teste de resistência.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Bênção Protetora",
+    "type": "magia",
+    "img": "icons/magic/defensive/shield-barrier-glowing-blue.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "abjuracao",
+      "custoPE": 5,
+      "custoContinuo": 0,
+      "tempoCon": "Reação",
+      "alcance": "9 Metros (6 Quadrados)",
+      "duracao": "1 Rodada",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você toca uma criatura voluntária, traçando um símbolo sagrado efêmero no ar que envolve o corpo do alvo com uma sutil película de energia protetora.</p>\n<ul>\n<li><strong>Efeito de Esquiva:</strong> O alvo recebe um bônus de <strong>+2 em sua Defesa</strong>. No instante em que esse ataque ocorre (independente de acertar ou errar), a barreira absorve o impacto residual e a magia se encerra.</li>\n<li><strong>Limitação de Alvos:</strong> Esta proteção divina exige uma conexão focada. Você pode manter este truque ativo em apenas <strong>um único alvo por vez</strong>. Se você conjurar esta magia novamente enquanto uma barreira anterior ainda estiver ativa em outro companheiro, o efeito antigo colapsa imediatamente.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Orientação Divina",
+    "type": "magia",
+    "img": "icons/magic/perception/eye-ringed-glow-angled-blue.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "adivinhacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Toque",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você toca em uma criatura voluntária, sussurrando uma breve prece ou estendendo uma fração de percepção guiada ao espírito do alvo.</p>\n<p><strong>Bônus Abençoado:</strong> Uma única vez por rodada, o alvo pode rolar um <strong>d4</strong> e adicionar o valor obtido no resultado de <strong>um teste de Perícia </strong>à escolha dele.</p>\n<p><strong>Gatilho de Uso:</strong> O jogador pode optar por rolar e aplicar este d4 bônus <strong>antes ou depois</strong> de realizar a rolagem principal, ajudando a transformar uma quase falha em um sucesso.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Detectar Alinhamento Espiritual",
+    "type": "magia",
+    "img": "icons/magic/perception/eye-ringed-glow-angled-blue.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "adivinhacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Pessoal (centrado em você)",
+      "duracao": "Até 10 minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você expande seus sentidos para sentir as assinaturas de energia que não pertencem ao plano material. Pela duração da magia, você percebe instantaneamente a presença e a localização exata de qualquer criatura do tipo <strong>Caótico, Cósmico, elemental, feérico, Infernal ou morto-vivo</strong> que esteja a até <strong>9 metros (6 quadrados)</strong> de você.</p>\n<p><strong>Locais e Objetos:</strong> Da mesma forma, você detecta se existe algum objeto, altar ou local dentro desse mesmo raio de 9 metros que tenha sido misticamente consagrado ou profanado por forças espirituais.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Detectar Venenos e Doenças",
+    "type": "magia",
+    "img": "icons/magic/perception/eye-ringed-glow-angled-blue.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "adivinhacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Pessoal (centrado em você)",
+      "duracao": "Até 10 minutos",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Sua sensibilidade mística se sintoniza com as impurezas biológicas e toxinas presentes no ambiente. Pela duração da magia, você sente a presença e a localização exata de venenos, criaturas venenosas e doenças infecciosas ou parasitárias a até <strong>9 metros (6 quadrados)</strong> de você.</p>\n<ul>\n<li><strong>Identificação Precisa:</strong> Além de localizar a ameaça, você consegue discernir instantaneamente a natureza exata de cada caso detectado (sabendo o nome específico da doença, o tipo de toxina do veneno ou a espécie da criatura peçonhenta).</li>\n<li>Em Caso de Suspeita: Caso você suspeite que seja algum veneno ou doença que você conheça, mas não tem certeza, faça um teste de Medicina ou Arcanismo (em caso de doenças mágicas), a ND é definida pelo mestre, em sucesso você recebe a certeza de qual doença ou veneno é, mas se não for o mestre pode afirmar que você não conhece mesmo com sucesso.</li>\n</ul>",
+      "peso": 0
+    }
+  }
+]

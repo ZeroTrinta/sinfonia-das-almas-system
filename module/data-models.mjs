@@ -207,6 +207,10 @@ export class MagiaDataModel extends BaseItemModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),
+      tipo: new StringField({
+        required: true, blank: false, initial: "arcana",
+        choices: ["arcana", "sagrada"]
+      }),
       circulo: new NumberField({ required: true, integer: true, min: 1, max: 5, initial: 1 }),
       escola:  new StringField({
         required: true, blank: false, initial: "evocacao",

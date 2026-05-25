@@ -1,0 +1,182 @@
+[
+  {
+    "name": "Adaga Enferrujada",
+    "type": "arma",
+    "img": "icons/weapons/daggers/dagger-curved-rusty.webp",
+    "system": {
+      "categoria": "leve",
+      "tipoDano": "perfuracao",
+      "dano": "1d4 + @agi",
+      "alcance": 1.5,
+      "bonus": 0,
+      "peso": 0.5,
+      "equipado": false,
+      "descricao": "<p>Uma lâmina velha, marcada pelo tempo e por sangues esquecidos. Ainda corta — mas custa pouco a pedir mais do que pode dar.</p>"
+    }
+  },
+  {
+    "name": "Faca do Ladino",
+    "type": "arma",
+    "img": "icons/weapons/daggers/dagger-jeweled-purple.webp",
+    "system": {
+      "categoria": "leve",
+      "tipoDano": "perfuracao",
+      "dano": "1d6 + @agi",
+      "alcance": 1.5,
+      "bonus": 1,
+      "peso": 0.4,
+      "equipado": false,
+      "descricao": "<p>Leve, bem balanceada, com guarda discreta. Feita para encontrar o ponto exato entre duas costelas — sem ruído.</p>"
+    }
+  },
+  {
+    "name": "Espada Curta",
+    "type": "arma",
+    "img": "icons/weapons/swords/shortsword-guard-brown.webp",
+    "system": {
+      "categoria": "espada",
+      "tipoDano": "corte",
+      "dano": "1d8 + @pod",
+      "alcance": 1.5,
+      "bonus": 0,
+      "peso": 1.5,
+      "equipado": false,
+      "descricao": "<p>A espada de quem precisou aprender a se defender antes de aprender a viver. Comum, confiável, suficiente.</p>"
+    }
+  },
+  {
+    "name": "Espada Longa",
+    "type": "arma",
+    "img": "icons/weapons/swords/sword-guard-purple.webp",
+    "system": {
+      "categoria": "espada",
+      "tipoDano": "corte",
+      "dano": "1d10 + @pod",
+      "alcance": 1.5,
+      "bonus": 0,
+      "peso": 2.5,
+      "equipado": false,
+      "descricao": "<p>A arma do soldado e do duelista. Equilibrada o bastante para a esgrima, pesada o bastante para abrir armaduras.</p>"
+    }
+  },
+  {
+    "name": "Lâmina do Penitente",
+    "type": "arma",
+    "img": "icons/weapons/swords/sword-guard-gold-worn.webp",
+    "system": {
+      "categoria": "espada",
+      "tipoDano": "sagrado",
+      "dano": "1d10 + @pod + 2",
+      "alcance": 1.5,
+      "bonus": 2,
+      "peso": 2.5,
+      "equipado": false,
+      "descricao": "<p>Forjada por monges silenciosos para condenar o que não devia mais existir. A lâmina ressoa baixo, como um cântico que nunca termina.</p>"
+    }
+  },
+  {
+    "name": "Lança de Caça",
+    "type": "arma",
+    "img": "icons/weapons/polearms/spear-flared-steel.webp",
+    "system": {
+      "categoria": "haste",
+      "tipoDano": "perfuracao",
+      "dano": "1d8 + @pod",
+      "alcance": 3,
+      "bonus": 0,
+      "peso": 2,
+      "equipado": false,
+      "descricao": "<p>Alcance honesto, ponta firme. A mesma arma que alimentou aldeias por gerações — e enfrentou o que vinha das matas à noite.</p>"
+    }
+  },
+  {
+    "name": "Alabarda",
+    "type": "arma",
+    "img": "icons/weapons/polearms/halberd-crescent-engraved.webp",
+    "system": {
+      "categoria": "haste",
+      "tipoDano": "corte",
+      "dano": "1d10 + @pod + 1",
+      "alcance": 3,
+      "bonus": 0,
+      "peso": 3.5,
+      "equipado": false,
+      "descricao": "<p>Lâmina, gancho e ponta numa só haste. Pesada, mas mantém o inimigo à distância — e desmonta cavaleiros num só golpe bem dado.</p>"
+    }
+  },
+  {
+    "name": "Maça de Armas",
+    "type": "arma",
+    "img": "icons/weapons/maces/mace-flanged-steel.webp",
+    "system": {
+      "categoria": "pesada",
+      "tipoDano": "impacto",
+      "dano": "1d10 + @pod",
+      "alcance": 1.5,
+      "bonus": 0,
+      "peso": 3,
+      "equipado": false,
+      "descricao": "<p>Não corta. Não perfura. Simplesmente quebra. Armaduras, escudos, ossos — tudo cede ao peso certo no lugar certo.</p>"
+    }
+  },
+  {
+    "name": "Machado de Batalha",
+    "type": "arma",
+    "img": "icons/weapons/axes/axe-broad-engraved.webp",
+    "system": {
+      "categoria": "pesada",
+      "tipoDano": "corte",
+      "dano": "1d12 + @pod",
+      "alcance": 1.5,
+      "bonus": 0,
+      "peso": 4,
+      "equipado": false,
+      "descricao": "<p>Lâmina larga, cabo grosso. Não é uma arma elegante — é uma promessa de que o próximo golpe vai ser o último.</p>"
+    }
+  },
+  {
+    "name": "Arco Curto",
+    "type": "arma",
+    "img": "icons/weapons/bows/shortbow-recurve-bone.webp",
+    "system": {
+      "categoria": "precisao",
+      "tipoDano": "perfuracao",
+      "dano": "1d8 + @agi",
+      "alcance": 24,
+      "bonus": 0,
+      "peso": 1,
+      "equipado": false,
+      "descricao": "<p>Madeira flexível, corda de tendão. A arma do caçador e do batedor — silenciosa, leve, paciente.</p>"
+    }
+  },
+  {
+    "name": "Besta Pesada",
+    "type": "arma",
+    "img": "icons/weapons/crossbows/crossbow-heavy-engraved.webp",
+    "system": {
+      "categoria": "precisao",
+      "tipoDano": "perfuracao",
+      "dano": "1d12 + @agi",
+      "alcance": 30,
+      "bonus": 1,
+      "peso": 5,
+      "equipado": false,
+      "descricao": "<p>Demora a recarregar, mas atravessa cota de malha como se fosse linho. Quem carrega uma raramente precisa atirar duas vezes.</p>"
+    }
+  },
+  {
+    "name": "Pistola de Pederneira",
+    "type": "arma",
+    "img": "icons/weapons/guns/gun-pistol-flintlock.webp",
+    "system": {
+      "categoria": "fogo",
+      "tipoDano": "perfuracao",
+      "dano": "1d10 + @agi + 2",
+      "alcance": 12,
+      "bonus": 0,
+      "peso": 1.5,
+      "equipado": false,
+      "descricao": "<p>Trovão na palma da mão. Cara, caprichosa, lenta para recarregar — mas o primeiro tiro vale uma sentença.</p>"
+    }
+  }
+]
