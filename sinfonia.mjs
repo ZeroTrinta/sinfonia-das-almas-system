@@ -285,7 +285,58 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.2.0");
+  console.log("Sinfonia das Almas | Pronto. v0.4.0");
+
+  // ── Listener delegado: botões dentro das mensagens de chat ──
+  document.body.addEventListener("click", async (ev) => {
+    const btn = ev.target.closest(".btn-rolar-dano, .btn-aplicar-dano, .btn-aplicar-cura");
+    if (!btn) return;
+    ev.preventDefault();
+
+    // Rolar dano da arma (botão no cabeçalho de ataque)
+    if (btn.classList.contains("btn-rolar-dano")) {
+      const actorId = btn.dataset.actorId;
+      const armaId  = btn.dataset.armaId;
+      const actor = game.actors.get(actorId);
+      const arma  = actor?.items?.get(armaId);
+      if (!actor || !arma) {
+        ui.notifications.warn("Ator ou arma não encontrados.");
+        return;
+      }
+      const critico = await foundry.applications.api.DialogV2.confirm({
+        window: { title: `Dano — ${arma.name}` },
+        content: `<p>Esta rolagem é um <b>crítico</b> (dados dobrados)?</p>`,
+        yes: { label: "Sim, crítico" },
+        no:  { label: "Não, dano normal", default: true }
+      });
+      await actor.rolarDano(arma, { critico: !!critico });
+      return;
+    }
+
+    // Aplicar dano nos tokens selecionados
+    if (btn.classList.contains("btn-aplicar-dano")) {
+      const dano = parseInt(btn.dataset.dano) || 0;
+      const tokens = canvas.tokens?.controlled ?? [];
+      if (!tokens.length) {
+        ui.notifications.warn("Selecione um ou mais tokens para aplicar o dano.");
+        return;
+      }
+      for (const t of tokens) await t.actor?.aplicarDano?.(dano);
+      return;
+    }
+
+    // Aplicar cura nos tokens selecionados
+    if (btn.classList.contains("btn-aplicar-cura")) {
+      const cura = parseInt(btn.dataset.cura) || 0;
+      const tokens = canvas.tokens?.controlled ?? [];
+      if (!tokens.length) {
+        ui.notifications.warn("Selecione um ou mais tokens para aplicar a cura.");
+        return;
+      }
+      for (const t of tokens) await t.actor?.curar?.(cura);
+      return;
+    }
+  });
 });
 
 /* ============================================================

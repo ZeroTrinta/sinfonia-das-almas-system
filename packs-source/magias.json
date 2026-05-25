@@ -1119,5 +1119,157 @@
       "descricao": "<p>Sua sensibilidade mística se sintoniza com as impurezas biológicas e toxinas presentes no ambiente. Pela duração da magia, você sente a presença e a localização exata de venenos, criaturas venenosas e doenças infecciosas ou parasitárias a até <strong>9 metros (6 quadrados)</strong> de você.</p>\n<ul>\n<li><strong>Identificação Precisa:</strong> Além de localizar a ameaça, você consegue discernir instantaneamente a natureza exata de cada caso detectado (sabendo o nome específico da doença, o tipo de toxina do veneno ou a espécie da criatura peçonhenta).</li>\n<li>Em Caso de Suspeita: Caso você suspeite que seja algum veneno ou doença que você conheça, mas não tem certeza, faça um teste de Medicina ou Arcanismo (em caso de doenças mágicas), a ND é definida pelo mestre, em sucesso você recebe a certeza de qual doença ou veneno é, mas se não for o mestre pode afirmar que você não conhece mesmo com sucesso.</li>\n</ul>",
       "peso": 0
     }
+  },
+  {
+    "name": "Palavra de Alívio",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você profere uma rápida palavra de poder ou uma prece sussurrada que ecoa diretamente na alma de um aliado enfraquecido, costurando suas feridas à distância no calor da batalha.</p>\n<ul>\n<li><strong>Restauração Fluida:</strong> Escolha uma criatura voluntária que você possa ver dentro do alcance. O alvo recupera imediatamente uma quantidade de Pontos de Vida (PV) igual a <strong>1d4 + o Valor Fixo do seu Conduíte Sagrado</strong>.</li>\n<li><strong>Restrições Biológicas:</strong> Como este feitiço atua estimulando e infundindo energia vital biológica, ele <strong>não surte nenhum efeito</strong> mecânico se for conjurado em mortos-vivos.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Infringir Ferimentos",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "necromancia",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Toque",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você estende sua mão envolta em uma sutil névoa escura e estagnada, canalizando o reverso da energia vital para apodrecer a carne do alvo ao menor contato.</p>\n<ul>\n<li><strong>Toque Corruptor:</strong> Realize um ataque de <strong>Conjuração Mística corpo a corpo</strong> contra a Defesa de uma criatura ao seu alcance.</li>\n<li><strong>Impacto Necrótico:</strong> Em caso de sucesso, sua mão descarrega a malevolência diretamente na anatomia do alvo, causando <strong>3d10 de Dano de Trevas</strong> enquanto as células e tecidos atingidos entram em colapso instantâneo.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Saeta Guia",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "36 metros (24 quadrados)",
+      "duracao": "1 Rodada",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Um feixe de luz ofuscante dispara de suas mãos ou de seu conduíte, traçando uma linha brilhante pelo ar em direção a uma criatura dentro do alcance.</p>\n<p><strong>Disparo Luminoso:</strong> Realize um Ataque <strong>Conjuração mística à distância</strong> contra a Defesa do alvo escolhido.</p>\n<p><strong>Impacto Radiante:</strong> Em caso de sucesso, o feixe explode contra o corpo do oponente, causando <strong>4d6 + Valor do Conduíte Sagrado de Dano de Luz</strong>.</p>\n<p><strong>Marcação Mística:</strong> Independentemente do dano sofrido, partículas de uma luminância mística residual passam a brilhar intensamente ao redor do alvo. Devido a essa marca clara, o <strong>próximo teste de ataque</strong> realizado por qualquer aliado contra este alvo antes do final do seu <em>próximo turno</em> recebe <strong>Vantagem</strong>.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Preservar o Moribundo",
+    "type": "magia",
+    "img": "icons/magic/death/skull-energy-light-purple.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "necromancia",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Inicial",
+      "alcance": "Toque",
+      "duracao": "Instantânea",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você toca em uma criatura viva caídas nas frentes de combate, canalizando uma sutil ondulação de energia que estanca hemorragias e sela ferimentos superficiais para segurar a alma do alvo ao plano físico.</p>\n<ul>\n<li><strong>Estabilização.</strong> Ao tocar uma criatura viva voluntária ou caída que esteja atualmente com <strong>0 Pontos de Vida (PV)</strong>, você faz com que ela fique <strong>Estabilizada</strong> imediatamente. O alvo interrompe qualquer teste ou contagem de morte em andamento, permanecendo inconsciente, mas totalmente seguro e fora de perigo iminente.</li>\n<li><strong>Restrições.</strong> Por lidar estritamente com o fluxo e a manutenção da vida biológica orgânica, este truque <strong>não surte nenhum efeito</strong> mecânico se for conjurado sobre mortos-vivos ou construtos.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Infundir Elemento",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "transmutacao",
+      "custoPE": 10,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação inicial",
+      "alcance": "9 metros (6 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas)",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você estende a mão em direção ao armamento de um aliado, moldando a energia elemental dispersa na atmosfera para envolver a arma dele com uma poderosa ressonância da natureza.</p>\n<p>Escolha uma criatura que você possa ver dentro do alcance e, em seguida, selecione <strong>um</strong> dos seguintes elementos para infundir em sua arma principal:</p>\n<ul>\n<li><strong>Fogo:</strong> A arma é envolta por chamas ardentes. Todo o dano desferido por ela passa a ser <strong>Dano de Fogo</strong>.</li>\n<li><strong>Gelo:</strong> Névoas congelantes e fragmentos de geada cobrem o metal. Todo o dano desferido por ela passa a ser <strong>Dano de Gelo</strong>.</li>\n<li><strong>Ar:</strong> Correntes de ar comprimido e lufadas cortantes orbitam a arma. Todo o dano desferido por ela passa a ser <strong>Dano de Ar</strong>.</li>\n<li><strong>Terra:</strong> Rochas densas e runas de minerais pesados fortificam a estrutura. Todo o dano desferido por ela passa a ser <strong>Dano de Terra</strong>.</li>\n<li><strong>Raio:</strong> Faíscas elétricas e estática violentas se instalam ao longo do fio. Todo o dano desferido por ela passa a ser <strong>Dano de Raio</strong>.</li>\n</ul>\n<p>Pela duração do feitiço, todos os ataques realizados com a arma afetada têm o seu tipo de dano original (seja físico ou místico) inteiramente convertido para o elemento escolhido.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Luz",
+    "type": "magia",
+    "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 1,
+      "escola": "evocacao",
+      "custoPE": 5,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação Parcial",
+      "alcance": "Toque",
+      "duracao": "1 hora ou até ser dispensada",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você toca em um objeto que não tenha dimensão maior do que 3 metros (2 quadrados). Pela duração da magia, o objeto passa a emanar uma luminescência mágica contínua, cuja cor você pode definir no momento da conjuração.</p>\n<ul>\n<li><strong>Raio de Iluminação:</strong> O objeto projeta <strong>Luz Plena</strong> em um raio de 6 metros (4 quadrados) a partir de seu centro, e <strong>Luz Penumbra</strong> por mais 6 metros adicionais além do raio inicial. Coobrir totalmente o objeto com um material opaco (como um pano ou colocá-lo dentro de uma bolsa fechada) bloqueia a emissão da luz.</li>\n<li><strong>Alvos Hostis:</strong> Se você tentar conjurar este truque em um objeto que esteja sendo segurado, vestido ou empunhado por uma criatura hostil, o alvo deve realizar um teste de <strong>Reflexos</strong> contra a sua ND Mística. Se obtiver sucesso, a criatura esquiva do seu toque e a magia falha.</li>\n<li><strong>Cancelamento:</strong> O efeito se encerra imediatamente se você gastar <strong>1 Ação Livre</strong> para dispensá-lo voluntariamente ou se conjurar este mesmo truque novamente em outro objeto.</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Acalmar Emoções",
+    "type": "magia",
+    "img": "icons/magic/control/hypnosis-mesmerism-eye.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 2,
+      "escola": "encantamento",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "18 metros (12 quadrados)",
+      "duracao": "Até 1 minuto (10 rodadas) / Concentração",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você emana uma onda de serenidade mística que pacifica mentes agitadas e suprime impulsos violentos. Escolha um ponto dentro do alcance; uma onda invisível se expande em uma esfera com raio de <strong>6 metros (4 quadrados)</strong> centrada nele. Cada humanoide na área deve realizar um teste de <strong>Força de Vontade</strong> contra o seu Nível de Dificuldade(criaturas aliadas voluntárias podem optar por falhar automaticamente no teste).</p>\n<p>Para cada criatura que falhar no teste de resistência, você escolhe <strong>um</strong> dos dois efeitos a seguir:</p>\n<ul>\n<li><strong>Suprimir Condições:</strong> Você suprime temporariamente qualquer efeito ou magia que esteja deixando o alvo com as condições <strong>Enfeitiçado</strong> ou <strong>Amedrontado</strong>. Enquanto esta magia persistir, essas condições negativas não surtem efeito. Assim que a magia terminar, as condições originais retornam imediatamente, a menos que a duração delas tenha expirado nesse meio-tempo.</li>\n<li><strong>Tornar indiferente:</strong> Você remove a agressividade de alvos hostis em relação a criaturas da sua escolha (como o seu grupo). A hostilidade cessa instantaneamente, fazendo com que os inimigos afetados parem de atacar. Esta indiferença quebra imediatamente se o alvo sofrer um ataque, for atingido por uma magia prejudicial ou se testemunhar um de seus próprios aliados sendo ferido no campo de batalha</li>\n</ul>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Aprimorar Aptidão",
+    "type": "magia",
+    "img": "icons/magic/symbols/runes-triangle-orange.webp",
+    "system": {
+      "tipo": "sagrada",
+      "circulo": 2,
+      "escola": "transmutacao",
+      "custoPE": 20,
+      "custoContinuo": 0,
+      "tempoCon": "1 Ação",
+      "alcance": "Toque",
+      "duracao": "Até 1 hora",
+      "areaEfeito": "",
+      "resistencia": "",
+      "descricao": "<p>Você toca em uma criatura voluntária e canaliza uma benção mística que altera e eleva o fluxo de energia em seu corpo ou mente. Escolha uma das seguintes aptidões; o alvo recebe o efeito correspondente pela duração da magia:</p>\n<ul>\n<li><strong>Vigor do Urso:</strong> O alvo recebe <strong>Vantagem</strong> em todos os testes de <strong>Fortitude</strong>. Além disso, ele ganha imediatamente <strong>2d6 Pontos de Vida Temporários</strong> (que desaparecem assim que a magia se encerra ou até que você os perca).</li>\n<li><strong>Força do Touro:</strong> O alvo recebe <strong>Vantagem</strong> em todos os testes de <strong>Atletismo</strong> (ou força física bruta) e sua capacidade de carga total é inteiramente duplicada.</li>\n<li><strong>Graça do Gato:</strong> O alvo recebe <strong>Vantagem</strong> em todos os testes de <strong>Reflexos</strong>. Adicionalmente, caso não esteja Incapacitado, ele se torna completamente imune a sofrer danos decorrentes de quedas de até 6 metros (4 quadrados).</li>\n<li><strong>Esplendor da Águia:</strong> O alvo recebe <strong>Vantagem</strong> em todos os testes de <strong>CARISMA </strong>focados em interações sociais, lábia ou liderança.</li>\n<li><strong>Astúcia da Raposa:</strong> O alvo recebe <strong>Vantagem</strong> em todos os testes de <strong>Intelecto</strong> focados em investigação, lógica ou conhecimentos gerais.</li>\n<li><strong>Sabedoria da Coruja:</strong> O alvo recebe <strong>Vantagem</strong> em todos os testes de <strong>Percepção</strong>, <strong>intuição</strong>.</li>\n</ul>",
+      "peso": 0
+    }
   }
 ]

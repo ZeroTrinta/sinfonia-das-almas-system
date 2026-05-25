@@ -1734,3 +1734,191 @@
   color: var(--text);
   line-height: 1.3;
 }
+
+/* ================================================================
+   FASE 2 — COMBATE
+================================================================ */
+
+/* Ícones de ação na lista de armas */
+.arma-item .icon-atacar { color: #d06060; }
+.arma-item .icon-atacar:hover { color: #ff7060; text-shadow: 0 0 6px rgba(255,80,80,0.5); }
+.arma-item .icon-dano   { color: #c8972a; }
+.arma-item .icon-dano:hover { color: var(--gold-light); text-shadow: 0 0 6px rgba(200,151,42,0.5); }
+
+/* Item Sheet de Arma */
+.item.arma .item-type-badge {
+  background: rgba(200,64,64,0.15);
+  border: 1px solid rgba(200,64,64,0.4);
+  color: #d08080;
+  padding: 2px 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.arma-form {
+  display: flex; flex-direction: column; gap: 12px; padding: 8px 4px;
+}
+.arma-form .form-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+}
+.arma-form .form-row:has(.form-group:nth-child(2):last-child) {
+  grid-template-columns: 1fr 1fr;
+}
+.arma-form .form-group { display: flex; flex-direction: column; gap: 4px; }
+.arma-form .form-group label {
+  font-family: 'Cinzel', serif; font-size: 9px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--gold-light);
+}
+.arma-form .form-hint {
+  font-family: 'EB Garamond', serif; font-size: 11px;
+  font-style: italic; color: var(--silver-dim); line-height: 1.4;
+}
+.arma-form .form-hint code {
+  background: rgba(200,151,42,0.1);
+  border: 1px solid rgba(200,151,42,0.3);
+  padding: 1px 4px;
+  font-family: 'Courier New', monospace; font-size: 10px;
+  color: var(--gold-light);
+}
+.arma-form .check-row {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gold-light); cursor: pointer; padding: 4px 0;
+}
+.arma-form .check-row input[type="checkbox"] { cursor: pointer; accent-color: var(--gold); }
+
+/* Dialog de ataque — info da arma e do alvo */
+.sinfonia-dialog-rolagem .arma-info {
+  padding: 6px 10px;
+  background: rgba(200,151,42,0.08);
+  border-left: 3px solid var(--gold);
+  font-family: 'EB Garamond', serif; font-size: 13px;
+  color: var(--text);
+}
+.sinfonia-dialog-rolagem .alvo-info {
+  padding: 6px 10px;
+  background: rgba(200,64,64,0.08);
+  border-left: 3px solid #c84040;
+  font-family: 'EB Garamond', serif; font-size: 13px;
+  color: #e0c0c0;
+}
+.sinfonia-dialog-rolagem .alvo-info.sem-alvo {
+  background: rgba(120,140,180,0.06);
+  border-left-color: #8090b0;
+  color: #a0b0c8; font-style: italic;
+}
+
+/* Mensagem de chat: cabeçalho de ataque */
+.sinfonia-ataque-header {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #090c14;
+  font-family: 'EB Garamond', serif; font-size: 14px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.sinfonia-ataque-header.acerto { border-left: 3px solid #50c060; }
+.sinfonia-ataque-header.erro   { border-left: 3px solid #c05050; opacity: 0.85; }
+.sinfonia-ataque-header i { color: var(--gold); font-size: 16px; }
+
+.sinfonia-ataque-acoes {
+  padding: 6px 12px 8px;
+  border: 1px solid var(--border); border-top: none;
+  background: #090c14;
+}
+
+.btn-rolar-dano,
+.btn-aplicar-dano,
+.btn-aplicar-cura {
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-rolar-dano { border-color: rgba(200,151,42,0.5); color: var(--gold-light); }
+.btn-rolar-dano:hover {
+  background: rgba(200,151,42,0.12);
+  border-color: var(--gold);
+  text-shadow: 0 0 6px rgba(240,192,96,0.4);
+}
+.btn-aplicar-dano { border-color: rgba(200,64,64,0.5); color: #d07070; }
+.btn-aplicar-dano:hover {
+  background: rgba(200,64,64,0.12);
+  border-color: #c84040; color: #ff7060;
+  text-shadow: 0 0 6px rgba(255,80,80,0.4);
+}
+.btn-aplicar-cura { border-color: rgba(80,200,96,0.5); color: #80d090; }
+.btn-aplicar-cura:hover {
+  background: rgba(80,200,96,0.12);
+  border-color: #50c060; color: #a0e8a0;
+  text-shadow: 0 0 6px rgba(80,200,96,0.4);
+}
+
+/* Mensagem de chat: rolagem de dano */
+.sinfonia-dano-roll {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: #090c14;
+  font-family: 'EB Garamond', serif; color: var(--text);
+}
+.sinfonia-dano-roll.critico {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #1a1408, #0a0806);
+  box-shadow: inset 0 0 20px rgba(200,151,42,0.15);
+}
+.sinfonia-dano-roll .dano-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(200,151,42,0.15);
+}
+.sinfonia-dano-roll .actor-name {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--gold); letter-spacing: 1px;
+}
+.sinfonia-dano-roll .dano-arma {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--gold-light);
+}
+.sinfonia-dano-roll.critico .dano-arma {
+  color: #ffeba0;
+  text-shadow: 0 0 8px rgba(255,235,160,0.5);
+  letter-spacing: 1.5px;
+}
+.sinfonia-dano-roll .dano-formula {
+  font-family: 'Courier New', monospace; font-size: 11px;
+  color: var(--silver-dim); margin-bottom: 6px;
+}
+.sinfonia-dano-roll .dano-total {
+  display: flex; align-items: baseline; gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(200,151,42,0.15);
+  margin-top: 6px;
+}
+.sinfonia-dano-roll .total {
+  font-family: 'Cinzel', serif; font-size: 28px;
+  color: var(--gold-light);
+  text-shadow: 0 0 10px rgba(200,151,42,0.4);
+}
+.sinfonia-dano-roll.critico .total {
+  color: #ffeba0;
+  text-shadow: 0 0 14px rgba(255,235,160,0.6);
+}
+.sinfonia-dano-roll .dano-tipo {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--silver-dim);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.sinfonia-dano-roll .dano-acoes {
+  display: flex; gap: 6px;
+  margin-top: 10px; padding-top: 8px;
+  border-top: 1px solid rgba(200,151,42,0.1);
+}
+.sinfonia-dano-roll .dano-acoes button {
+  flex: 1; justify-content: center;
+}
