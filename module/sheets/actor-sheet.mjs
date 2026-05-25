@@ -27,7 +27,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       corromper:    SinfoniaActorSheet._onCorromper,
       descansar:    SinfoniaActorSheet._onDescansar,
       resetEstilhacos: SinfoniaActorSheet._onResetEstilhacos,
-      verTodasPericias: SinfoniaActorSheet._onVerTodasPericias
+      verTodasPericias: SinfoniaActorSheet._onVerTodasPericias,
+      atacarArma:      SinfoniaActorSheet._onAtacarArma,
+      rolarDanoArma:   SinfoniaActorSheet._onRolarDanoArma
     }
   };
 
@@ -499,6 +501,178 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         const tr = t.closest(".pericia-row");
         tr.classList.remove("sem-maestria", "maestria-iniciante", "maestria-treinado", "maestria-experiente");
         tr.classList.add(valor ? `maestria-${valor}` : "sem-maestria");
+      });
+    });
+  }
+
+  /* ============================================================
+     COMBATE — Atacar com arma / Rolar dano
+  ============================================================ */
+
+  /**
+   * Click no ícone de espada de uma arma na lista. Abre um dialog
+   * específico de ataque (com modificadores de Alma + alvo).
+   */
+  static async _onAtacarArma(event, target) {
+    const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+    const arma = this.document.items.get(itemId);
+    if (!arma) return;
+
+    const opcoes = await SinfoniaActorSheet._dialogAtaque(this.document, arma);
+    if (!opcoes) return;
+    await this.document.rolarAtaque(arma, opcoes);
+  }
+
+  /**
+   * Click direto no botão de dano da ficha (sem passar por ataque).
+   * Pergunta apenas se é crítico.
+   */
+  static async _onRolarDanoArma(event, target) {
+    const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+    const arma = this.document.items.get(itemId);
+    if (!arma) return;
+
+    const critico = await foundry.applications.api.DialogV2.confirm({
+      window: { title: `Dano — ${arma.name}` },
+      content: `<p>Esta rolagem é um <b>crítico</b> (dados dobrados)?</p>`,
+      yes: { label: "Sim, crítico" },
+      no:  { label: "Não, dano normal", default: true }
+    });
+
+    await this.document.rolarDano(arma, { critico: !!critico });
+  }
+
+  /**
+   * Dialog rico de ataque com arma. Reaproveita os mesmos modificadores
+   * de Alma do dialog de perícia, mas lê o ND do alvo selecionado
+   * automaticamente (Defesa do token alvo) ou pede ND manual.
+   */
+  static async _dialogAtaque(actor, arma) {
+    const sys = actor.system;
+    const det = sys.alma.determinacao;
+    const cor = sys.alma.corrupcao;
+    const eventoUsado   = sys.origem?.eventoMarcante?.usadoNaSessao;
+    const ocupacaoUsada = sys.origem?.ocupacao?.usadoNaSessao;
+    const eventoDesc    = sys.origem?.eventoMarcante?.descricao || "";
+    const ocupacaoDesc  = sys.origem?.ocupacao?.descricao || "";
+    const eventoDisabled   = eventoUsado   || !eventoDesc;
+    const ocupacaoDisabled = ocupacaoUsada || !ocupacaoDesc;
+
+    const categoria = arma.system.categoria;
+    // Mapeamento embutido pra evitar import dinamico
+    const periciaMap = {
+      leve: "armasBrancas", espada: "armasBrancas", haste: "armasBrancas", pesada: "armasBrancas",
+      precisao: "armasDeFogo", fogo: "armasDeFogo"
+    };
+    const pericia = periciaMap[categoria] ?? "armasBrancas";
+    const cfg     = SINFONIA.PERICIAS[pericia];
+
+    // Tenta pegar o alvo via game.user.targets (token targeted com 'T')
+    const alvos = Array.from(game.user.targets ?? []);
+    const alvo = alvos[0] ?? null;
+    const nomeAlvo = alvo?.actor?.name ?? null;
+    const defesaAlvo = alvo?.actor?.system?.combate?.defesa ?? null;
+
+    const alvoInfo = alvo
+      ? `<div class="alvo-info"><b>Alvo:</b> ${nomeAlvo} — Defesa ${defesaAlvo}</div>`
+      : `<div class="alvo-info sem-alvo">Nenhum alvo selecionado. ND manual abaixo.</div>`;
+
+    const ndDefault = defesaAlvo ?? 10;
+    const bonusArma = Number(arma.system.bonus) || 0;
+
+    const content = `
+      <div class="sinfonia-dialog-rolagem">
+        <div class="arma-info">
+          <b>${arma.name}</b> (${SINFONIA.CATEGORIAS_ARMA[categoria] ?? categoria}) —
+          perícia <b>${cfg?.label ?? pericia}</b>${bonusArma ? ` — bônus +${bonusArma}` : ""}
+        </div>
+        ${alvoInfo}
+
+        <div class="linha">
+          <label>${alvo ? "ND (Defesa)" : "ND manual"}</label>
+          <input type="number" name="nd" value="${ndDefault}" min="1" max="40" autofocus/>
+        </div>
+        <div class="linha">
+          <label>Penalidade do Mestre</label>
+          <input type="number" name="penalidade" value="0" min="0" max="20"/>
+        </div>
+
+        <fieldset class="alma-bloco">
+          <legend>★ Determinação (${det} disponíveis)</legend>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="empenhoA" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho ${cfg.atribA.toUpperCase()}</b> — 1 Det: dado extra em ${cfg.atribA.toUpperCase()}
+          </label>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="empenhoB" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho ${cfg.atribB.toUpperCase()}</b> — 1 Det: dado extra em ${cfg.atribB.toUpperCase()}
+          </label>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="perseveranca" ${det < 1 ? 'disabled' : ''}/>
+            <b>Perseverança</b> — 1 Det: ignora a penalidade
+          </label>
+        </fieldset>
+
+        <fieldset class="alma-bloco">
+          <legend>⚭ Origem</legend>
+          <label class="radio">
+            <input type="radio" name="origem" value="" checked/> Nenhuma
+          </label>
+          <label class="radio ${eventoDisabled ? 'disabled' : ''}">
+            <input type="radio" name="origem" value="eventoMarcante" ${eventoDisabled ? 'disabled' : ''}/>
+            <b>Evento</b>${eventoDesc ? `: <em>${eventoDesc}</em>` : ' (não definido)'}
+            ${eventoUsado ? ' <span class="used">(usado)</span>' : ''}
+          </label>
+          <label class="radio ${ocupacaoDisabled ? 'disabled' : ''}">
+            <input type="radio" name="origem" value="ocupacao" ${ocupacaoDisabled ? 'disabled' : ''}/>
+            <b>Ocupação</b>${ocupacaoDesc ? `: <em>${ocupacaoDesc}</em>` : ' (não definida)'}
+            ${ocupacaoUsada ? ' <span class="used">(usada)</span>' : ''}
+          </label>
+        </fieldset>
+
+        <fieldset class="alma-bloco">
+          <legend>☠ Corrupção (${cor}/10)</legend>
+          <label class="radio"><input type="radio" name="corrupcao" value="" checked/> Nenhuma</label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="+5" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>+5 no teste</b>
+          </label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="rerolar" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>Rerolar</b>
+          </label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="passoDado" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>Passo de Dado</b>
+          </label>
+        </fieldset>
+      </div>
+    `;
+
+    return new Promise(resolve => {
+      foundry.applications.api.DialogV2.prompt({
+        window: { title: `Atacar com ${arma.name}` },
+        content,
+        ok: {
+          label: "Atacar",
+          icon: "fa-crosshairs",
+          callback: (ev, btn) => {
+            const f = btn.form.elements;
+            const origemValor = f.origem.value;
+            resolve({
+              nd:           parseInt(f.nd.value) || ndDefault,
+              penalidade:   parseInt(f.penalidade.value) || 0,
+              empenhoA:     f.empenhoA.checked,
+              empenhoB:     f.empenhoB.checked,
+              perseveranca: f.perseveranca.checked,
+              origem:       !!origemValor,
+              origemTipo:   origemValor || null,
+              corrupcao:    f.corrupcao.value || null,
+              alvo:         alvo ? { name: nomeAlvo, defesa: defesaAlvo } : null
+            });
+          }
+        },
+        cancel: { label: "Cancelar", callback: () => resolve(null) }
       });
     });
   }

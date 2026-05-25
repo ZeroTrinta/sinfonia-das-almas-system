@@ -115,15 +115,17 @@
     </div>
     <ul class="items-list">
       {{#each armas as |item|}}
-      <li class="item" data-item-id="{{item.id}}">
+      <li class="item arma-item" data-item-id="{{item.id}}">
         <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
         <div class="item-info">
           <span class="item-nome">{{item.name}}</span>
           <span class="item-sub">{{item.system.dano}} {{item.system.tipoDano}}</span>
         </div>
         <div class="item-controls">
-          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-          <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+          <a data-action="atacarArma"    data-item-id="{{item.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
+          <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Só Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
+          <a data-action="editarItem"   data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+          <a data-action="deletarItem"  data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
         </div>
       </li>
       {{else}}

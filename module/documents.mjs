@@ -227,6 +227,187 @@ export class SinfoniaActor extends Actor {
     return { roll, sucesso, total, ndEfetivo, ganhouCorrupcao };
   }
 
+  /* ============================================================
+     COMBATE — Ataque e Dano
+  ============================================================ */
+
+  /**
+   * Mapeia uma categoria de arma para a perícia usada no ataque.
+   * Conforme o documento de regras:
+   *   leve / espada / haste / pesada → Armas Brancas (POD+AGI)
+   *   precisao / fogo                → Armas de Fogo (AGI+INT)
+   * "Briga" (sem arma) cai num caso separado.
+   */
+  static periciaDeAtaque(categoria) {
+    const map = {
+      leve:     "armasBrancas",
+      espada:   "armasBrancas",
+      haste:    "armasBrancas",
+      pesada:   "armasBrancas",
+      precisao: "armasDeFogo",
+      fogo:     "armasDeFogo"
+    };
+    return map[categoria] ?? "armasBrancas";
+  }
+
+  /**
+   * Rola um ataque com uma arma.
+   * Usa a perícia correspondente à categoria contra a Defesa do alvo.
+   * Aceita os mesmos modificadores de Alma que rolarPericia.
+   *
+   * @param {Item} arma             Item do tipo "arma"
+   * @param {object} [opts]
+   * @param {number} [opts.nd]      ND manual (se não houver alvo). Default 10.
+   * @param {object} [opts.alvo]    { name, defesa } extraído de um Token alvo
+   * @param {boolean} [opts.empenhoA]
+   * @param {boolean} [opts.empenhoB]
+   * @param {boolean} [opts.perseveranca]
+   * @param {boolean} [opts.origem]
+   * @param {string}  [opts.origemTipo]
+   * @param {string}  [opts.corrupcao]
+   * @param {number}  [opts.penalidade]
+   */
+  async rolarAtaque(arma, opts = {}) {
+    if (this.type !== "personagem") return;
+    if (!arma || arma.type !== "arma") return;
+
+    const categoria = arma.system.categoria;
+    const pericia   = SinfoniaActor.periciaDeAtaque(categoria);
+    const cfg       = SINFONIA.PERICIAS[pericia];
+    if (!cfg) return;
+
+    // ND = Defesa do alvo (se houver) ou ND manual
+    const nd = opts.alvo?.defesa ?? opts.nd ?? 10;
+
+    // Bônus da arma vira penalidade negativa (ajuda no ataque)
+    // rolarPericia já adiciona `penalidade` à ND; se bonus>0, devemos diminuir a ND.
+    const bonusArma = Number(arma.system.bonus) || 0;
+    const penalidade = Math.max(0, (opts.penalidade || 0) - bonusArma);
+
+    const resultado = await this.rolarPericia(
+      pericia, cfg.atribA, cfg.atribB, nd,
+      {
+        empenhoA:     opts.empenhoA,
+        empenhoB:     opts.empenhoB,
+        perseveranca: opts.perseveranca,
+        origem:       opts.origem,
+        origemTipo:   opts.origemTipo,
+        corrupcao:    opts.corrupcao,
+        penalidade
+      }
+    );
+
+    if (!resultado) return;
+
+    // Mensagem extra no chat: "X ataca Y com Z" + botão de rolar dano
+    const nomeAlvo = opts.alvo?.name ? ` em <b>${opts.alvo.name}</b>` : "";
+    const cabecalho = `
+      <div class="sinfonia-ataque-header ${resultado.sucesso ? 'acerto' : 'erro'}">
+        <i class="fas fa-crosshairs"></i>
+        <span><b>${this.name}</b> ataca${nomeAlvo} com <b>${arma.name}</b></span>
+      </div>`;
+    const acoesHtml = resultado.sucesso
+      ? `<div class="sinfonia-ataque-acoes">
+           <button type="button" class="btn-rolar-dano"
+             data-actor-id="${this.id}" data-arma-id="${arma.id}">
+             <i class="fas fa-dice-d20"></i> Rolar Dano
+           </button>
+         </div>`
+      : "";
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: cabecalho + acoesHtml
+    });
+
+    return resultado;
+  }
+
+  /**
+   * Rola dano de uma arma. Resolve @pod/@agi/@int/@car/@mis
+   * para o valor do dado de atributo correspondente.
+   *
+   * @param {Item} arma
+   * @param {object} [opts]
+   * @param {boolean} [opts.critico]  Se true, dobra os dados
+   */
+  async rolarDano(arma, opts = {}) {
+    if (this.type !== "personagem") return;
+    if (!arma || arma.type !== "arma") return;
+
+    let formula = (arma.system.dano || "1d6").trim();
+
+    // Substitui @attr pelos valores numéricos dos dados
+    const subs = {
+      pod: this.dadoValor("pod"),
+      agi: this.dadoValor("agi"),
+      int: this.dadoValor("int"),
+      car: this.dadoValor("car"),
+      mis: this.dadoValor("mis")
+    };
+    for (const [k, v] of Object.entries(subs)) {
+      formula = formula.replaceAll(`@${k}`, v);
+    }
+
+    // Crítico: dobra todos os termos de dado (ex: 1d10 → 2d10)
+    if (opts.critico) {
+      formula = formula.replace(/(\d+)d(\d+)/gi, (_, n, f) => `${parseInt(n) * 2}d${f}`);
+    }
+
+    let roll;
+    try {
+      roll = new Roll(formula);
+      await roll.evaluate();
+    } catch (err) {
+      ui.notifications.error(`Fórmula de dano inválida em ${arma.name}: ${formula}`);
+      console.error(err);
+      return;
+    }
+
+    const total = roll.total;
+    const tipoDano = arma.system.tipoDano || "";
+
+    // Detalhamento dos dados
+    const dadosHtml = roll.dice.map(term => {
+      const pills = term.results.map(r =>
+        `<span class="dado-pill ativo" title="d${term.faces}">${r.result}</span>`
+      ).join("");
+      return `<span class="dado-grupo"><span class="dado-tipo">d${term.faces}</span>${pills}</span>`;
+    }).join("");
+
+    const content = `
+      <div class="sinfonia-dano-roll ${opts.critico ? 'critico' : ''}">
+        <div class="dano-header">
+          <span class="actor-name">${this.name}</span>
+          <span class="dano-arma">${arma.name}${opts.critico ? ' — CRÍTICO!' : ''}</span>
+        </div>
+        <div class="dano-formula">${arma.system.dano || ""}</div>
+        <div class="roll-dados">${dadosHtml}</div>
+        <div class="dano-total">
+          <span class="total">${total}</span>
+          <span class="dano-tipo">${tipoDano}</span>
+        </div>
+        <div class="dano-acoes">
+          <button type="button" class="btn-aplicar-dano" data-dano="${total}">
+            <i class="fas fa-heart-broken"></i> Aplicar Dano
+          </button>
+          <button type="button" class="btn-aplicar-cura" data-cura="${total}">
+            <i class="fas fa-heart"></i> Aplicar Cura
+          </button>
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content,
+      rolls: [roll],
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL
+    });
+
+    return { roll, total };
+  }
+
   /**
    * Gasta pontos de Determinação
    * @param {number} quantidade

@@ -2,7 +2,7 @@
   <header class="item-header">
     <img class="item-img-edit" src="{{item.img}}" data-edit="img" title="{{item.name}}"/>
     <div class="item-header-fields">
-      <input class="item-name" type="text" name="name" value="{{item.name}}" placeholder="Nome do Item"/>
+      <input class="item-name" type="text" name="name" value="{{item.name}}" placeholder="Nome da Arma"/>
       <span class="item-type-badge">arma</span>
     </div>
   </header>
@@ -12,9 +12,70 @@
   </nav>
   <div class="sheet-body">
     <div class="tab" data-group="item" data-tab="detalhes">
-      <div class="form-grid">
-        {{!-- Campos específicos preenchidos via JS/sheet getData --}}
-        <div class="form-group"><label>Peso (kg)</label><input type="number" name="system.peso" value="{{system.peso}}" min="0" step="0.1"/></div>
+      <div class="arma-form">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Categoria</label>
+            <select name="system.categoria">
+              <option value="leve"     {{#eq "leve"     system.categoria}}selected{{/eq}}>Leve</option>
+              <option value="espada"   {{#eq "espada"   system.categoria}}selected{{/eq}}>Espada</option>
+              <option value="haste"    {{#eq "haste"    system.categoria}}selected{{/eq}}>Haste</option>
+              <option value="pesada"   {{#eq "pesada"   system.categoria}}selected{{/eq}}>Pesada</option>
+              <option value="precisao" {{#eq "precisao" system.categoria}}selected{{/eq}}>Precisão</option>
+              <option value="fogo"     {{#eq "fogo"     system.categoria}}selected{{/eq}}>Fogo</option>
+            </select>
+            <span class="form-hint">Define qual perícia rolar no ataque</span>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Dano</label>
+            <select name="system.tipoDano">
+              <option value="corte"      {{#eq "corte"      system.tipoDano}}selected{{/eq}}>Corte</option>
+              <option value="perfuracao" {{#eq "perfuracao" system.tipoDano}}selected{{/eq}}>Perfuração</option>
+              <option value="impacto"    {{#eq "impacto"    system.tipoDano}}selected{{/eq}}>Impacto</option>
+              <option value="fogo"       {{#eq "fogo"       system.tipoDano}}selected{{/eq}}>Fogo</option>
+              <option value="frio"       {{#eq "frio"       system.tipoDano}}selected{{/eq}}>Frio</option>
+              <option value="trovao"     {{#eq "trovao"     system.tipoDano}}selected{{/eq}}>Trovão</option>
+              <option value="acido"      {{#eq "acido"      system.tipoDano}}selected{{/eq}}>Ácido</option>
+              <option value="veneno"     {{#eq "veneno"     system.tipoDano}}selected{{/eq}}>Veneno</option>
+              <option value="sagrado"    {{#eq "sagrado"    system.tipoDano}}selected{{/eq}}>Sagrado</option>
+              <option value="profano"    {{#eq "profano"    system.tipoDano}}selected{{/eq}}>Profano</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Fórmula de Dano</label>
+          <input type="text" name="system.dano" value="{{system.dano}}"
+                 placeholder="Ex: 1d10 + @pod + 3"/>
+          <span class="form-hint">
+            Use <code>@pod</code>, <code>@agi</code>, <code>@int</code>, <code>@car</code>, <code>@mis</code>
+            para o valor do dado do atributo.
+          </span>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Alcance (m)</label>
+            <input type="number" name="system.alcance" value="{{system.alcance}}" min="0" step="0.5"/>
+          </div>
+          <div class="form-group">
+            <label>Bônus de Ataque</label>
+            <input type="number" name="system.bonus" value="{{system.bonus}}" step="1"/>
+          </div>
+          <div class="form-group">
+            <label>Peso (kg)</label>
+            <input type="number" name="system.peso" value="{{system.peso}}" min="0" step="0.1"/>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="check-row">
+            <input type="checkbox" name="system.equipado" {{#if system.equipado}}checked{{/if}}/>
+            Equipada
+          </label>
+        </div>
+
       </div>
     </div>
     <div class="tab" data-group="item" data-tab="descricao">
