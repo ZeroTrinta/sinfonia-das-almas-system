@@ -9,7 +9,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
   static DEFAULT_OPTIONS = {
     classes: ["sinfonia-das-almas", "sheet", "actor"],
-    position: { width: 960, height: 900 },
+    position: { width: 1100, height: 820 },
     window: { resizable: true },
     // ✦ ABORDAGEM B (ATIVA): submitOnChange desligado. Cada campo é salvo
     //    manualmente via listener no _onRender com {render:false}.
@@ -104,13 +104,14 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
     // Tabs manuais
     const activateTab = (name) => {
-      this.element.querySelectorAll(".sheet-tabs .item")
+      // Suporta tanto layout antigo (.sheet-tabs .item) quanto novo (.right-tabs .vtab)
+      this.element.querySelectorAll(".sheet-tabs .item, .right-tabs .vtab")
         .forEach(t => t.classList.toggle("active", t.dataset.tab === name));
       this.element.querySelectorAll(".sheet-body .tab")
         .forEach(c => c.classList.toggle("active", c.dataset.tab === name));
       this._activeTab = name;
     };
-    this.element.querySelectorAll(".sheet-tabs .item").forEach(tab => {
+    this.element.querySelectorAll(".sheet-tabs .item, .right-tabs .vtab").forEach(tab => {
       tab.addEventListener("click", () => activateTab(tab.dataset.tab));
     });
     activateTab(this._activeTab ?? "principal");

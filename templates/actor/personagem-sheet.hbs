@@ -1,134 +1,183 @@
-{{!-- Sinfonia das Almas — Ficha de Personagem (DocumentSheetV2) --}}
-<div class="sinfonia-sheet personagem">
+{{!-- Sinfonia das Almas — Ficha de Personagem (DocumentSheetV2) — v0.5 Redesign --}}
+<div class="sinfonia-sheet personagem v2-layout">
 
-  {{!-- ═══ HEADER ═══ --}}
-  <header class="sheet-header">
-    <img class="actor-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Avatar"/>
-    <div class="header-fields">
-
-      {{!-- Linha 1: nome + nível destacado --}}
-      <div class="header-row-1">
-        <input class="actor-name" type="text" name="name" value="{{actor.name}}" placeholder="Nome do Personagem"/>
-        <div class="nivel-bloco" title="Nível e Pontos de Habilidade">
-          <div class="nivel-display">
-            <span class="nivel-label">Nível</span>
-            <input type="number" class="nivel-input" name="system.progressao.nivel" value="{{system.progressao.nivel}}" min="1" max="99"/>
-          </div>
-          <div class="ptshab-display">
-            <span class="ptshab-label">Pts Hab.</span>
-            <input type="number" class="ptshab-input" name="system.progressao.pontosHabilidade" value="{{system.progressao.pontosHabilidade}}" min="0"/>
-          </div>
+  {{!-- ═══════ HEADER FAIXA SUPERIOR ═══════ --}}
+  <header class="sheet-banner">
+    <img class="banner-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Avatar"/>
+    <div class="banner-identity">
+      <input class="banner-name" type="text" name="name" value="{{actor.name}}" placeholder="Nome do Personagem"/>
+      <div class="banner-meta">
+        <select name="system.progressao.classe" class="banner-classe">
+          <option value="" {{#eq "" system.progressao.classe}}selected{{/eq}}>— Classe —</option>
+          <option value="guerreiro" {{#eq "guerreiro" system.progressao.classe}}selected{{/eq}}>Guerreiro</option>
+          <option value="gatuno"    {{#eq "gatuno"    system.progressao.classe}}selected{{/eq}}>Gatuno</option>
+          <option value="arqueiro"  {{#eq "arqueiro"  system.progressao.classe}}selected{{/eq}}>Arqueiro</option>
+          <option value="mago"      {{#eq "mago"      system.progressao.classe}}selected{{/eq}}>Mago</option>
+        </select>
+        <div class="banner-nivel">
+          <span class="banner-mini-label">Nível</span>
+          <input type="number" name="system.progressao.nivel" value="{{system.progressao.nivel}}" min="1" max="99"/>
+        </div>
+        <div class="banner-pts">
+          <span class="banner-mini-label">Pts Hab.</span>
+          <input type="number" name="system.progressao.pontosHabilidade" value="{{system.progressao.pontosHabilidade}}" min="0"/>
         </div>
       </div>
+    </div>
 
-      {{!-- Linha 2: badges PV/PE/PI --}}
-      <div class="header-badges">
-        <div class="badge pv" title="Pontos de Vida">
-          <span class="badge-label">♥ PV</span>
-          <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0"/>
-          <span class="badge-sep">/</span>
-          <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
-        </div>
-        <div class="badge pe" title="Pontos de Energia">
-          <span class="badge-label">✦ PE</span>
-          <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0"/>
-          <span class="badge-sep">/</span>
-          <input type="number" name="system.recursos.pe.max" value="{{system.recursos.pe.max}}" min="0"/>
-        </div>
-        <div class="badge pi" title="Pontos de Inventário">
-          <span class="badge-label">◈ PI</span>
-          <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0"/>
-          <span class="badge-sep">/</span>
-          <input type="number" name="system.recursos.pi.max" value="{{system.recursos.pi.max}}" min="0"/>
-        </div>
-      </div>
-
-      {{!-- Linha 3: classe + deslocamento compacto --}}
-      <div class="header-row-3">
-        <div class="field-group classe-group">
-          <label>Classe</label>
-          <select name="system.progressao.classe">
-            <option value="" {{#eq "" system.progressao.classe}}selected{{/eq}}>— escolha —</option>
-            <option value="guerreiro" {{#eq "guerreiro" system.progressao.classe}}selected{{/eq}}>Guerreiro</option>
-            <option value="gatuno"    {{#eq "gatuno"    system.progressao.classe}}selected{{/eq}}>Gatuno</option>
-            <option value="arqueiro"  {{#eq "arqueiro"  system.progressao.classe}}selected{{/eq}}>Arqueiro</option>
-            <option value="mago"      {{#eq "mago"      system.progressao.classe}}selected{{/eq}}>Mago</option>
-          </select>
-        </div>
-        <div class="field-group desl-group">
-          <label>Desloc.</label>
-          <div class="desl-wrap">
-            <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}" min="0"/>
-            <span class="desl-sufixo">m</span>
+    {{!-- Recursos compactos na faixa --}}
+    <div class="banner-resources">
+      <div class="res-card pv">
+        <div class="res-icon">♥</div>
+        <div class="res-content">
+          <span class="res-label">PV</span>
+          <div class="res-values">
+            <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0"/>
+            <span class="res-sep">/</span>
+            <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
           </div>
         </div>
       </div>
-
+      <div class="res-card pe">
+        <div class="res-icon">✦</div>
+        <div class="res-content">
+          <span class="res-label">PE</span>
+          <div class="res-values">
+            <input type="number" name="system.recursos.pe.value" value="{{system.recursos.pe.value}}" min="0"/>
+            <span class="res-sep">/</span>
+            <input type="number" name="system.recursos.pe.max" value="{{system.recursos.pe.max}}" min="0"/>
+          </div>
+        </div>
+      </div>
+      <div class="res-card pi">
+        <div class="res-icon">◈</div>
+        <div class="res-content">
+          <span class="res-label">PI</span>
+          <div class="res-values">
+            <input type="number" name="system.recursos.pi.value" value="{{system.recursos.pi.value}}" min="0"/>
+            <span class="res-sep">/</span>
+            <input type="number" name="system.recursos.pi.max" value="{{system.recursos.pi.max}}" min="0"/>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
-  {{!-- ═══ ATRIBUTOS ═══ --}}
-  <section class="atributos-section">
-    {{#each atributosConfig as |cfg key|}}
-    <div class="atributo-box">
-      <span class="atrib-code">{{cfg.abbr}}</span>
-      <span class="atrib-label">{{cfg.label}}</span>
-      <select name="system.atributos.{{key}}" class="dado-select">
-        <option value="d6"  {{#eq "d6"  (lookup ../system.atributos key)}}selected{{/eq}}>d6</option>
-        <option value="d8"  {{#eq "d8"  (lookup ../system.atributos key)}}selected{{/eq}}>d8</option>
-        <option value="d10" {{#eq "d10" (lookup ../system.atributos key)}}selected{{/eq}}>d10</option>
-        <option value="d12" {{#eq "d12" (lookup ../system.atributos key)}}selected{{/eq}}>d12</option>
-      </select>
-    </div>
-    {{/each}}
-  </section>
+  {{!-- ═══════ CORPO PRINCIPAL EM 3 COLUNAS ═══════ --}}
+  <div class="sheet-main">
 
-  {{!-- ═══ COMBATE ═══ --}}
-  <section class="combate-section">
-    <div class="combate-box"><label>Defesa</label><input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/></div>
-    <div class="combate-box"><label>Iniciativa</label><input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/></div>
-    <div class="combate-box"><label>ND Mística</label><input type="number" name="system.combate.ndMistica" value="{{system.combate.ndMistica}}"/></div>
-    <div class="combate-box"><label>Estilhaços</label><input type="number" name="system.combate.estilhacos" value="{{system.combate.estilhacos}}" min="0"/></div>
-  </section>
+    {{!-- ─── COLUNA ESQUERDA (FIXA) ─── --}}
+    <aside class="left-rail">
+      <div class="rail-portrait">
+        <img src="{{actor.img}}" data-edit="img" alt="Retrato"/>
+      </div>
 
-  {{!-- ═══ TABS ═══ --}}
-  <div class="sheet-tabs-row">
-    <nav class="sheet-tabs">
-      <a class="item" data-tab="principal">Principal</a>
-      <a class="item" data-tab="habilidades">Habilidades</a>
-      <a class="item" data-tab="inventario">Inventário</a>
-      <a class="item" data-tab="alma">Alma</a>
-      <a class="item" data-tab="bio">Origens &amp; Bio</a>
-    </nav>
-    <button type="button" data-action="abrirArvore" class="btn-arvore">✶ Árvore de Habilidades</button>
-  </div>
+      <div class="rail-stats">
+        <div class="rail-stat" title="Iniciativa">
+          <span class="rail-stat-icon">⚡</span>
+          <span class="rail-stat-label">INIT</span>
+          <input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/>
+        </div>
+        <div class="rail-stat" title="Defesa Passiva">
+          <span class="rail-stat-icon">🛡</span>
+          <span class="rail-stat-label">DEF</span>
+          <input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/>
+        </div>
+        <div class="rail-stat" title="Deslocamento">
+          <span class="rail-stat-icon">⇄</span>
+          <span class="rail-stat-label">DESL</span>
+          <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}"/>
+          <span class="rail-stat-suffix">m</span>
+        </div>
+        <div class="rail-stat" title="ND Mística">
+          <span class="rail-stat-icon">✦</span>
+          <span class="rail-stat-label">ND M.</span>
+          <input type="number" name="system.combate.ndMistica" value="{{system.combate.ndMistica}}"/>
+        </div>
+        <div class="rail-stat estilhacos" title="Estilhaços da Alma">
+          <span class="rail-stat-icon">◈</span>
+          <span class="rail-stat-label">ESTILH.</span>
+          <input type="number" name="system.combate.estilhacos" value="{{system.combate.estilhacos}}" min="0"/>
+        </div>
+      </div>
 
-  <div class="sheet-body">
+      <button type="button" data-action="abrirArvore" class="rail-btn-arvore">
+        <span>✶</span> Árvore de Habilidades
+      </button>
 
-    {{!-- TAB: PRINCIPAL --}}
-    <div class="tab" data-tab="principal">
-      {{> "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs"}}
-    </div>
+      <button type="button" data-action="descansar" class="rail-btn-secondary">
+        <span>☾</span> Descansar
+      </button>
+    </aside>
 
-    {{!-- TAB: HABILIDADES (árvore) --}}
-    <div class="tab" data-tab="habilidades">
-      {{> "systems/sinfonia-das-almas/templates/actor/tabs/habilidades-arvore.hbs"}}
-    </div>
+    {{!-- ─── COLUNA CENTRAL ─── --}}
+    <main class="center-content">
 
-    {{!-- TAB: INVENTÁRIO --}}
-    <div class="tab" data-tab="inventario">
-      {{> "systems/sinfonia-das-almas/templates/actor/tabs/inventario.hbs"}}
-    </div>
+      {{!-- Atributos no topo --}}
+      <section class="atributos-cards">
+        {{#each atributosConfig as |cfg key|}}
+        <div class="atrib-card">
+          <span class="atrib-abbr">{{cfg.abbr}}</span>
+          <select name="system.atributos.{{key}}" class="atrib-dado">
+            <option value="d6"  {{#eq "d6"  (lookup ../system.atributos key)}}selected{{/eq}}>d6</option>
+            <option value="d8"  {{#eq "d8"  (lookup ../system.atributos key)}}selected{{/eq}}>d8</option>
+            <option value="d10" {{#eq "d10" (lookup ../system.atributos key)}}selected{{/eq}}>d10</option>
+            <option value="d12" {{#eq "d12" (lookup ../system.atributos key)}}selected{{/eq}}>d12</option>
+          </select>
+          <span class="atrib-label">{{cfg.label}}</span>
+        </div>
+        {{/each}}
+      </section>
 
-    {{!-- TAB: ALMA --}}
-    <div class="tab" data-tab="alma">
-      {{> "systems/sinfonia-das-almas/templates/actor/tabs/alma.hbs"}}
-    </div>
+      {{!-- Conteúdo da tab ativa --}}
+      <div class="sheet-body">
 
-    {{!-- TAB: BIO --}}
-    <div class="tab" data-tab="bio">
-      {{> "systems/sinfonia-das-almas/templates/actor/tabs/bio.hbs"}}
-    </div>
+        <div class="tab" data-tab="principal">
+          {{> "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs"}}
+        </div>
+
+        <div class="tab" data-tab="habilidades">
+          {{> "systems/sinfonia-das-almas/templates/actor/tabs/habilidades-arvore.hbs"}}
+        </div>
+
+        <div class="tab" data-tab="inventario">
+          {{> "systems/sinfonia-das-almas/templates/actor/tabs/inventario.hbs"}}
+        </div>
+
+        <div class="tab" data-tab="alma">
+          {{> "systems/sinfonia-das-almas/templates/actor/tabs/alma.hbs"}}
+        </div>
+
+        <div class="tab" data-tab="bio">
+          {{> "systems/sinfonia-das-almas/templates/actor/tabs/bio.hbs"}}
+        </div>
+
+      </div>
+    </main>
+
+    {{!-- ─── COLUNA DIREITA: TABS VERTICAIS ─── --}}
+    <aside class="right-tabs">
+      <a class="vtab" data-tab="principal" title="Perícias, Habilidades, Magias, Armas">
+        <span class="vtab-icon">⚔</span>
+        <span class="vtab-label">Principal</span>
+      </a>
+      <a class="vtab" data-tab="habilidades" title="Árvore de Habilidades">
+        <span class="vtab-icon">✶</span>
+        <span class="vtab-label">Habilidades</span>
+      </a>
+      <a class="vtab" data-tab="inventario" title="Inventário">
+        <span class="vtab-icon">◈</span>
+        <span class="vtab-label">Inventário</span>
+      </a>
+      <a class="vtab" data-tab="alma" title="Alma">
+        <span class="vtab-icon">★</span>
+        <span class="vtab-label">Alma</span>
+      </a>
+      <a class="vtab" data-tab="bio" title="Origens e Biografia">
+        <span class="vtab-icon">⚭</span>
+        <span class="vtab-label">Origens & Bio</span>
+      </a>
+    </aside>
 
   </div>
 </div>
