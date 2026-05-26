@@ -15,6 +15,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Extrair versão da tag
         id: version
         run: echo "VERSION=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
@@ -26,9 +31,15 @@ jobs:
           mv system.tmp.json system.json
           echo "Versão atualizada para $VERSION"
 
+      - name: Instalar dependências
+        run: npm install
+
+      - name: Build Compendium Packs
+        run: npm run build:packs
+
       - name: Criar ZIP do sistema
         run: |
-          # Empacota somente os arquivos do sistema (sem .git, sem .github)
+          # Empacota somente os arquivos do sistema (sem .git, sem .github, sem node_modules, sem packs-source)
           zip -r sinfonia-das-almas.zip \
             system.json \
             sinfonia.mjs \
@@ -36,9 +47,11 @@ jobs:
             templates/ \
             styles/ \
             lang/ \
+            packs/ \
             README.md \
             --exclude "*.DS_Store" \
-            --exclude "*Thumbs.db"
+            --exclude "*Thumbs.db" \
+            --exclude "node_modules/*"
           echo "ZIP criado: $(du -sh sinfonia-das-almas.zip)"
 
       - name: Criar GitHub Release
@@ -56,6 +69,10 @@ jobs:
 
             ### Instalação Manual
             Baixe o `sinfonia-das-almas.zip` abaixo e extraia em `{foundryData}/Data/systems/`
+
+            ### Compendiums Incluídos
+            - **Armas do Núcleo** (4 armas oficiais)
+            - **Magias do Núcleo** (67 magias arcanas e sagradas)
           files: |
             sinfonia-das-almas.zip
             system.json

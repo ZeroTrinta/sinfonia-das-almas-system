@@ -1,0 +1,14 @@
+{
+  "name": "sinfonia-das-almas-system",
+  "version": "0.5.0",
+  "description": "Build tooling para o sistema Sinfonia das Almas (Foundry VTT v12)",
+  "type": "module",
+  "scripts": {
+    "build:packs": "node tools/build-packs.mjs",
+    "clean:packs": "node tools/clean-packs.mjs"
+  },
+  "devDependencies": {
+    "@foundryvtt/foundryvtt-cli": "^1.0.4"
+  },
+  "private": true
+}

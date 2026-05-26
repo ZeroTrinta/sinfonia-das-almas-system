@@ -240,7 +240,11 @@ export class ArmaDataModel extends BaseItemModel {
       tipoDano: new StringField({ required: true, blank: true, initial: "corte" }),
       alcance:  new NumberField({ required: true, min: 0, initial: 1.5 }),
       bonus:    new NumberField({ required: true, integer: true, initial: 0 }),
-      equipado: new BooleanField({ required: true, initial: false })
+      equipado: new BooleanField({ required: true, initial: false }),
+      // Propriedades especiais
+      duasMaos:        new BooleanField({ required: true, initial: false }),
+      duplaEmpunhadura: new BooleanField({ required: true, initial: false }),
+      propriedades:    new StringField({ required: true, blank: true, initial: "" })
     };
   }
 }

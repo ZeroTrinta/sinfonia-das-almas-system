@@ -1,76 +1,79 @@
-# Pack de Armas — Sinfonia das Almas
+# packs-source
 
-Pasta com dados de armas pré-fabricadas para importação no Foundry.
+Fonte editável dos Compendium Packs do sistema **Sinfonia das Almas**.
 
-## Como importar no Foundry
+## Como funciona (v0.5.0+)
 
-### Opção 1 — Macro (recomendado)
+Os arquivos `.json` nesta pasta são a **fonte de verdade** das armas e magias. O build script (`tools/build-packs.mjs`) compila esses JSONs em **Compendium Packs (LevelDB)** que ficam em `packs/` e aparecem automaticamente dentro do Foundry quando o sistema é instalado.
 
-1. No Foundry, abra a aba **Macros** (na hotbar inferior, clique em qualquer slot vazio).
-2. Crie uma nova macro do tipo **Script**.
-3. Cole o conteúdo de `importar-armas.js` no campo de comando.
-4. Salve e execute (clique na macro ou arraste pra hotbar).
-5. As 12 armas vão aparecer na aba **Itens** do mundo.
-6. Arraste qualquer uma pra ficha de um personagem.
+### Estrutura
 
-### Opção 2 — Drag and drop manual
+| Arquivo | Pack gerado | Conteúdo |
+|---------|-------------|----------|
+| `armas.json`  | `packs/armas-nucleo/`  | 4 armas oficiais |
+| `magias.json` | `packs/magias-nucleo/` | 67 magias |
 
-Não suportado nativamente pelo Foundry para JSON simples — use a Opção 1.
+### Como adicionar/editar items
 
-## Como adicionar/editar armas
+1. Edite o JSON correspondente em `packs-source/`
+2. Rode `npm run build:packs` localmente para testar (precisa de Node 20+)
+3. Commit e push — o workflow do GitHub Actions reconstrói no release
 
-Abra `armas.json` num editor de texto. Cada entrada tem:
+### Build local
+
+```bash
+npm install
+npm run build:packs   # gera packs/armas-nucleo e packs/magias-nucleo
+npm run clean:packs   # limpa pasta packs/
+```
+
+## Macros legadas (`importar-*.js`)
+
+As macros `importar-armas.js` e `importar-magias.js` ainda funcionam, mas com Compendium Packs você **não precisa mais delas**. Basta arrastar items direto do Compendium pra ficha. Estão aqui como backup caso queira importar via macro em mundos antigos.
+
+## Schema das Armas
 
 ```json
 {
-  "name": "Nome da Arma",
+  "name": "Long Sword",
   "type": "arma",
-  "img": "caminho/icone.webp",
+  "img": "icons/weapons/swords/sword-guard-gold.webp",
   "system": {
-    "categoria": "leve | espada | haste | pesada | precisao | fogo",
-    "tipoDano": "corte | perfuracao | impacto | fogo | frio | trovao | acido | veneno | sagrado | profano",
-    "dano": "1d10 + @pod + 2",
+    "categoria": "espada",        // leve, espada, haste, pesada, precisao, fogo
+    "dano": "@pod+@agi+8",        // @pod, @agi, @int, @car, @mis (valor do dado)
+    "tipoDano": "fisico",
     "alcance": 1.5,
     "bonus": 0,
-    "peso": 1.5,
     "equipado": false,
-    "descricao": "<p>HTML aceito aqui.</p>"
+    "duasMaos": false,
+    "duplaEmpunhadura": false,
+    "propriedades": "Uma mão",
+    "descricao": "<p>...</p>",
+    "peso": 3
   }
 }
 ```
 
-### Variáveis de atributo na fórmula de dano
+## Schema das Magias
 
-- `@pod` — valor do dado de Poder
-- `@agi` — valor do dado de Agilidade
-- `@int` — valor do dado de Intelecto
-- `@car` — valor do dado de Carisma
-- `@mis` — valor do dado de Misticismo
-
-Estes resolvem para o valor numérico do dado (d6=6, d8=8, d10=10, d12=12), não rolam o dado.
-
-### Mapeamento categoria → perícia de ataque
-
-- `leve`, `espada`, `haste`, `pesada` → **Armas Brancas** (POD + AGI)
-- `precisao`, `fogo` → **Armas de Fogo** (AGI + INT)
-
-### Ícones
-
-Os caminhos `icons/...` referem-se aos ícones nativos do Foundry. Para usar ícones próprios, coloque em `systems/sinfonia-das-almas/icons/` e use esse caminho.
-
-## Armas incluídas
-
-| Nome | Categoria | Dano | Tipo |
-|---|---|---|---|
-| Adaga Enferrujada | leve | 1d4 + @agi | perfuração |
-| Faca do Ladino | leve | 1d6 + @agi (+1) | perfuração |
-| Espada Curta | espada | 1d8 + @pod | corte |
-| Espada Longa | espada | 1d10 + @pod | corte |
-| Lâmina do Penitente | espada | 1d10 + @pod + 2 (+2) | sagrado |
-| Lança de Caça | haste | 1d8 + @pod | perfuração |
-| Alabarda | haste | 1d10 + @pod + 1 | corte |
-| Maça de Armas | pesada | 1d10 + @pod | impacto |
-| Machado de Batalha | pesada | 1d12 + @pod | corte |
-| Arco Curto | precisão | 1d8 + @agi | perfuração |
-| Besta Pesada | precisão | 1d12 + @agi (+1) | perfuração |
-| Pistola de Pederneira | fogo | 1d10 + @agi + 2 | perfuração |
+```json
+{
+  "name": "Dardo de Fogo",
+  "type": "magia",
+  "img": "icons/magic/fire/projectile-fireball.webp",
+  "system": {
+    "tipo": "arcana",       // arcana ou sagrada
+    "circulo": 1,           // 1 a 5
+    "escola": "evocacao",
+    "custoPE": 10,
+    "custoContinuo": 0,
+    "tempoCon": "1 Ação Inicial",
+    "alcance": "18 metros",
+    "duracao": "Instantânea",
+    "areaEfeito": "",
+    "resistencia": "",
+    "descricao": "<p>...</p>",
+    "peso": 0
+  }
+}
+```
