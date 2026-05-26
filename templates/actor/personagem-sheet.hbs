@@ -119,16 +119,16 @@
 
       {{!-- Atributos no topo --}}
       <section class="atributos-cards">
-        {{#each atributosConfig as |cfg key|}}
+        {{#each atributosTodos}}
         <div class="atrib-card">
-          <span class="atrib-abbr">{{cfg.abbr}}</span>
-          <select name="system.atributos.{{key}}" class="atrib-dado">
-            <option value="d6"  {{#eq "d6"  (lookup ../system.atributos key)}}selected{{/eq}}>d6</option>
-            <option value="d8"  {{#eq "d8"  (lookup ../system.atributos key)}}selected{{/eq}}>d8</option>
-            <option value="d10" {{#eq "d10" (lookup ../system.atributos key)}}selected{{/eq}}>d10</option>
-            <option value="d12" {{#eq "d12" (lookup ../system.atributos key)}}selected{{/eq}}>d12</option>
+          <span class="atrib-abbr">{{this.abbr}}</span>
+          <select name="system.atributos.{{this.key}}" class="atrib-dado">
+            <option value="d6"  {{#if this.isD6}}selected{{/if}}>d6</option>
+            <option value="d8"  {{#if this.isD8}}selected{{/if}}>d8</option>
+            <option value="d10" {{#if this.isD10}}selected{{/if}}>d10</option>
+            <option value="d12" {{#if this.isD12}}selected{{/if}}>d12</option>
           </select>
-          <span class="atrib-label">{{cfg.label}}</span>
+          <span class="atrib-label">{{this.label}}</span>
         </div>
         {{/each}}
       </section>

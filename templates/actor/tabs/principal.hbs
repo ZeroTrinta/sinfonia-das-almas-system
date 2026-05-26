@@ -8,22 +8,22 @@
       <span class="panel-hint">Clique no nome para rolar.</span>
     </div>
     <div class="pericias-grid">
-      {{#each periciasConfig as |cfg key|}}
-      <div class="pericia-row maestria-{{lookup ../system.pericias key}}{{#unless (lookup ../system.pericias key)}} sem-maestria{{/unless}}" data-key="{{key}}">
+      {{#each periciasTodas}}
+      <div class="pericia-row maestria-{{this.maestria}}{{#if this.isNone}} sem-maestria{{/if}}" data-key="{{this.key}}">
         <a class="pericia-rolar"
            data-action="rolarPericia"
-           data-pericia="{{key}}"
-           data-atrib-a="{{cfg.atribA}}"
-           data-atrib-b="{{cfg.atribB}}"
-           title="Rolar {{cfg.label}}">
-          <span class="pericia-nome">{{cfg.label}}</span>
-          <span class="pericia-atribs">{{upper cfg.atribA}}+{{upper cfg.atribB}}</span>
+           data-pericia="{{this.key}}"
+           data-atrib-a="{{this.atribA}}"
+           data-atrib-b="{{this.atribB}}"
+           title="Rolar {{this.label}}">
+          <span class="pericia-nome">{{this.label}}</span>
+          <span class="pericia-atribs">{{upper this.atribA}}+{{upper this.atribB}}</span>
         </a>
-        <select class="sel-maestria" name="system.pericias.{{key}}" title="Maestria">
-          <option value=""           {{#eq "" (lookup ../system.pericias key)}}selected{{/eq}}>—</option>
-          <option value="iniciante"  {{#eq "iniciante"  (lookup ../system.pericias key)}}selected{{/eq}}>I (+2)</option>
-          <option value="treinado"   {{#eq "treinado"   (lookup ../system.pericias key)}}selected{{/eq}}>T (+4)</option>
-          <option value="experiente" {{#eq "experiente" (lookup ../system.pericias key)}}selected{{/eq}}>E (+6)</option>
+        <select class="sel-maestria" name="system.pericias.{{this.key}}" title="Maestria">
+          <option value=""           {{#if this.isNone}}selected{{/if}}>—</option>
+          <option value="iniciante"  {{#if this.isIniciante}}selected{{/if}}>I (+2)</option>
+          <option value="treinado"   {{#if this.isTreinado}}selected{{/if}}>T (+4)</option>
+          <option value="experiente" {{#if this.isExperiente}}selected{{/if}}>E (+6)</option>
         </select>
       </div>
       {{/each}}
@@ -37,36 +37,31 @@
       <span class="panel-hint">Marque ★ em qualquer item para fixá-lo aqui.</span>
     </div>
     <ul class="items-list favoritos-list">
-      {{#each favoritos as |item|}}
-      <li class="item favorito-item tipo-{{item.type}}" data-item-id="{{item.id}}">
-        <a class="fav-toggle is-fav" data-action="toggleFavorito" data-item-id="{{item.id}}" title="Desfavoritar">
+      {{#each favoritos}}
+      <li class="item favorito-item tipo-{{this.type}}" data-item-id="{{this.id}}">
+        <a class="fav-toggle is-fav" data-action="toggleFavorito" data-item-id="{{this.id}}" title="Desfavoritar">
           <i class="fas fa-star"></i>
         </a>
-        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+        <img class="item-img" src="{{this.img}}" alt="{{this.name}}"/>
         <div class="item-info">
-          <span class="item-nome">{{item.name}}</span>
+          <span class="item-nome">{{this.name}}</span>
           <span class="item-sub">
-            {{#if (eq item.type "arma")}}
-              {{item.system.dano}} {{item.system.tipoDano}}
-            {{else if (eq item.type "magia")}}
-              {{item.system.circulo}}º · {{item.system.custoPE}} PE
-            {{else if (eq item.type "habilidade")}}
-              {{#if item.system.custoPE}}{{item.system.custoPE}} PE{{else}}Habilidade{{/if}}
-            {{else if (eq item.type "armadura")}}
-              +{{item.system.bonusDefesa}} DEF
-            {{else if (eq item.type "inventario")}}
-              x{{item.system.quantidade}}
-            {{/if}}
+            {{#if (eq this.type "arma")}}{{this.system.dano}} {{this.system.tipoDano}}{{/if}}
+            {{#if (eq this.type "magia")}}{{this.system.circulo}}º · {{this.system.custoPE}} PE{{/if}}
+            {{#if (eq this.type "habilidade")}}{{#if this.system.custoPE}}{{this.system.custoPE}} PE{{else}}Habilidade{{/if}}{{/if}}
+            {{#if (eq this.type "armadura")}}+{{this.system.bonusDefesa}} DEF{{/if}}
+            {{#if (eq this.type "inventario")}}x{{this.system.quantidade}}{{/if}}
           </span>
         </div>
         <div class="item-controls">
-          {{#if (eq item.type "arma")}}
-            <a data-action="atacarArma"    data-item-id="{{item.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
-            <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
-          {{else}}
-            <a data-action="usarItem" data-item-id="{{item.id}}" title="Usar"><i class="fas fa-bolt"></i></a>
+          {{#if (eq this.type "arma")}}
+            <a data-action="atacarArma"    data-item-id="{{this.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
+            <a data-action="rolarDanoArma" data-item-id="{{this.id}}" title="Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
           {{/if}}
-          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+          {{#unless (eq this.type "arma")}}
+            <a data-action="usarItem" data-item-id="{{this.id}}" title="Usar"><i class="fas fa-bolt"></i></a>
+          {{/unless}}
+          <a data-action="editarItem"  data-item-id="{{this.id}}" title="Editar"><i class="fas fa-edit"></i></a>
         </div>
       </li>
       {{else}}

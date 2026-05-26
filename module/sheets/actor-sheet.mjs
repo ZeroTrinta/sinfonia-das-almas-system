@@ -58,6 +58,40 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       if (maestria) periciasComMaestria.push({ key, maestria, ...cfg });
     }
 
+    // Lista plana de TODAS as perícias para o grid (3 colunas).
+    // Inclui a maestria atual já resolvida (evita lookup aninhado no Handlebars,
+    // que estava quebrando o template).
+    const periciasTodas = Object.entries(SINFONIA.PERICIAS).map(([key, cfg]) => {
+      const maestria = sys.pericias?.[key] || "";
+      return {
+        key,
+        label: cfg.label,
+        atribA: cfg.atribA,
+        atribB: cfg.atribB,
+        maestria,
+        // Pra simplificar template: flags booleanas pra cada nível
+        isNone:       maestria === "",
+        isIniciante:  maestria === "iniciante",
+        isTreinado:   maestria === "treinado",
+        isExperiente: maestria === "experiente"
+      };
+    });
+
+    // Lista plana de atributos para os cards do topo (mesmo motivo: evita lookup).
+    const atributosTodos = Object.entries(SINFONIA.ATRIBUTOS).map(([key, cfg]) => {
+      const dado = sys.atributos?.[key] || "d6";
+      return {
+        key,
+        label: cfg.label,
+        abbr: cfg.abbr,
+        dado,
+        isD6:  dado === "d6",
+        isD8:  dado === "d8",
+        isD10: dado === "d10",
+        isD12: dado === "d12"
+      };
+    });
+
     // ── Aba Habilidades: agrupa nós ativos da árvore por classe ──────────────
     const ativos = doc.getFlag("sinfonia-das-almas", "arvoreAtiva") ?? {};
     const nodesAtivos = (SINFONIA.NODES || []).filter(n => ativos[n.id] === true);
@@ -86,8 +120,10 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       isOwner:         doc.isOwner,
       isEditable:      this.isEditable,
       atributosConfig: SINFONIA.ATRIBUTOS,
+      atributosTodos,
       periciasConfig:  SINFONIA.PERICIAS,
       periciasComMaestria,
+      periciasTodas,
       habArvore,
       habilidades:     doc.items.filter(i => i.type === "habilidade"),
       magias:          doc.items.filter(i => i.type === "magia").sort((a,b) => a.system.circulo - b.system.circulo),

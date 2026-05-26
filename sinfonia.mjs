@@ -265,6 +265,7 @@ Hooks.once("init", () => {
     "systems/sinfonia-das-almas/templates/actor/npc-sheet.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/principal.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/pericias.hbs",
+    "systems/sinfonia-das-almas/templates/actor/tabs/magias.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/inventario.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/alma.hbs",
     "systems/sinfonia-das-almas/templates/actor/tabs/bio.hbs",
@@ -285,7 +286,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.5.1");
+  console.log("Sinfonia das Almas | Pronto. v0.5.2");
 
   // ── Listener delegado: botões dentro das mensagens de chat ──
   document.body.addEventListener("click", async (ev) => {
