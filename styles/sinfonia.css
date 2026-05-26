@@ -1922,3 +1922,148 @@
 .sinfonia-dano-roll .dano-acoes button {
   flex: 1; justify-content: center;
 }
+
+/* ================================================================
+   FASE 3 (v0.5.0) — PERÍCIAS-GRID + LAYOUT REORGANIZADO
+================================================================ */
+
+/* Grid de perícias — 3 colunas, tudo visível inline */
+.pericias-grid-panel {
+  margin-bottom: 14px;
+}
+.pericias-grid-panel .panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.pericias-grid-panel .panel-hint {
+  font-family: 'EB Garamond', serif;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--silver-dim);
+}
+
+.pericias-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px 12px;
+}
+
+.pericias-grid .pericia-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  background: rgba(255,255,255,0.02);
+  border-left: 2px solid transparent;
+  font-family: 'EB Garamond', serif;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pericias-grid .pericia-row:hover {
+  background: rgba(200,151,42,0.06);
+}
+
+/* Estados de maestria — borda esquerda colorida */
+.pericias-grid .pericia-row.sem-maestria { border-left-color: rgba(120,136,160,0.3); }
+.pericias-grid .pericia-row.maestria-iniciante  { border-left-color: #80a040; }
+.pericias-grid .pericia-row.maestria-treinado   { border-left-color: #4a9eff; }
+.pericias-grid .pericia-row.maestria-experiente { border-left-color: var(--gold); }
+
+.pericias-grid .pericia-rolar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-decoration: none;
+  cursor: pointer;
+  min-width: 0;
+}
+.pericias-grid .pericia-rolar:hover .pericia-nome {
+  color: var(--gold-light);
+  text-shadow: 0 0 4px rgba(240,192,96,0.3);
+}
+
+.pericias-grid .pericia-nome {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.pericias-grid .pericia-atribs {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+}
+.pericias-grid .pericia-row.sem-maestria .pericia-nome { color: var(--silver-dim); }
+.pericias-grid .pericia-row.maestria-experiente .pericia-nome { color: var(--gold-light); }
+
+.pericias-grid .sel-maestria {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(200,151,42,0.2);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  padding: 2px 4px;
+  width: 60px;
+  cursor: pointer;
+}
+.pericias-grid .sel-maestria:hover {
+  border-color: var(--gold);
+}
+
+/* Items-row: 3 colunas pra Habilidades, Magias, Armas */
+.items-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 1024px) {
+  .items-row {
+    grid-template-columns: 1fr;
+  }
+  .pericias-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Itens-panel mais compacto na nova grid */
+.items-row .itens-panel .items-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+.items-row .itens-panel .item {
+  padding: 4px 6px;
+  font-size: 12px;
+}
+.items-row .itens-panel .item-nome {
+  font-size: 13px;
+}
+.items-row .itens-panel .item-sub,
+.items-row .itens-panel .item-custo {
+  font-size: 10px;
+}
+.items-row .itens-panel .item-img {
+  width: 28px;
+  height: 28px;
+}
+.items-row .itens-panel .magia-circulo {
+  font-size: 11px;
+  min-width: 22px;
+}
+
+/* Mensagem quando vazio */
+.items-row .itens-panel .items-vazio {
+  font-style: italic;
+  color: var(--silver-dim);
+  font-size: 11px;
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px dashed rgba(200,151,42,0.2);
+  border-radius: 2px;
+}

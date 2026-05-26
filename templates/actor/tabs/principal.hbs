@@ -1,137 +1,119 @@
-{{!-- TAB PRINCIPAL: Perícias, Origens, Habilidades, Magias, Armas --}}
+{{!-- TAB PRINCIPAL: Perícias (3 colunas), Habilidades, Magias, Armas --}}
 <div class="principal-layout">
 
-  {{!-- PERÍCIAS COM MAESTRIA --}}
-  <section class="panel pericias-resumo-panel">
+  {{!-- ═══ PERÍCIAS — TODAS, EM 3 COLUNAS, INLINE ═══ --}}
+  <section class="panel pericias-grid-panel">
     <div class="panel-header">
       <h3 class="panel-title">Perícias</h3>
-      <a data-action="verTodasPericias" title="Ver todas as perícias">
-        <i class="fas fa-list"></i> ver todas
-      </a>
+      <span class="panel-hint">Clique no nome para rolar. Maestria salva automaticamente.</span>
     </div>
-    {{#if periciasComMaestria.length}}
-    <ul class="pericias-resumo">
-      {{#each periciasComMaestria as |p|}}
-      <li class="pericia-resumo-item maestria-{{p.maestria}}">
-        <a class="pericia-rolar" data-action="rolarPericia"
-           data-pericia="{{p.key}}" data-atrib-a="{{p.atribA}}" data-atrib-b="{{p.atribB}}"
-           title="Rolar {{p.label}}">
-          <span class="pericia-nome">{{p.label}}</span>
-          <span class="pericia-atribs">{{upper p.atribA}}+{{upper p.atribB}}</span>
-          <span class="pericia-maestria-tag">{{p.maestria}}</span>
+    <div class="pericias-grid">
+      {{#each periciasConfig as |cfg key|}}
+      {{#with (lookup ../system.pericias key) as |maestria|}}
+      <div class="pericia-row maestria-{{this}}{{#unless this}} sem-maestria{{/unless}}" data-key="{{key}}">
+        <a class="pericia-rolar"
+           data-action="rolarPericia"
+           data-pericia="{{key}}"
+           data-atrib-a="{{cfg.atribA}}"
+           data-atrib-b="{{cfg.atribB}}"
+           title="Rolar {{cfg.label}}">
+          <span class="pericia-nome">{{cfg.label}}</span>
+          <span class="pericia-atribs">{{upper cfg.atribA}}+{{upper cfg.atribB}}</span>
         </a>
-      </li>
+        <select class="sel-maestria" name="system.pericias.{{key}}" title="Maestria">
+          <option value=""           {{#eq "" this}}selected{{/eq}}>—</option>
+          <option value="iniciante"  {{#eq "iniciante" this}}selected{{/eq}}>I (+2)</option>
+          <option value="treinado"   {{#eq "treinado" this}}selected{{/eq}}>T (+4)</option>
+          <option value="experiente" {{#eq "experiente" this}}selected{{/eq}}>E (+6)</option>
+        </select>
+      </div>
+      {{/with}}
       {{/each}}
-    </ul>
-    {{else}}
-    <p class="items-vazio">Nenhuma perícia com maestria. Clique em “ver todas” para definir.</p>
-    {{/if}}
-  </section>
-
-  {{!-- ORIGENS --}}
-  <section class="panel origens-panel">
-    <h3 class="panel-title">Origens</h3>
-    <div class="origem-item">
-      <label>Evento Marcante</label>
-      <input type="text" name="system.origem.eventoMarcante.descricao"
-        value="{{system.origem.eventoMarcante.descricao}}"
-        placeholder="Ex: Sobrevivente de uma tragédia..."/>
-      <label class="origem-check">
-        <input type="checkbox" name="system.origem.eventoMarcante.usadoNaSessao"
-          {{#if system.origem.eventoMarcante.usadoNaSessao}}checked{{/if}}/>
-        Usado nesta sessão
-      </label>
-    </div>
-    <div class="origem-item">
-      <label>Ocupação</label>
-      <input type="text" name="system.origem.ocupacao.descricao"
-        value="{{system.origem.ocupacao.descricao}}"
-        placeholder="Ex: Guerreiro Amargurado"/>
-      <label class="origem-check">
-        <input type="checkbox" name="system.origem.ocupacao.usadoNaSessao"
-          {{#if system.origem.ocupacao.usadoNaSessao}}checked{{/if}}/>
-        Usado nesta sessão
-      </label>
     </div>
   </section>
 
-  {{!-- HABILIDADES --}}
-  <section class="panel itens-panel">
-    <div class="panel-header">
-      <h3 class="panel-title">Habilidades</h3>
-      <a data-action="criarItem" data-tipo="habilidade" title="Adicionar"><i class="fas fa-plus"></i></a>
-    </div>
-    <ul class="items-list">
-      {{#each habilidades as |item|}}
-      <li class="item" data-item-id="{{item.id}}">
-        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
-        <div class="item-info">
-          <span class="item-nome">{{item.name}}</span>
-          {{#if item.system.custoPE}}<span class="item-custo">{{item.system.custoPE}} PE</span>{{/if}}
-        </div>
-        <div class="item-controls">
-          <a data-action="usarItem"   data-item-id="{{item.id}}" title="Usar"><i class="fas fa-bolt"></i></a>
-          <a data-action="editarItem" data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-          <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
-        </div>
-      </li>
-      {{else}}
-      <li class="items-vazio">Nenhuma habilidade.</li>
-      {{/each}}
-    </ul>
-  </section>
+  {{!-- ═══ HABILIDADES + MAGIAS + ARMAS (em 3 colunas no desktop) ═══ --}}
+  <div class="items-row">
 
-  {{!-- MAGIAS --}}
-  <section class="panel itens-panel">
-    <div class="panel-header">
-      <h3 class="panel-title">Magias</h3>
-      <a data-action="criarItem" data-tipo="magia" title="Adicionar"><i class="fas fa-plus"></i></a>
-    </div>
-    <ul class="items-list">
-      {{#each magias as |item|}}
-      <li class="item magia-item circulo-{{item.system.circulo}}" data-item-id="{{item.id}}">
-        <div class="magia-circulo">{{item.system.circulo}}º</div>
-        <div class="item-info">
-          <span class="item-nome">{{item.name}}</span>
-          <span class="item-sub">{{item.system.custoPE}} PE · {{item.system.alcance}}</span>
-        </div>
-        <div class="item-controls">
-          <a data-action="usarItem"    data-item-id="{{item.id}}" title="Conjurar"><i class="fas fa-magic"></i></a>
-          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-          <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
-        </div>
-      </li>
-      {{else}}
-      <li class="items-vazio">Nenhuma magia.</li>
-      {{/each}}
-    </ul>
-  </section>
+    {{!-- HABILIDADES --}}
+    <section class="panel itens-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Habilidades</h3>
+        <a data-action="criarItem" data-tipo="habilidade" title="Adicionar"><i class="fas fa-plus"></i></a>
+      </div>
+      <ul class="items-list">
+        {{#each habilidades as |item|}}
+        <li class="item" data-item-id="{{item.id}}">
+          <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+          <div class="item-info">
+            <span class="item-nome">{{item.name}}</span>
+            {{#if item.system.custoPE}}<span class="item-custo">{{item.system.custoPE}} PE</span>{{/if}}
+          </div>
+          <div class="item-controls">
+            <a data-action="usarItem"   data-item-id="{{item.id}}" title="Usar"><i class="fas fa-bolt"></i></a>
+            <a data-action="editarItem" data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+            <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+        {{else}}
+        <li class="items-vazio">Arraste do compendium ou clique em +</li>
+        {{/each}}
+      </ul>
+    </section>
 
-  {{!-- ARMAS --}}
-  <section class="panel itens-panel">
-    <div class="panel-header">
-      <h3 class="panel-title">Armas</h3>
-      <a data-action="criarItem" data-tipo="arma" title="Adicionar"><i class="fas fa-plus"></i></a>
-    </div>
-    <ul class="items-list">
-      {{#each armas as |item|}}
-      <li class="item arma-item" data-item-id="{{item.id}}">
-        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
-        <div class="item-info">
-          <span class="item-nome">{{item.name}}</span>
-          <span class="item-sub">{{item.system.dano}} {{item.system.tipoDano}}</span>
-        </div>
-        <div class="item-controls">
-          <a data-action="atacarArma"    data-item-id="{{item.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
-          <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Só Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
-          <a data-action="editarItem"   data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-          <a data-action="deletarItem"  data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
-        </div>
-      </li>
-      {{else}}
-      <li class="items-vazio">Nenhuma arma.</li>
-      {{/each}}
-    </ul>
-  </section>
+    {{!-- MAGIAS --}}
+    <section class="panel itens-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Magias</h3>
+        <a data-action="criarItem" data-tipo="magia" title="Adicionar"><i class="fas fa-plus"></i></a>
+      </div>
+      <ul class="items-list">
+        {{#each magias as |item|}}
+        <li class="item magia-item circulo-{{item.system.circulo}}" data-item-id="{{item.id}}">
+          <div class="magia-circulo">{{item.system.circulo}}º</div>
+          <div class="item-info">
+            <span class="item-nome">{{item.name}}</span>
+            <span class="item-sub">{{item.system.custoPE}} PE · {{item.system.alcance}}</span>
+          </div>
+          <div class="item-controls">
+            <a data-action="usarItem"    data-item-id="{{item.id}}" title="Conjurar"><i class="fas fa-magic"></i></a>
+            <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+            <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+        {{else}}
+        <li class="items-vazio">Arraste do compendium ou clique em +</li>
+        {{/each}}
+      </ul>
+    </section>
+
+    {{!-- ARMAS --}}
+    <section class="panel itens-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Armas</h3>
+        <a data-action="criarItem" data-tipo="arma" title="Adicionar"><i class="fas fa-plus"></i></a>
+      </div>
+      <ul class="items-list">
+        {{#each armas as |item|}}
+        <li class="item arma-item" data-item-id="{{item.id}}">
+          <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+          <div class="item-info">
+            <span class="item-nome">{{item.name}}</span>
+            <span class="item-sub">{{item.system.dano}} {{item.system.tipoDano}}</span>
+          </div>
+          <div class="item-controls">
+            <a data-action="atacarArma"    data-item-id="{{item.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
+            <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Só Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
+            <a data-action="editarItem"   data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+            <a data-action="deletarItem"  data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+          </div>
+        </li>
+        {{else}}
+        <li class="items-vazio">Arraste do compendium ou clique em +</li>
+        {{/each}}
+      </ul>
+    </section>
+
+  </div>
 
 </div>

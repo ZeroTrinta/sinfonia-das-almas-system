@@ -9,13 +9,15 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
   static DEFAULT_OPTIONS = {
     classes: ["sinfonia-das-almas", "sheet", "actor"],
-    position: { width: 800, height: 900 },
+    position: { width: 960, height: 900 },
     window: { resizable: true },
     // ✦ ABORDAGEM B (ATIVA): submitOnChange desligado. Cada campo é salvo
     //    manualmente via listener no _onRender com {render:false}.
     //    Para usar a ABORDAGEM A: troque por { submitOnChange: true, closeOnSubmit: false }
     //    e descomente o bloco _canRender/_processSubmitData mais abaixo.
     form: { submitOnChange: false, closeOnSubmit: false },
+    // Habilita drag-and-drop de items (de outras sheets, sidebar, compendiums)
+    dragDrop: [{ dragSelector: "[data-item-id]", dropSelector: null }],
     actions: {
       rolarPericia: SinfoniaActorSheet._onRolarPericia,
       usarItem:     SinfoniaActorSheet._onUsarItem,
@@ -160,6 +162,17 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
     // Guarda referência ao helper para reaproveitá-lo em _preClose.
     this._salvarCampo = salvarCampo;
+
+    // ── Drag & Drop: conecta os listeners no DOM ──
+    // ApplicationV2 não liga sozinho como ApplicationV1, precisa configurar aqui.
+    this.element.addEventListener("dragover", (ev) => this._onDragOver(ev));
+    this.element.addEventListener("drop", (ev) => this._onDrop(ev));
+
+    // Drag de items pra fora da sheet (pra arrastar pra outra sheet ou hotbar)
+    this.element.querySelectorAll("[data-item-id]").forEach(el => {
+      el.setAttribute("draggable", "true");
+      el.addEventListener("dragstart", (ev) => this._onDragStart(ev));
+    });
   }
 
   // ── PreClose: salva qualquer campo pendente antes da janela fechar ─────────────
@@ -170,6 +183,109 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       await Promise.all(Array.from(inputs).map(el => this._salvarCampo(el)));
     }
     return super._preClose?.(options);
+  }
+
+  /* ============================================================
+     DRAG & DROP
+     DocumentSheetV2 não tem drop nativo, então implementamos manualmente.
+     Foundry chama _onDrop quando algo é dropado na sheet.
+  ============================================================ */
+
+  /**
+   * Handler chamado automaticamente pelo Foundry quando algo é dropado.
+   * Identifica o tipo do dado e direciona pro handler apropriado.
+   */
+  async _onDrop(event) {
+    event.preventDefault();
+    let data;
+    try {
+      data = JSON.parse(event.dataTransfer.getData("text/plain"));
+    } catch (err) {
+      return false;
+    }
+
+    // Dispara hook do Foundry, caso algum módulo queira interceptar
+    const allowed = Hooks.call("dropActorSheetData", this.document, this, data);
+    if (allowed === false) return false;
+
+    if (data.type === "Item") return this._onDropItem(event, data);
+    if (data.type === "ActiveEffect") return this._onDropActiveEffect(event, data);
+    if (data.type === "Folder") return this._onDropFolder(event, data);
+
+    return false;
+  }
+
+  /**
+   * Cria uma cópia do item no actor.
+   * Funciona tanto pra items vindos de compendiums quanto de outras sheets.
+   */
+  async _onDropItem(event, data) {
+    if (!this.document.isOwner) return false;
+
+    // Resolve o documento Item a partir do uuid (Foundry passa { type:"Item", uuid:"..." })
+    const item = await Item.implementation.fromDropData(data);
+    if (!item) return false;
+
+    const itemData = item.toObject();
+
+    // Se está movendo dentro do próprio actor, não cria duplicata, apenas reordena
+    if (this.document.uuid === item.parent?.uuid) {
+      return this._onSortItem(event, itemData);
+    }
+
+    // Cria item novo no actor
+    const created = await this.document.createEmbeddedDocuments("Item", [itemData]);
+    ui.notifications.info(`${item.name} adicionado a ${this.document.name}.`);
+    return created;
+  }
+
+  /**
+   * Reordena items quando dropados dentro do próprio actor.
+   * Implementação simples — sem reordenação por agora, apenas no-op.
+   * (Ordem visual é controlada pelo sort no _prepareContext.)
+   */
+  async _onSortItem(event, itemData) {
+    // Por enquanto, não fazemos nada — a ordem é dada por sort em _prepareContext.
+    return false;
+  }
+
+  /**
+   * Drop de ActiveEffect (não usado por enquanto, mas previne erros).
+   */
+  async _onDropActiveEffect(event, data) {
+    if (!this.document.isOwner) return false;
+    const effect = await ActiveEffect.implementation.fromDropData(data);
+    if (!effect || (this.document.uuid === effect.parent?.uuid)) return false;
+    return ActiveEffect.create(effect.toObject(), { parent: this.document });
+  }
+
+  /**
+   * Drop de Folder — cria todos os items da pasta de uma vez.
+   * Útil pra arrastar uma pasta inteira de armas/magias do compendium.
+   */
+  async _onDropFolder(event, data) {
+    if (!this.document.isOwner) return false;
+    const folder = await Folder.implementation.fromDropData(data);
+    if (!folder || folder.type !== "Item") return false;
+    const itemsData = folder.contents.map(i => i.toObject());
+    return this.document.createEmbeddedDocuments("Item", itemsData);
+  }
+
+  /**
+   * Inicia drag de items DENTRO da própria sheet (pra mover entre sheets).
+   * Chamado automaticamente quando o usuário arrasta algo do dragSelector.
+   */
+  _onDragStart(event) {
+    const itemId = event.target.closest("[data-item-id]")?.dataset.itemId;
+    if (!itemId) return;
+    const item = this.document.items.get(itemId);
+    if (!item) return;
+    event.dataTransfer.setData("text/plain", JSON.stringify(item.toDragData()));
+  }
+
+  /** Permite drop — chamado durante dragover */
+  _onDragOver(event) {
+    event.preventDefault();
   }
 
   // ─────────────────────────────────────────────────────────────────
