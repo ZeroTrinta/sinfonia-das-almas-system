@@ -1,16 +1,15 @@
-{{!-- TAB PRINCIPAL: Perícias (3 colunas), Habilidades, Magias, Armas --}}
+{{!-- TAB PRINCIPAL: Perícias (3 colunas) + Favoritos --}}
 <div class="principal-layout">
 
   {{!-- ═══ PERÍCIAS — TODAS, EM 3 COLUNAS, INLINE ═══ --}}
   <section class="panel pericias-grid-panel">
     <div class="panel-header">
       <h3 class="panel-title">Perícias</h3>
-      <span class="panel-hint">Clique no nome para rolar. Maestria salva automaticamente.</span>
+      <span class="panel-hint">Clique no nome para rolar.</span>
     </div>
     <div class="pericias-grid">
       {{#each periciasConfig as |cfg key|}}
-      {{#with (lookup ../system.pericias key) as |maestria|}}
-      <div class="pericia-row maestria-{{this}}{{#unless this}} sem-maestria{{/unless}}" data-key="{{key}}">
+      <div class="pericia-row maestria-{{lookup ../system.pericias key}}{{#unless (lookup ../system.pericias key)}} sem-maestria{{/unless}}" data-key="{{key}}">
         <a class="pericia-rolar"
            data-action="rolarPericia"
            data-pericia="{{key}}"
@@ -21,99 +20,61 @@
           <span class="pericia-atribs">{{upper cfg.atribA}}+{{upper cfg.atribB}}</span>
         </a>
         <select class="sel-maestria" name="system.pericias.{{key}}" title="Maestria">
-          <option value=""           {{#eq "" this}}selected{{/eq}}>—</option>
-          <option value="iniciante"  {{#eq "iniciante" this}}selected{{/eq}}>I (+2)</option>
-          <option value="treinado"   {{#eq "treinado" this}}selected{{/eq}}>T (+4)</option>
-          <option value="experiente" {{#eq "experiente" this}}selected{{/eq}}>E (+6)</option>
+          <option value=""           {{#eq "" (lookup ../system.pericias key)}}selected{{/eq}}>—</option>
+          <option value="iniciante"  {{#eq "iniciante"  (lookup ../system.pericias key)}}selected{{/eq}}>I (+2)</option>
+          <option value="treinado"   {{#eq "treinado"   (lookup ../system.pericias key)}}selected{{/eq}}>T (+4)</option>
+          <option value="experiente" {{#eq "experiente" (lookup ../system.pericias key)}}selected{{/eq}}>E (+6)</option>
         </select>
       </div>
-      {{/with}}
       {{/each}}
     </div>
   </section>
 
-  {{!-- ═══ HABILIDADES + MAGIAS + ARMAS (em 3 colunas no desktop) ═══ --}}
-  <div class="items-row">
-
-    {{!-- HABILIDADES --}}
-    <section class="panel itens-panel">
-      <div class="panel-header">
-        <h3 class="panel-title">Habilidades</h3>
-        <a data-action="criarItem" data-tipo="habilidade" title="Adicionar"><i class="fas fa-plus"></i></a>
-      </div>
-      <ul class="items-list">
-        {{#each habilidades as |item|}}
-        <li class="item" data-item-id="{{item.id}}">
-          <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
-          <div class="item-info">
-            <span class="item-nome">{{item.name}}</span>
-            {{#if item.system.custoPE}}<span class="item-custo">{{item.system.custoPE}} PE</span>{{/if}}
-          </div>
-          <div class="item-controls">
-            <a data-action="usarItem"   data-item-id="{{item.id}}" title="Usar"><i class="fas fa-bolt"></i></a>
-            <a data-action="editarItem" data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-            <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
-          </div>
-        </li>
-        {{else}}
-        <li class="items-vazio">Arraste do compendium ou clique em +</li>
-        {{/each}}
-      </ul>
-    </section>
-
-    {{!-- MAGIAS --}}
-    <section class="panel itens-panel">
-      <div class="panel-header">
-        <h3 class="panel-title">Magias</h3>
-        <a data-action="criarItem" data-tipo="magia" title="Adicionar"><i class="fas fa-plus"></i></a>
-      </div>
-      <ul class="items-list">
-        {{#each magias as |item|}}
-        <li class="item magia-item circulo-{{item.system.circulo}}" data-item-id="{{item.id}}">
-          <div class="magia-circulo">{{item.system.circulo}}º</div>
-          <div class="item-info">
-            <span class="item-nome">{{item.name}}</span>
-            <span class="item-sub">{{item.system.custoPE}} PE · {{item.system.alcance}}</span>
-          </div>
-          <div class="item-controls">
-            <a data-action="usarItem"    data-item-id="{{item.id}}" title="Conjurar"><i class="fas fa-magic"></i></a>
-            <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-            <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
-          </div>
-        </li>
-        {{else}}
-        <li class="items-vazio">Arraste do compendium ou clique em +</li>
-        {{/each}}
-      </ul>
-    </section>
-
-    {{!-- ARMAS --}}
-    <section class="panel itens-panel">
-      <div class="panel-header">
-        <h3 class="panel-title">Armas</h3>
-        <a data-action="criarItem" data-tipo="arma" title="Adicionar"><i class="fas fa-plus"></i></a>
-      </div>
-      <ul class="items-list">
-        {{#each armas as |item|}}
-        <li class="item arma-item" data-item-id="{{item.id}}">
-          <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
-          <div class="item-info">
-            <span class="item-nome">{{item.name}}</span>
-            <span class="item-sub">{{item.system.dano}} {{item.system.tipoDano}}</span>
-          </div>
-          <div class="item-controls">
+  {{!-- ═══ FAVORITOS ═══ --}}
+  <section class="panel favoritos-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Favoritos</h3>
+      <span class="panel-hint">Marque ★ em qualquer item para fixá-lo aqui.</span>
+    </div>
+    <ul class="items-list favoritos-list">
+      {{#each favoritos as |item|}}
+      <li class="item favorito-item tipo-{{item.type}}" data-item-id="{{item.id}}">
+        <a class="fav-toggle is-fav" data-action="toggleFavorito" data-item-id="{{item.id}}" title="Desfavoritar">
+          <i class="fas fa-star"></i>
+        </a>
+        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          <span class="item-sub">
+            {{#if (eq item.type "arma")}}
+              {{item.system.dano}} {{item.system.tipoDano}}
+            {{else if (eq item.type "magia")}}
+              {{item.system.circulo}}º · {{item.system.custoPE}} PE
+            {{else if (eq item.type "habilidade")}}
+              {{#if item.system.custoPE}}{{item.system.custoPE}} PE{{else}}Habilidade{{/if}}
+            {{else if (eq item.type "armadura")}}
+              +{{item.system.bonusDefesa}} DEF
+            {{else if (eq item.type "inventario")}}
+              x{{item.system.quantidade}}
+            {{/if}}
+          </span>
+        </div>
+        <div class="item-controls">
+          {{#if (eq item.type "arma")}}
             <a data-action="atacarArma"    data-item-id="{{item.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
-            <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Só Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
-            <a data-action="editarItem"   data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
-            <a data-action="deletarItem"  data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
-          </div>
-        </li>
-        {{else}}
-        <li class="items-vazio">Arraste do compendium ou clique em +</li>
-        {{/each}}
-      </ul>
-    </section>
-
-  </div>
+            <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
+          {{else}}
+            <a data-action="usarItem" data-item-id="{{item.id}}" title="Usar"><i class="fas fa-bolt"></i></a>
+          {{/if}}
+          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">
+        Nenhum item favoritado. Marque a estrela ★ em armas, magias, habilidades ou itens para fixá-los aqui.
+      </li>
+      {{/each}}
+    </ul>
+  </section>
 
 </div>

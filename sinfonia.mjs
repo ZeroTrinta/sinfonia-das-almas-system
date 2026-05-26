@@ -285,7 +285,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.4.0");
+  console.log("Sinfonia das Almas | Pronto. v0.5.1");
 
   // ── Listener delegado: botões dentro das mensagens de chat ──
   document.body.addEventListener("click", async (ev) => {

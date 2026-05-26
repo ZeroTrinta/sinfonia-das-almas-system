@@ -31,7 +31,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       resetEstilhacos: SinfoniaActorSheet._onResetEstilhacos,
       verTodasPericias: SinfoniaActorSheet._onVerTodasPericias,
       atacarArma:      SinfoniaActorSheet._onAtacarArma,
-      rolarDanoArma:   SinfoniaActorSheet._onRolarDanoArma
+      rolarDanoArma:   SinfoniaActorSheet._onRolarDanoArma,
+      toggleFavorito:  SinfoniaActorSheet._onToggleFavorito
     }
   };
 
@@ -90,9 +91,13 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       habArvore,
       habilidades:     doc.items.filter(i => i.type === "habilidade"),
       magias:          doc.items.filter(i => i.type === "magia").sort((a,b) => a.system.circulo - b.system.circulo),
+      magiasArcanas:   doc.items.filter(i => i.type === "magia" && i.system.tipo === "arcana").sort((a,b) => a.system.circulo - b.system.circulo),
+      magiasSagradas:  doc.items.filter(i => i.type === "magia" && i.system.tipo === "sagrada").sort((a,b) => a.system.circulo - b.system.circulo),
       armas:           doc.items.filter(i => i.type === "arma"),
       armaduras:       doc.items.filter(i => i.type === "armadura"),
       inventario:      doc.items.filter(i => i.type === "inventario"),
+      // Tudo que pode ser favoritado, marcado pelo usuário
+      favoritos:       doc.items.filter(i => i.system?.favorito === true),
       detPct:          (sys.alma?.determinacao ?? 7) * 10,
       corPct:          (sys.alma?.corrupcao    ?? 3) * 10,
     };
@@ -657,6 +662,21 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     });
 
     await this.document.rolarDano(arma, { critico: !!critico });
+  }
+
+  /**
+   * Alterna o flag `favorito` no item, atualizando a UI da estrela e
+   * a lista de Favoritos da aba Principal.
+   */
+  static async _onToggleFavorito(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+    const item = this.document.items.get(itemId);
+    if (!item) return;
+    const atual = item.system?.favorito === true;
+    await item.update({ "system.favorito": !atual });
+    this.render(false);
   }
 
   /**

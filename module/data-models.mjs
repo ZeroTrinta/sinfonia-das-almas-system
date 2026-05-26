@@ -182,7 +182,9 @@ class BaseItemModel extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
       descricao: new HTMLField({ required: true, blank: true }),
-      peso:      new NumberField({ required: true, min: 0, initial: 0 })
+      peso:      new NumberField({ required: true, min: 0, initial: 0 }),
+      // Marca de favorito — exibido em destaque na aba Principal
+      favorito:  new BooleanField({ required: true, initial: false })
     };
   }
 }

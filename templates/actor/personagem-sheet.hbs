@@ -83,11 +83,13 @@
           <span class="rail-stat-label">DEF</span>
           <input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/>
         </div>
-        <div class="rail-stat" title="Deslocamento">
+        <div class="rail-stat" title="Deslocamento (metros)">
           <span class="rail-stat-icon">⇄</span>
           <span class="rail-stat-label">DESL</span>
-          <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}"/>
-          <span class="rail-stat-suffix">m</span>
+          <div class="rail-stat-input-with-suffix">
+            <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}"/>
+            <span class="rail-stat-suffix">m</span>
+          </div>
         </div>
         <div class="rail-stat" title="ND Mística">
           <span class="rail-stat-icon">✦</span>
@@ -101,12 +103,14 @@
         </div>
       </div>
 
-      <button type="button" data-action="abrirArvore" class="rail-btn-arvore">
-        <span>✶</span> Árvore de Habilidades
+      <button type="button" data-action="abrirArvore" class="rail-btn-arvore" title="Abrir Árvore de Habilidades">
+        <span class="rail-btn-icon">✶</span>
+        <span class="rail-btn-text">Árvore</span>
       </button>
 
-      <button type="button" data-action="descansar" class="rail-btn-secondary">
-        <span>☾</span> Descansar
+      <button type="button" data-action="descansar" class="rail-btn-secondary" title="Descanso longo: restaura PV, PE e Origens">
+        <span class="rail-btn-icon">☾</span>
+        <span class="rail-btn-text">Descansar</span>
       </button>
     </aside>
 
@@ -140,6 +144,10 @@
           {{> "systems/sinfonia-das-almas/templates/actor/tabs/habilidades-arvore.hbs"}}
         </div>
 
+        <div class="tab" data-tab="magias">
+          {{> "systems/sinfonia-das-almas/templates/actor/tabs/magias.hbs"}}
+        </div>
+
         <div class="tab" data-tab="inventario">
           {{> "systems/sinfonia-das-almas/templates/actor/tabs/inventario.hbs"}}
         </div>
@@ -157,7 +165,7 @@
 
     {{!-- ─── COLUNA DIREITA: TABS VERTICAIS ─── --}}
     <aside class="right-tabs">
-      <a class="vtab" data-tab="principal" title="Perícias, Habilidades, Magias, Armas">
+      <a class="vtab" data-tab="principal" title="Perícias e Favoritos">
         <span class="vtab-icon">⚔</span>
         <span class="vtab-label">Principal</span>
       </a>
@@ -165,7 +173,11 @@
         <span class="vtab-icon">✶</span>
         <span class="vtab-label">Habilidades</span>
       </a>
-      <a class="vtab" data-tab="inventario" title="Inventário">
+      <a class="vtab" data-tab="magias" title="Magias Arcanas e Sagradas">
+        <span class="vtab-icon">✦</span>
+        <span class="vtab-label">Magias</span>
+      </a>
+      <a class="vtab" data-tab="inventario" title="Armas, Armaduras e Utilizáveis">
         <span class="vtab-icon">◈</span>
         <span class="vtab-label">Inventário</span>
       </a>

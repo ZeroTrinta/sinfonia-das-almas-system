@@ -1,0 +1,66 @@
+{{!-- TAB MAGIAS: Arcanas + Sagradas, agrupadas por círculo --}}
+<div class="magias-layout">
+
+  {{!-- ═══ MAGIAS ARCANAS ═══ --}}
+  <section class="panel magias-tipo-panel arcanas">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <i class="fas fa-hat-wizard"></i> Magias Arcanas
+      </h3>
+      <a data-action="criarItem" data-tipo="magia" title="Adicionar magia"><i class="fas fa-plus"></i></a>
+    </div>
+    <ul class="items-list magias-list">
+      {{#each magiasArcanas as |item|}}
+      <li class="item magia-item circulo-{{item.system.circulo}}" data-item-id="{{item.id}}">
+        <a class="fav-toggle{{#if item.system.favorito}} is-fav{{/if}}" data-action="toggleFavorito" data-item-id="{{item.id}}" title="{{#if item.system.favorito}}Desfavoritar{{else}}Favoritar{{/if}}">
+          <i class="fas fa-star"></i>
+        </a>
+        <div class="magia-circulo">{{item.system.circulo}}º</div>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          <span class="item-sub">{{item.system.custoPE}} PE · {{item.system.alcance}}</span>
+        </div>
+        <div class="item-controls">
+          <a data-action="usarItem"    data-item-id="{{item.id}}" title="Conjurar"><i class="fas fa-magic"></i></a>
+          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+          <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">Arraste magias arcanas do compendium ou clique em +</li>
+      {{/each}}
+    </ul>
+  </section>
+
+  {{!-- ═══ MAGIAS SAGRADAS ═══ --}}
+  <section class="panel magias-tipo-panel sagradas">
+    <div class="panel-header">
+      <h3 class="panel-title">
+        <i class="fas fa-sun"></i> Magias Sagradas
+      </h3>
+      <a data-action="criarItem" data-tipo="magia" title="Adicionar magia"><i class="fas fa-plus"></i></a>
+    </div>
+    <ul class="items-list magias-list">
+      {{#each magiasSagradas as |item|}}
+      <li class="item magia-item sagrada circulo-{{item.system.circulo}}" data-item-id="{{item.id}}">
+        <a class="fav-toggle{{#if item.system.favorito}} is-fav{{/if}}" data-action="toggleFavorito" data-item-id="{{item.id}}" title="{{#if item.system.favorito}}Desfavoritar{{else}}Favoritar{{/if}}">
+          <i class="fas fa-star"></i>
+        </a>
+        <div class="magia-circulo">{{item.system.circulo}}º</div>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          <span class="item-sub">{{item.system.custoPE}} PE · {{item.system.alcance}}</span>
+        </div>
+        <div class="item-controls">
+          <a data-action="usarItem"    data-item-id="{{item.id}}" title="Conjurar"><i class="fas fa-magic"></i></a>
+          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+          <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">Arraste magias sagradas do compendium ou clique em +</li>
+      {{/each}}
+    </ul>
+  </section>
+
+</div>
