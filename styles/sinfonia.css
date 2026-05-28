@@ -2773,3 +2773,87 @@
 }
 .v2-layout .items-list .item-controls .icon-atacar:hover { color: #d04040; }
 .v2-layout .items-list .item-controls .icon-dano:hover   { color: var(--gold); }
+
+/* ================================================================
+   v0.5.3 — AUTOMAÇÃO DE MAGIAS (cards de conjuração no chat)
+================================================================ */
+
+/* Tag de modo (ataque/resistência/utilitária) no card da magia */
+.magia-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.magia-tag.ataque {
+  color: #ff8060; border-color: rgba(255,128,96,0.5);
+  background: rgba(255,128,96,0.1);
+}
+.magia-tag.resist {
+  color: #6aa0ff; border-color: rgba(106,160,255,0.5);
+  background: rgba(106,160,255,0.1);
+}
+.magia-tag.util {
+  color: #b090ff; border-color: rgba(176,144,255,0.5);
+  background: rgba(176,144,255,0.1);
+}
+
+/* Card de resistência no chat */
+.sinfonia-magia-resist {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-left: 3px solid #6aa0ff;
+  background: #090c14;
+  font-family: 'EB Garamond', serif;
+  color: var(--text);
+}
+.sinfonia-magia-resist .magia-resist-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; margin-bottom: 6px;
+}
+.sinfonia-magia-resist .magia-resist-header i { color: #6aa0ff; }
+.sinfonia-magia-resist .magia-resist-info {
+  font-size: 13px; margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(106,160,255,0.08);
+  border-radius: 2px;
+}
+.sinfonia-magia-resist .magia-resist-acoes {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.sinfonia-magia-resist .magia-resist-dica {
+  font-size: 10px; font-style: italic;
+  color: var(--silver-dim); margin: 8px 0 0;
+}
+
+/* Botões de magia no chat */
+.btn-rolar-resistencia,
+.btn-magia-dano {
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-rolar-resistencia {
+  border-color: rgba(106,160,255,0.5); color: #8ab8ff;
+}
+.btn-rolar-resistencia:hover {
+  background: rgba(106,160,255,0.12);
+  border-color: #6aa0ff;
+  text-shadow: 0 0 6px rgba(106,160,255,0.4);
+}
+.btn-magia-dano {
+  border-color: rgba(200,151,42,0.5); color: var(--gold-light);
+}
+.btn-magia-dano:hover {
+  background: rgba(200,151,42,0.12);
+  border-color: var(--gold);
+  text-shadow: 0 0 6px rgba(240,192,96,0.4);
+}
+

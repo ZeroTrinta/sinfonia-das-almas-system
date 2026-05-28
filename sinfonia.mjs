@@ -286,11 +286,11 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.5.2");
+  console.log("Sinfonia das Almas | Pronto. v0.5.3");
 
   // ── Listener delegado: botões dentro das mensagens de chat ──
   document.body.addEventListener("click", async (ev) => {
-    const btn = ev.target.closest(".btn-rolar-dano, .btn-aplicar-dano, .btn-aplicar-cura");
+    const btn = ev.target.closest(".btn-rolar-dano, .btn-aplicar-dano, .btn-aplicar-cura, .btn-magia-dano, .btn-rolar-resistencia");
     if (!btn) return;
     ev.preventDefault();
 
@@ -311,6 +311,63 @@ Hooks.once("ready", () => {
         no:  { label: "Não, dano normal", default: true }
       });
       await actor.rolarDano(arma, { critico: !!critico });
+      return;
+    }
+
+    // Rolar dano de MAGIA (botão no card de ataque/resistência mística)
+    if (btn.classList.contains("btn-magia-dano")) {
+      const actorId = btn.dataset.actorId;
+      const itemId  = btn.dataset.itemId;
+      const actor = game.actors.get(actorId);
+      const magia = actor?.items?.get(itemId);
+      if (!actor || !magia) {
+        ui.notifications.warn("Ator ou magia não encontrados.");
+        return;
+      }
+      const critico = await foundry.applications.api.DialogV2.confirm({
+        window: { title: `Dano — ${magia.name}` },
+        content: `<p>Esta rolagem é um <b>crítico</b> (dados dobrados)?</p>`,
+        yes: { label: "Sim, crítico" },
+        no:  { label: "Não, dano normal", default: true }
+      });
+      await actor.rolarDanoMagia(magia, { critico: !!critico });
+      return;
+    }
+
+    // Rolar RESISTÊNCIA (o jogador do alvo seleciona o token e clica)
+    if (btn.classList.contains("btn-rolar-resistencia")) {
+      const periciaKey = btn.dataset.pericia; // reflexos | fortitude | vontade
+      const nd = parseInt(btn.dataset.nd) || 10;
+
+      // Pega o token selecionado do jogador (o alvo)
+      const tokens = canvas.tokens?.controlled ?? [];
+      if (!tokens.length) {
+        ui.notifications.warn("Selecione o token do seu personagem (o alvo) antes de rolar a resistência.");
+        return;
+      }
+      const alvo = tokens[0].actor;
+      if (!alvo) return;
+
+      // Mapeia a perícia de resistência pra chave + atributos do SINFONIA.PERICIAS
+      // reflexos → reflexos (AGI+AGI); fortitude → fortitude (POD+POD); vontade → forcaDeVontade (POD+CAR)
+      const mapaPericia = {
+        reflexos:  "reflexos",
+        fortitude: "fortitude",
+        vontade:   "forcaDeVontade"
+      };
+      const pKey = mapaPericia[periciaKey] ?? periciaKey;
+      const cfg = SINFONIA.PERICIAS[pKey];
+      if (!cfg) {
+        ui.notifications.error(`Perícia de resistência desconhecida: ${periciaKey}`);
+        return;
+      }
+
+      // Abre o dialog rico de Alma do alvo e rola
+      const opcoes = await SinfoniaActorSheet._dialogND(alvo, cfg.atribA, cfg.atribB);
+      if (!opcoes) return;
+      // Força o ND informado pelo card (ND Mística do conjurador), mas respeita
+      // a redução por Origem etc do próprio dialog.
+      await alvo.rolarPericia(pKey, cfg.atribA, cfg.atribB, nd, opcoes);
       return;
     }
 

@@ -143,6 +143,14 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   _onRender(context, options) {
     super._onRender?.(context, options);
 
+    // ✶ CRITICAL: aborta TODOS os listeners do render anterior antes de
+    // adicionar novos. Sem isso, cada re-render duplica handlers e
+    // operações (ex: drop cria N cópias do item).
+    // O AbortSignal é passado pra TODOS os addEventListener abaixo.
+    if (this._listenerAbort) this._listenerAbort.abort();
+    this._listenerAbort = new AbortController();
+    const sig = this._listenerAbort.signal;
+
     // Tabs manuais
     const activateTab = (name) => {
       // Suporta tanto layout antigo (.sheet-tabs .item) quanto novo (.right-tabs .vtab)
@@ -153,7 +161,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       this._activeTab = name;
     };
     this.element.querySelectorAll(".sheet-tabs .item, .right-tabs .vtab").forEach(tab => {
-      tab.addEventListener("click", () => activateTab(tab.dataset.tab));
+      tab.addEventListener("click", () => activateTab(tab.dataset.tab), { signal: sig });
     });
     activateTab(this._activeTab ?? "principal");
 
@@ -194,12 +202,12 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     //     pra não spammar o servidor.
     const debouncers = new WeakMap();
     this.element.querySelectorAll("input, select, textarea").forEach(el => {
-      el.addEventListener("change", (ev) => salvarCampo(ev.currentTarget));
+      el.addEventListener("change", (ev) => salvarCampo(ev.currentTarget), { signal: sig });
       el.addEventListener("input",  (ev) => {
         const t = ev.currentTarget;
         clearTimeout(debouncers.get(t));
         debouncers.set(t, setTimeout(() => salvarCampo(t), 150));
-      });
+      }, { signal: sig });
     });
 
     // Guarda referência ao helper para reaproveitá-lo em _preClose.
@@ -207,14 +215,22 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
     // ── Drag & Drop: conecta os listeners no DOM ──
     // ApplicationV2 não liga sozinho como ApplicationV1, precisa configurar aqui.
-    this.element.addEventListener("dragover", (ev) => this._onDragOver(ev));
-    this.element.addEventListener("drop", (ev) => this._onDrop(ev));
+    // ✶ signal: sig é CRÍTICO aqui — sem o abort, cada re-render adiciona
+    // outro listener de drop, fazendo o item ser criado múltiplas vezes.
+    this.element.addEventListener("dragover", (ev) => this._onDragOver(ev), { signal: sig });
+    this.element.addEventListener("drop",     (ev) => this._onDrop(ev),     { signal: sig });
 
     // Drag de items pra fora da sheet (pra arrastar pra outra sheet ou hotbar)
     this.element.querySelectorAll("[data-item-id]").forEach(el => {
       el.setAttribute("draggable", "true");
-      el.addEventListener("dragstart", (ev) => this._onDragStart(ev));
+      el.addEventListener("dragstart", (ev) => this._onDragStart(ev), { signal: sig });
     });
+  }
+
+  // Aborta listeners pendentes ao fechar a ficha (limpeza de memória)
+  async _onClose(options) {
+    if (this._listenerAbort) this._listenerAbort.abort();
+    return super._onClose?.(options);
   }
 
   // ── PreClose: salva qualquer campo pendente antes da janela fechar ─────────────
@@ -236,25 +252,37 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   /**
    * Handler chamado automaticamente pelo Foundry quando algo é dropado.
    * Identifica o tipo do dado e direciona pro handler apropriado.
+   *
+   * Tem um lock simples (_dropInFlight) pra evitar processamento duplicado
+   * em cenários onde dois eventos de drop chegam quase simultaneamente.
    */
   async _onDrop(event) {
     event.preventDefault();
-    let data;
+    if (this._dropInFlight) return false;
+    this._dropInFlight = true;
+
     try {
-      data = JSON.parse(event.dataTransfer.getData("text/plain"));
-    } catch (err) {
+      let data;
+      try {
+        data = JSON.parse(event.dataTransfer.getData("text/plain"));
+      } catch (err) {
+        return false;
+      }
+
+      // Dispara hook do Foundry, caso algum módulo queira interceptar
+      const allowed = Hooks.call("dropActorSheetData", this.document, this, data);
+      if (allowed === false) return false;
+
+      if (data.type === "Item") return await this._onDropItem(event, data);
+      if (data.type === "ActiveEffect") return await this._onDropActiveEffect(event, data);
+      if (data.type === "Folder") return await this._onDropFolder(event, data);
+
       return false;
+    } finally {
+      // Libera o lock no próximo tick, garantindo que listeners duplicados
+      // (caso tenham vazado) não vejam o flag baixo ainda.
+      setTimeout(() => { this._dropInFlight = false; }, 50);
     }
-
-    // Dispara hook do Foundry, caso algum módulo queira interceptar
-    const allowed = Hooks.call("dropActorSheetData", this.document, this, data);
-    if (allowed === false) return false;
-
-    if (data.type === "Item") return this._onDropItem(event, data);
-    if (data.type === "ActiveEffect") return this._onDropActiveEffect(event, data);
-    if (data.type === "Folder") return this._onDropFolder(event, data);
-
-    return false;
   }
 
   /**
@@ -829,6 +857,135 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         ok: {
           label: "Atacar",
           icon: "fa-crosshairs",
+          callback: (ev, btn) => {
+            const f = btn.form.elements;
+            const origemValor = f.origem.value;
+            resolve({
+              nd:           parseInt(f.nd.value) || ndDefault,
+              penalidade:   parseInt(f.penalidade.value) || 0,
+              empenhoA:     f.empenhoA.checked,
+              empenhoB:     f.empenhoB.checked,
+              perseveranca: f.perseveranca.checked,
+              origem:       !!origemValor,
+              origemTipo:   origemValor || null,
+              corrupcao:    f.corrupcao.value || null,
+              alvo:         alvo ? { name: nomeAlvo, defesa: defesaAlvo } : null
+            });
+          }
+        },
+        cancel: { label: "Cancelar", callback: () => resolve(null) }
+      });
+    });
+  }
+
+  /**
+   * Dialog rico de ataque com MAGIA. Igual ao de arma, mas usa a perícia de
+   * conjuração (Arcanismo MIS+MIS pra arcana, CAR+INT pra sagrada) passada em `conj`.
+   * É chamado de SinfoniaActor.rolarAtaqueMagia via this.sheet.constructor.
+   */
+  static async _dialogAtaqueMagia(actor, magia, conj, analise) {
+    const sys = actor.system;
+    const det = sys.alma.determinacao;
+    const cor = sys.alma.corrupcao;
+    const eventoUsado   = sys.origem?.eventoMarcante?.usadoNaSessao;
+    const ocupacaoUsada = sys.origem?.ocupacao?.usadoNaSessao;
+    const eventoDesc    = sys.origem?.eventoMarcante?.descricao || "";
+    const ocupacaoDesc  = sys.origem?.ocupacao?.descricao || "";
+    const eventoDisabled   = eventoUsado   || !eventoDesc;
+    const ocupacaoDisabled = ocupacaoUsada || !ocupacaoDesc;
+
+    const atribA = conj.atribA, atribB = conj.atribB;
+
+    // Alvo via targets
+    const alvos = Array.from(game.user.targets ?? []);
+    const alvo = alvos[0] ?? null;
+    const nomeAlvo = alvo?.actor?.name ?? null;
+    const defesaAlvo = alvo?.actor?.system?.combate?.defesa ?? null;
+    const alvoInfo = alvo
+      ? `<div class="alvo-info"><b>Alvo:</b> ${nomeAlvo} — Defesa ${defesaAlvo}</div>`
+      : `<div class="alvo-info sem-alvo">Nenhum alvo selecionado. ND manual abaixo.</div>`;
+    const ndDefault = defesaAlvo ?? 10;
+
+    const danoInfo = analise.dano
+      ? `<div class="arma-info">Dano detectado: <b>${analise.dano.formula}${analise.dano.tipoDano ? " " + analise.dano.tipoDano : ""}</b></div>`
+      : "";
+
+    const content = `
+      <div class="sinfonia-dialog-rolagem">
+        <div class="arma-info">
+          <b>${magia.name}</b> (${magia.system.circulo}º Círculo) — ${conj.label}
+        </div>
+        ${danoInfo}
+        ${alvoInfo}
+
+        <div class="linha">
+          <label>${alvo ? "ND (Defesa)" : "ND manual"}</label>
+          <input type="number" name="nd" value="${ndDefault}" min="1" max="40" autofocus/>
+        </div>
+        <div class="linha">
+          <label>Penalidade do Mestre</label>
+          <input type="number" name="penalidade" value="0" min="0" max="20"/>
+        </div>
+
+        <fieldset class="alma-bloco">
+          <legend>★ Determinação (${det} disponíveis)</legend>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="empenhoA" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho ${atribA.toUpperCase()}</b> — 1 Det: dado extra
+          </label>
+          <label class="check ${det < 2 ? 'disabled' : ''}">
+            <input type="checkbox" name="empenhoB" ${det < 1 ? 'disabled' : ''}/>
+            <b>Empenho ${atribB.toUpperCase()}</b> — 1 Det: dado extra
+          </label>
+          <label class="check ${det < 1 ? 'disabled' : ''}">
+            <input type="checkbox" name="perseveranca" ${det < 1 ? 'disabled' : ''}/>
+            <b>Perseverança</b> — 1 Det: ignora a penalidade
+          </label>
+        </fieldset>
+
+        <fieldset class="alma-bloco">
+          <legend>⚭ Origem</legend>
+          <label class="radio">
+            <input type="radio" name="origem" value="" checked/> Nenhuma
+          </label>
+          <label class="radio ${eventoDisabled ? 'disabled' : ''}">
+            <input type="radio" name="origem" value="eventoMarcante" ${eventoDisabled ? 'disabled' : ''}/>
+            <b>Evento</b>${eventoDesc ? `: <em>${eventoDesc}</em>` : ' (não definido)'}
+            ${eventoUsado ? ' <span class="used">(usado)</span>' : ''}
+          </label>
+          <label class="radio ${ocupacaoDisabled ? 'disabled' : ''}">
+            <input type="radio" name="origem" value="ocupacao" ${ocupacaoDisabled ? 'disabled' : ''}/>
+            <b>Ocupação</b>${ocupacaoDesc ? `: <em>${ocupacaoDesc}</em>` : ' (não definida)'}
+            ${ocupacaoUsada ? ' <span class="used">(usada)</span>' : ''}
+          </label>
+        </fieldset>
+
+        <fieldset class="alma-bloco">
+          <legend>☠ Corrupção (${cor}/10)</legend>
+          <label class="radio"><input type="radio" name="corrupcao" value="" checked/> Nenhuma</label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="+5" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>+5 no teste</b>
+          </label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="rerolar" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>Rerolar</b>
+          </label>
+          <label class="radio ${cor >= 10 ? 'disabled' : ''}">
+            <input type="radio" name="corrupcao" value="passoDado" ${cor >= 10 ? 'disabled' : ''}/>
+            <b>Passo de Dado</b>
+          </label>
+        </fieldset>
+      </div>
+    `;
+
+    return new Promise(resolve => {
+      foundry.applications.api.DialogV2.prompt({
+        window: { title: `Conjurar ${magia.name}` },
+        content,
+        ok: {
+          label: "Conjurar",
+          icon: "fa-wand-magic-sparkles",
           callback: (ev, btn) => {
             const f = btn.form.elements;
             const origemValor = f.origem.value;

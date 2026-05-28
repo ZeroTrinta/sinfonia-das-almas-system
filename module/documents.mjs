@@ -324,6 +324,149 @@ export class SinfoniaActor extends Actor {
   }
 
   /**
+   * Rola um ataque de MAGIA (Conjuração Mística) contra a Defesa do alvo.
+   * Abre o dialog rico de Alma reaproveitando a lógica de _dialogAtaqueMagia
+   * da sheet. Aqui, no actor, fazemos a rolagem em si.
+   *
+   * @param {Item}   magia    Item do tipo "magia"
+   * @param {object} analise  resultado de SinfoniaItem.analisarMagia
+   */
+  async rolarAtaqueMagia(magia, analise) {
+    if (this.type !== "personagem") return;
+    if (!magia || magia.type !== "magia") return;
+
+    // Perícia/atributos conforme arcana vs sagrada
+    const conj = (await import("./documents.mjs")).SinfoniaItem.periciaConjuracao(magia.system.tipo);
+
+    // Abre o dialog rico de Alma (mesma UX do ataque com arma)
+    const opcoes = await this.sheet?.constructor?._dialogAtaqueMagia?.(this, magia, conj, analise);
+    // Se a sheet não estiver disponível, usa um fluxo simplificado sem dialog
+    const opts = opcoes ?? { nd: null, alvo: null };
+    if (opcoes === null) return; // usuario cancelou
+
+    // ND = Defesa do alvo (se houver) ou ND manual
+    const nd = opts.alvo?.defesa ?? opts.nd ?? 10;
+
+    const resultado = await this.rolarPericia(
+      conj.pericia, conj.atribA, conj.atribB, nd,
+      {
+        empenhoA:     opts.empenhoA,
+        empenhoB:     opts.empenhoB,
+        perseveranca: opts.perseveranca,
+        origem:       opts.origem,
+        origemTipo:   opts.origemTipo,
+        corrupcao:    opts.corrupcao,
+        penalidade:   opts.penalidade
+      }
+    );
+    if (!resultado) return;
+
+    // Cabeçalho + botão de rolar dano (se a magia tiver dano)
+    const nomeAlvo = opts.alvo?.name ? ` em <b>${opts.alvo.name}</b>` : "";
+    const cabecalho = `
+      <div class="sinfonia-ataque-header ${resultado.sucesso ? 'acerto' : 'erro'}">
+        <i class="fas fa-wand-magic-sparkles"></i>
+        <span><b>${this.name}</b> conjura${nomeAlvo} com <b>${magia.name}</b></span>
+      </div>`;
+    const acoesHtml = (resultado.sucesso && analise.dano)
+      ? `<div class="sinfonia-ataque-acoes">
+           <button type="button" class="btn-magia-dano"
+             data-actor-id="${this.id}" data-item-id="${magia.id}">
+             <i class="fas fa-dice-d20"></i> Rolar Dano (${analise.dano.formula}${analise.dano.tipoDano ? " " + analise.dano.tipoDano : ""})
+           </button>
+         </div>`
+      : "";
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: cabecalho + acoesHtml
+    });
+
+    return resultado;
+  }
+
+  /**
+   * Rola o dano de uma magia. A fórmula vem da análise (auto-detectada na
+   * descrição). Resolve nada de @attr (magias usam dados fixos tipo 3d8),
+   * mas adiciona o "Valor Fixo do Conduíte" se o texto mencionar (placeholder
+   * tratado como 0 por enquanto, já que condíte não é modelado ainda).
+   *
+   * @param {Item}   magia
+   * @param {object} [opts]
+   * @param {string} [opts.formula]  sobrescreve a fórmula detectada
+   * @param {string} [opts.tipoDano]
+   * @param {boolean}[opts.critico]
+   */
+  async rolarDanoMagia(magia, opts = {}) {
+    if (this.type !== "personagem") return;
+    if (!magia || magia.type !== "magia") return;
+
+    const analise = (await import("./documents.mjs")).SinfoniaItem.analisarMagia(magia.system);
+    let formula = (opts.formula || analise.dano?.formula || "").trim();
+    const tipoDano = opts.tipoDano || analise.dano?.tipoDano || "";
+
+    if (!formula) {
+      ui.notifications.warn(`Não detectei fórmula de dano em ${magia.name}. Edite a magia ou role manualmente.`);
+      return;
+    }
+
+    // Crítico dobra os dados
+    if (opts.critico) {
+      formula = formula.replace(/(\d+)d(\d+)/gi, (_, n, f) => `${parseInt(n) * 2}d${f}`);
+    }
+
+    let roll;
+    try {
+      roll = new Roll(formula);
+      await roll.evaluate();
+    } catch (err) {
+      ui.notifications.error(`Fórmula de dano inválida em ${magia.name}: ${formula}`);
+      console.error(err);
+      return;
+    }
+
+    const total = roll.total;
+    const dadosHtml = roll.dice.map(term => {
+      const pills = term.results.map(r =>
+        `<span class="dado-pill ativo" title="d${term.faces}">${r.result}</span>`
+      ).join("");
+      return `<span class="dado-grupo"><span class="dado-tipo">d${term.faces}</span>${pills}</span>`;
+    }).join("");
+
+    const content = `
+      <div class="sinfonia-dano-roll ${opts.critico ? 'critico' : ''}">
+        <div class="dano-header">
+          <span class="actor-name">${this.name}</span>
+          <span class="dano-arma">${magia.name}${opts.critico ? ' — CRÍTICO!' : ''}</span>
+        </div>
+        <div class="dano-formula">${formula}${tipoDano ? " · " + tipoDano : ""}</div>
+        <div class="roll-dados">${dadosHtml}</div>
+        <div class="dano-total">
+          <span class="total">${total}</span>
+          <span class="dano-tipo">${tipoDano}</span>
+        </div>
+        <div class="dano-acoes">
+          <button type="button" class="btn-aplicar-dano" data-dano="${total}">
+            <i class="fas fa-heart-broken"></i> Aplicar Dano
+          </button>
+          <button type="button" class="btn-aplicar-cura" data-cura="${total}">
+            <i class="fas fa-heart"></i> Aplicar Cura
+          </button>
+        </div>
+      </div>
+    `;
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content,
+      rolls: [roll],
+      type: CONST.CHAT_MESSAGE_TYPES.ROLL
+    });
+
+    return { roll, total };
+  }
+
+  /**
    * Rola dano de uma arma. Resolve @pod/@agi/@int/@car/@mis
    * para o valor do dado de atributo correspondente.
    *
@@ -574,24 +717,260 @@ export class SinfoniaItem extends Item {
       return;
     }
 
-    await actor.update({ "system.recursos.pe.value": pe.value - sys.custoPE });
+    // Analisa a descrição pra detectar tipo (ataque / resistência / utilitária),
+    // perícia de resistência exigida e fórmula de dano.
+    const analise = SinfoniaItem.analisarMagia(sys);
 
+    // Despacha pro fluxo correto. Cada um cuida de gastar PE e postar no chat.
+    if (analise.tipo === "ataque") {
+      return this._conjurarAtaque(actor, analise);
+    }
+    if (analise.tipo === "resistencia") {
+      return this._conjurarResistencia(actor, analise);
+    }
+    // Utilitária: apenas gasta PE e mostra o card descritivo.
+    return this._conjurarUtilitaria(actor, analise);
+  }
+
+  /* ============================================================
+     ANÁLISE DE MAGIA (auto-detecção pela descrição)
+  ============================================================ */
+
+  /**
+   * Analisa o system de uma magia e detecta:
+   *   • tipo: "ataque" | "resistencia" | "utilitaria"
+   *   • resistencia: "reflexos" | "fortitude" | "vontade" | null
+   *   • dano: { formula, tipoDano } | null
+   *
+   * A detecção usa primeiro o campo system.resistencia (se preenchido) e,
+   * como fallback, faz regex na descrição em texto livre.
+   *
+   * @param {object} sys  system da magia
+   * @returns {{tipo:string, resistencia:string|null, dano:object|null, raw:string}}
+   */
+  static analisarMagia(sys) {
+    // Texto limpo (sem tags HTML) pra rodar regex
+    const html = sys.descricao || "";
+    const txt = html
+      .replace(/<[^>]+>/g, " ")   // remove tags
+      .replace(/&[a-z]+;/gi, " ") // remove entidades
+      .replace(/\s+/g, " ")
+      .trim();
+    const lower = txt.toLowerCase();
+
+    // ── 1. Detecta perícia de RESISTÊNCIA ──
+    // Padrões: "teste de Reflexos", "realizar um teste de Fortitude", "teste de Vontade"
+    // Também aceita "Força de Vontade".
+    let resistencia = null;
+    const mapaResist = [
+      { re: /\bteste\s+de\s+reflexos\b/i,                         val: "reflexos"  },
+      { re: /\bteste\s+de\s+fortitude\b/i,                        val: "fortitude" },
+      { re: /\bteste\s+de\s+(?:for[çc]a\s+de\s+)?vontade\b/i,     val: "vontade"   }
+    ];
+    // Prioriza o campo estruturado, se existir
+    const campoResist = (sys.resistencia || "").toLowerCase().trim();
+    if (campoResist) {
+      if (campoResist.includes("reflex"))   resistencia = "reflexos";
+      else if (campoResist.includes("fort")) resistencia = "fortitude";
+      else if (campoResist.includes("vont")) resistencia = "vontade";
+    }
+    if (!resistencia) {
+      for (const m of mapaResist) {
+        if (m.re.test(lower)) { resistencia = m.val; break; }
+      }
+    }
+
+    // ── 2. Detecta ATAQUE místico (rola contra Defesa) ──
+    // Padrões: "ataque de Conjuração", "contra a Defesa", "teste de acerto místico"
+    const ehAtaque =
+      /ataque\s+de\s+conjura[çc][ãa]o/i.test(lower) ||
+      /teste\s+de\s+acerto\s+m[íi]stico/i.test(lower) ||
+      /contra\s+a\s+defesa\s+do\s+alvo/i.test(lower);
+
+    // ── 3. Detecta fórmula de DANO ──
+    // Vários padrões cobrem arcanas e sagradas:
+    //   • "1d6 de dano de ácido"           (arcanas — dano logo após o dado)
+    //   • "4d6 + Valor do Conduíte de Dano" (sagradas — texto entre dado e "dano")
+    //   • "sofre 3d8"                        (fallback — primeiro dado após "sofre")
+    let dano = null;
+    let mDano =
+      txt.match(/(\d+\s*d\s*\d+)\s*de\s*dano(?:\s*de\s*([a-zçãéíóáúâêôà]+))?/i) ||
+      txt.match(/(\d+\s*d\s*\d+)\s*\+[^.]{0,60}?de\s+dano(?:\s+de\s+([a-zçãéíóáúâêôà]+))?/i);
+    if (!mDano) {
+      const mFallback = txt.match(/sofre\s+(?:\*+)?(\d+\s*d\s*\d+)/i);
+      if (mFallback) mDano = [mFallback[0], mFallback[1], ""];
+    }
+    if (mDano) {
+      const formula = mDano[1].replace(/\s+/g, "");
+      const tipoDano = (mDano[2] || "").trim();
+      dano = { formula, tipoDano };
+    }
+
+    // ── 4. Decide o tipo final ──
+    // Se exige teste de resistência → "resistencia" (mesmo que cause dano)
+    // Senão se tem ataque místico → "ataque"
+    // Senão → "utilitaria"
+    let tipo;
+    if (resistencia)    tipo = "resistencia";
+    else if (ehAtaque)  tipo = "ataque";
+    else                tipo = "utilitaria";
+
+    return { tipo, resistencia, dano, raw: txt };
+  }
+
+  /* ============================================================
+     FLUXOS DE CONJURAÇÃO
+  ============================================================ */
+
+  /**
+   * Determina a perícia/atributos de ataque místico conforme o tipo da magia.
+   *   • Arcana  → Conjuração Mística = Arcanismo (MIS + MIS)
+   *   • Sagrada → Conjuração Divina  = CAR + INT
+   * Retorna { pericia, atribA, atribB, label }.
+   */
+  static periciaConjuracao(tipoMagia) {
+    if (tipoMagia === "sagrada") {
+      return { pericia: "arcanismo", atribA: "car", atribB: "int", label: "Conjuração Divina (CAR+INT)" };
+    }
+    // Arcana (default)
+    return { pericia: "arcanismo", atribA: "mis", atribB: "mis", label: "Conjuração Arcana (MIS+MIS)" };
+  }
+
+  /**
+   * Conjura uma magia de ATAQUE: rola Conjuração Mística contra a Defesa do alvo.
+   * Reaproveita rolarAtaqueMagia do actor (que abre dialog de Alma).
+   */
+  async _conjurarAtaque(actor, analise) {
+    const sys = this.system;
+    const pe = actor.system.recursos.pe;
+
+    // Gasta PE
+    await actor.update({ "system.recursos.pe.value": pe.value - sys.custoPE }, { render: false });
+
+    // Posta o card descritivo da magia primeiro
+    await this._postarCardMagia(actor, analise, "ataque");
+
+    // Dispara o ataque místico (rola contra Defesa do alvo)
+    await actor.rolarAtaqueMagia(this, analise);
+  }
+
+  /**
+   * Conjura uma magia de RESISTÊNCIA: posta no chat o card + botão pro alvo
+   * rolar a resistência contra a ND Mística do conjurador.
+   */
+  async _conjurarResistencia(actor, analise) {
+    const sys = this.system;
+    const pe = actor.system.recursos.pe;
+
+    // Gasta PE
+    await actor.update({ "system.recursos.pe.value": pe.value - sys.custoPE }, { render: false });
+
+    // ND de resistência: arcana = 8 + MIS, sagrada = 8 + CAR (do doc)
+    const ndResist = this.system.tipo === "sagrada"
+      ? 8 + actor.dadoValor("car")
+      : 8 + actor.dadoValor("mis");
+
+    // Perícia que o alvo deve rolar
+    const periciaResist = analise.resistencia; // reflexos | fortitude | vontade
+    const labelResist = {
+      reflexos:  "Reflexos",
+      fortitude: "Fortitude",
+      vontade:   "Força de Vontade"
+    }[periciaResist] ?? periciaResist;
+
+    // Card descritivo
+    await this._postarCardMagia(actor, analise, "resistencia");
+
+    // Mensagem com botão de rolar resistência + (se houver dano) rolar dano
+    const danoBtn = analise.dano
+      ? `<button type="button" class="btn-magia-dano"
+           data-actor-id="${actor.id}" data-item-id="${this.id}">
+           <i class="fas fa-dice-d20"></i> Rolar Dano (${analise.dano.formula}${analise.dano.tipoDano ? " " + analise.dano.tipoDano : ""})
+         </button>`
+      : "";
+
+    const content = `
+      <div class="sinfonia-magia-resist">
+        <div class="magia-resist-header">
+          <i class="fas fa-shield-halved"></i>
+          <span><b>${actor.name}</b> conjura <b>${this.name}</b></span>
+        </div>
+        <div class="magia-resist-info">
+          O alvo deve rolar <b>${labelResist}</b> contra <b>ND ${ndResist}</b> (Mística).
+        </div>
+        <div class="magia-resist-acoes">
+          <button type="button" class="btn-rolar-resistencia"
+            data-pericia="${periciaResist}" data-nd="${ndResist}">
+            <i class="fas fa-dice"></i> Rolar ${labelResist} (alvo)
+          </button>
+          ${danoBtn}
+        </div>
+        <p class="magia-resist-dica">O jogador do alvo seleciona o próprio token e clica em "Rolar ${labelResist}".</p>
+      </div>
+    `;
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content
+    });
+  }
+
+  /**
+   * Conjura uma magia UTILITÁRIA: só gasta PE e mostra o card descritivo.
+   */
+  async _conjurarUtilitaria(actor, analise) {
+    const sys = this.system;
+    const pe = actor.system.recursos.pe;
+    await actor.update({ "system.recursos.pe.value": pe.value - sys.custoPE }, { render: false });
+    await this._postarCardMagia(actor, analise, "utilitaria");
+
+    // Se a utilitária tiver dano (ex: cura listada como "Xd dano"), oferece botão
+    if (analise.dano) {
+      const content = `
+        <div class="sinfonia-magia-resist">
+          <div class="magia-resist-acoes">
+            <button type="button" class="btn-magia-dano"
+              data-actor-id="${actor.id}" data-item-id="${this.id}">
+              <i class="fas fa-dice-d20"></i> Rolar (${analise.dano.formula})
+            </button>
+          </div>
+        </div>`;
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content
+      });
+    }
+  }
+
+  /**
+   * Posta o card visual padrão da magia (nome, círculo, custo, alcance, descrição).
+   * @param {string} modo  "ataque" | "resistencia" | "utilitaria" (só pra uma tag visual)
+   */
+  async _postarCardMagia(actor, analise, modo) {
+    const sys = this.system;
     const escolaLabel = game.i18n.localize(`SINFONIA.Escolas.${sys.escola}`) || sys.escola;
+    const tipoLabel = sys.tipo === "sagrada" ? "Sagrada" : "Arcana";
+    const modoTag = {
+      ataque:      `<span class="magia-tag ataque">⚔ Ataque</span>`,
+      resistencia: `<span class="magia-tag resist">🛡 Resistência</span>`,
+      utilitaria:  `<span class="magia-tag util">✨ Utilitária</span>`
+    }[modo] ?? "";
+
     const content = `
       <div class="sinfonia-magia">
         <div class="magia-header">
           <span class="magia-nome">${this.name}</span>
-          <span class="magia-info">${sys.circulo}º Círculo — ${escolaLabel}</span>
+          <span class="magia-info">${sys.circulo}º Círculo — ${escolaLabel} · ${tipoLabel}</span>
         </div>
         <div class="magia-detalhes">
           <span>⚡ ${sys.custoPE} PE</span>
           <span>📏 ${sys.alcance}</span>
           <span>⏱ ${sys.duracao}</span>
+          ${modoTag}
         </div>
         <div class="magia-desc">${sys.descricao || ""}</div>
       </div>
     `;
-
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor }),
       content
