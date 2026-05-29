@@ -200,18 +200,57 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     };
 
     // Persiste em DOIS gatilhos para cobrir todos os casos:
-    //   • change — dispara quando o input perde o foco (clique fora).
-    //   • input — dispara a cada tecla; necessário porque se o usuário digita
-    //     num input e clica direto em "Abrir Árvore" ou fecha a janela, o
-    //     navegador pode NÃO disparar change a tempo. Usamos debounce em input
+    //   • change — dispara quando o input perde o foco (clique fora). Para SELECTs,
+    //     dispara imediatamente quando a escolha muda — então salvamos SEM debounce.
+    //   • input — dispara a cada tecla em inputs de texto; usamos debounce 150ms
     //     pra não spammar o servidor.
     const debouncers = new WeakMap();
     this.element.querySelectorAll("input, select, textarea").forEach(el => {
-      el.addEventListener("change", (ev) => salvarCampo(ev.currentTarget), { signal: sig });
-      el.addEventListener("input",  (ev) => {
+      // change: salva IMEDIATAMENTE (sem debounce). Crítico para selects (classe,
+      // dado de atributo, maestria) — se debouncasse, fechar a ficha antes dos
+      // 150ms perderia a mudança.
+      el.addEventListener("change", async (ev) => {
         const t = ev.currentTarget;
+        // Cancela qualquer debounce pendente do input
         clearTimeout(debouncers.get(t));
-        debouncers.set(t, setTimeout(() => salvarCampo(t), 150));
+        await salvarCampo(t);
+      }, { signal: sig });
+      // input: só pra inputs/textareas (com debounce). Selects já são cobertos pelo change.
+      if (el.tagName !== "SELECT") {
+        el.addEventListener("input",  (ev) => {
+          const t = ev.currentTarget;
+          clearTimeout(debouncers.get(t));
+          debouncers.set(t, setTimeout(() => salvarCampo(t), 150));
+        }, { signal: sig });
+      }
+    });
+
+    // ── Retrato/avatar: abre FilePicker ao clicar em [data-edit="img"] ──
+    // DocumentSheetV2 não conecta isso automaticamente, então fazemos manual.
+    // Fallback robusto: tenta o caminho v13 (foundry.applications.apps.FilePicker.implementation)
+    // e, se não existir, usa o FilePicker global (v12).
+    const FilePickerClass =
+      foundry.applications?.apps?.FilePicker?.implementation ??
+      globalThis.FilePicker;
+    this.element.querySelectorAll('[data-edit="img"]').forEach(el => {
+      el.style.cursor = "pointer";
+      el.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (!FilePickerClass) {
+          ui.notifications.error("FilePicker indisponível nesta versão do Foundry.");
+          return;
+        }
+        const fp = new FilePickerClass({
+          type: "image",
+          current: this.document.img,
+          callback: async (path) => {
+            await this.document.update({ img: path });
+          },
+          top: (this.position?.top ?? 100) + 40,
+          left: (this.position?.left ?? 100) + 10
+        });
+        fp.browse();
       }, { signal: sig });
     });
 
