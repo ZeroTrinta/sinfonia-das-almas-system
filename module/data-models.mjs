@@ -89,6 +89,11 @@ export class PersonagemDataModel extends BaseActorModel {
         corrupcao:    new NumberField({ required: true, integer: true, min: 0, max: 10, initial: 3 }),
         // Estilhaços acumulados — cada um abaixa o teto da Determinação em 1.
         estilhacos:   new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
+        // Crepúsculo da Morte: ativo quando PV = 0. Det atual vira contagem regressiva.
+        crepusculo:   new BooleanField({ required: true, initial: false }),
+        // Quantas vezes já fez o teste de Vontade no Crepúsculo nesta queda
+        // (usado para escalar a ND: 10 → 16 → 16 → 20 → 25 → 30).
+        testesVontade: new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
         pilar:      new StringField({ required: true, blank: true, initial: "" }),
         qualidades: new StringField({ required: true, blank: true, initial: "" }),
         defeitos:   new StringField({ required: true, blank: true, initial: "" })

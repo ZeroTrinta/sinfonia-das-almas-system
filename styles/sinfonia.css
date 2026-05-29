@@ -2857,3 +2857,83 @@
   text-shadow: 0 0 6px rgba(240,192,96,0.4);
 }
 
+/* ================================================================
+   v0.6.0 — CREPÚSCULO DA MORTE (avisos no chat)
+================================================================ */
+
+.crep-aviso {
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  background: rgba(200, 64, 64, 0.08);
+  border-left: 3px solid var(--cor-color);
+  color: #e0c0c0;
+  line-height: 1.4;
+}
+
+.crep-aviso b { color: #ff8a8a; }
+
+.crep-aviso.entrou {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #1a0808, #0a0506);
+  border: 1px solid var(--cor-color);
+  text-align: center;
+}
+.crep-aviso.entrou p:first-child {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--cor-color);
+  text-shadow: 0 0 8px rgba(200,64,64,0.5);
+  margin-bottom: 6px;
+}
+.crep-aviso.entrou p { margin: 3px 0; }
+
+.crep-aviso.saiu {
+  background: rgba(96, 200, 96, 0.08);
+  border-left-color: #60c860;
+  color: #c0e0c0;
+}
+.crep-aviso.saiu b { color: #80e890; }
+
+.crep-aviso.morte {
+  padding: 12px;
+  background: linear-gradient(135deg, #0a0508, #050203);
+  border: 1px solid #444;
+  border-left: 4px solid #888;
+  text-align: center;
+  color: #888;
+}
+.crep-aviso.morte h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: #aaaaaa;
+  margin: 0 0 8px;
+  text-shadow: 0 0 12px rgba(180,180,180,0.4);
+}
+.crep-aviso.morte p { margin: 0; font-style: italic; }
+
+.crep-aviso.teste {
+  background: rgba(240, 192, 96, 0.08);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 10px 12px;
+}
+.crep-aviso.teste p:first-child {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+  margin: 0 0 6px;
+}
+.crep-aviso.teste button {
+  margin-top: 6px;
+}
+
+.crep-aviso.turno {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+

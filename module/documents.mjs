@@ -642,40 +642,174 @@ export class SinfoniaActor extends Actor {
   }
 
   /**
-   * Aplica dano ao personagem
-   * @param {number} dano
+   * Aplica dano ao personagem.
+   * Robusta a NaN/undefined: se o valor não for válido, mostra erro claro
+   * em vez de quebrar silenciosamente no `update()` do Foundry.
+   *
+   * Implementa **Crepúsculo da Morte** (regra do doc):
+   *   • Ao chegar a 0 PV: entra no Crepúsculo, Det atual vira a contagem regressiva.
+   *   • Cada dano recebido no Crepúsculo: perde +1 Det (ou +2 se crítico).
+   *   • Cada Det perdida vira Ponto de Corrupção.
+   *
+   * @param {number}  dano
+   * @param {object}  [opts]
+   * @param {boolean} [opts.critico]  Marca este dano como crítico (dobra penalidade de Det no Crepúsculo)
    */
-  async aplicarDano(dano) {
-    dano = Math.max(1, Math.round(dano));
-    const pv = this.system.recursos.pv;
-    // Absorve PVT primeiro
-    if (pv.temp > 0) {
-      const absorvido = Math.min(pv.temp, dano);
-      dano -= absorvido;
-      await this.update({ "system.recursos.pv.temp": pv.temp - absorvido });
+  async aplicarDano(dano, opts = {}) {
+    // Normaliza entrada — aceita string "15" ou número 15
+    dano = Number(dano);
+    if (!Number.isFinite(dano) || dano <= 0) {
+      ui.notifications.warn(`Valor de dano inválido (${dano}). Verifique o card de dano.`);
+      return;
     }
-    const novoValor = Math.max(0, pv.value - dano);
-    await this.update({ "system.recursos.pv.value": novoValor });
+    dano = Math.max(1, Math.round(dano));
+
+    const pv = this.system.recursos.pv ?? {};
+    const pvValueAtual = Number.isFinite(pv.value) ? pv.value : 0;
+    const pvMaxAtual   = Number.isFinite(pv.max)   ? pv.max   : 0;
+    const pvTempAtual  = Number.isFinite(pv.temp)  ? pv.temp  : 0;
+    const jaNoCrepusculo = this.type === "personagem" && this.system.alma?.crepusculo === true;
+
+    let danoRestante = dano;
+    const updates = {};
+
+    // Absorve PVT primeiro (só se não estiver no Crepúsculo — lá o PV já é 0)
+    if (pvTempAtual > 0 && !jaNoCrepusculo) {
+      const absorvido = Math.min(pvTempAtual, danoRestante);
+      danoRestante -= absorvido;
+      updates["system.recursos.pv.temp"] = pvTempAtual - absorvido;
+    }
+
+    const novoValor = Math.max(0, pvValueAtual - danoRestante);
+    updates["system.recursos.pv.value"] = novoValor;
+
+    // ── Crepúsculo da Morte (só para personagens) ────────────────────
+    let mensagemExtra = "";
+    if (this.type === "personagem") {
+      // Caso 1: Já estava no Crepúsculo → dano custa 1 Det (2 se crítico)
+      if (jaNoCrepusculo) {
+        const detAtual = this.system.alma.determinacao;
+        const perda = opts.critico ? 2 : 1;
+        const novaDet = Math.max(0, detAtual - perda);
+        // Cor é derivada (10 - Det) no prepareDerivedData, então não setamos direto.
+        updates["system.alma.determinacao"] = novaDet;
+
+        mensagemExtra = `<p class="crep-aviso"><b>Crepúsculo:</b> ${this.name} perde ${perda} Determinação${opts.critico ? " (crítico!)" : ""}. Det: ${novaDet}.</p>`;
+      }
+      // Caso 2: Acabou de chegar a 0 PV → entra no Crepúsculo
+      else if (novoValor === 0 && pvValueAtual > 0) {
+        updates["system.alma.crepusculo"]    = true;
+        updates["system.alma.testesVontade"] = 0;
+        mensagemExtra = `
+          <div class="crep-aviso entrou">
+            <p><b>⚱ ${this.name} entra no Crepúsculo da Morte.</b></p>
+            <p>Det atual (${this.system.alma.determinacao}) = turnos restantes antes da morte.</p>
+            <p>No início de cada turno: –1 Determinação. Em Det 1: teste de Força de Vontade pra sobreviver.</p>
+          </div>`;
+      }
+    }
+
+    await this.update(updates);
 
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
-      content: `<div class="sinfonia-dano"><b>${this.name}</b> sofreu <b>${dano}</b> de dano! PV: ${novoValor}/${pv.max}</div>`
+      content: `<div class="sinfonia-dano"><b>${this.name}</b> sofreu <b>${dano}</b> de dano! PV: ${novoValor}/${pvMaxAtual}</div>${mensagemExtra}`
     });
   }
 
   /**
-   * Cura o personagem
+   * Cura o personagem.
+   * Se estava no Crepúsculo da Morte e recupera PV > 0, sai do Crepúsculo automaticamente.
    * @param {number} cura
    */
   async curar(cura) {
+    cura = Number(cura);
+    if (!Number.isFinite(cura) || cura <= 0) {
+      ui.notifications.warn(`Valor de cura inválido (${cura}). Verifique o card de dano.`);
+      return;
+    }
     cura = Math.max(1, Math.round(cura));
-    const pv = this.system.recursos.pv;
-    const novoValor = Math.min(pv.max, pv.value + cura);
-    await this.update({ "system.recursos.pv.value": novoValor });
+
+    const pv = this.system.recursos.pv ?? {};
+    const pvValueAtual = Number.isFinite(pv.value) ? pv.value : 0;
+    const pvMaxAtual   = Number.isFinite(pv.max)   ? pv.max   : 0;
+    const noCrepusculo = this.type === "personagem" && this.system.alma?.crepusculo === true;
+
+    const novoValor = Math.min(pvMaxAtual, pvValueAtual + cura);
+    const updates = { "system.recursos.pv.value": novoValor };
+
+    let mensagemExtra = "";
+    if (noCrepusculo && novoValor > 0) {
+      // Sai do Crepúsculo (PV voltou)
+      updates["system.alma.crepusculo"]    = false;
+      updates["system.alma.testesVontade"] = 0;
+      mensagemExtra = `<p class="crep-aviso saiu"><b>✨ ${this.name} retorna do Crepúsculo da Morte.</b></p>`;
+    }
+
+    await this.update(updates);
 
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
-      content: `<div class="sinfonia-cura"><b>${this.name}</b> recuperou <b>${cura}</b> PV! PV: ${novoValor}/${pv.max}</div>`
+      content: `<div class="sinfonia-cura"><b>${this.name}</b> recuperou <b>${cura}</b> PV! PV: ${novoValor}/${pvMaxAtual}</div>${mensagemExtra}`
+    });
+  }
+
+  /**
+   * Chamado no início do turno do personagem (via hook combatTurnChange).
+   * Se estiver no Crepúsculo da Morte, perde 1 Det. Se chegou a 1, oferece
+   * teste de Força de Vontade com ND escalonada (10 → 16 → 16 → 20 → 25 → 30).
+   * Se chegou a 0 Det, o personagem morre.
+   */
+  async processarTurnoCrepusculo() {
+    if (this.type !== "personagem") return;
+    if (!this.system.alma?.crepusculo) return;
+
+    const detAtual = this.system.alma.determinacao;
+
+    // Det 0 → morte
+    if (detAtual <= 0) {
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        content: `<div class="crep-aviso morte"><h3>☠ ${this.name} morreu.</h3><p>Sua alma se dissipou no Crepúsculo.</p></div>`
+      });
+      return;
+    }
+
+    // Det 1 → teste de Vontade
+    if (detAtual === 1) {
+      const NDS = [10, 16, 16, 20, 25, 30];
+      const tentativa = this.system.alma.testesVontade ?? 0;
+      const nd = NDS[Math.min(tentativa, NDS.length - 1)];
+
+      await this.update({
+        "system.alma.testesVontade": tentativa + 1
+      }, { render: false });
+
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        content: `
+          <div class="crep-aviso teste">
+            <p><b>⚠ ${this.name} agarra-se à vida.</b></p>
+            <p>Teste de <b>Força de Vontade</b> contra <b>ND ${nd}</b>. Em caso de falha, a alma se rompe e o personagem morre.</p>
+            <button type="button" class="btn-rolar-resistencia"
+              data-pericia="vontade" data-nd="${nd}"
+              data-actor-id="${this.id}">
+              <i class="fas fa-dice"></i> Rolar Vontade (ND ${nd})
+            </button>
+          </div>`
+      });
+      return;
+    }
+
+    // Caso normal: perde 1 Det (Cor sobe automaticamente via prepareDerivedData)
+    const novaDet = detAtual - 1;
+    await this.update({
+      "system.alma.determinacao": novaDet
+    }, { render: false });
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: `<div class="crep-aviso turno"><b>Crepúsculo:</b> ${this.name} perde 1 Determinação no início do turno. Det: ${novaDet}.</div>`
     });
   }
 }

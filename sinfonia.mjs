@@ -286,7 +286,17 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.5.3");
+  console.log("Sinfonia das Almas | Pronto. v0.6.0");
+
+  // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
+  // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
+  Hooks.on("combatTurnChange", async (combat, prior, current) => {
+    const combatant = combat?.combatants?.get(current?.combatantId);
+    const actor = combatant?.actor;
+    if (actor?.processarTurnoCrepusculo) {
+      await actor.processarTurnoCrepusculo();
+    }
+  });
 
   // ── Listener delegado: botões dentro das mensagens de chat ──
   document.body.addEventListener("click", async (ev) => {
@@ -371,24 +381,32 @@ Hooks.once("ready", () => {
       return;
     }
 
-    // Aplicar dano nos tokens selecionados
+    // Aplicar dano nos tokens-alvo (com fallback para selecionados)
     if (btn.classList.contains("btn-aplicar-dano")) {
       const dano = parseInt(btn.dataset.dano) || 0;
-      const tokens = canvas.tokens?.controlled ?? [];
+      // Prioriza tokens targetados (jogador apontou com 'T'). Se vazio, cai
+      // pros selecionados como fallback (útil quando o Mestre clica o próprio token).
+      const targets = Array.from(game.user.targets ?? []);
+      const tokens = targets.length
+        ? targets
+        : (canvas.tokens?.controlled ?? []);
       if (!tokens.length) {
-        ui.notifications.warn("Selecione um ou mais tokens para aplicar o dano.");
+        ui.notifications.warn("Aponte com 'T' um ou mais tokens (ou selecione) para aplicar o dano.");
         return;
       }
       for (const t of tokens) await t.actor?.aplicarDano?.(dano);
       return;
     }
 
-    // Aplicar cura nos tokens selecionados
+    // Aplicar cura nos tokens-alvo (com fallback para selecionados)
     if (btn.classList.contains("btn-aplicar-cura")) {
       const cura = parseInt(btn.dataset.cura) || 0;
-      const tokens = canvas.tokens?.controlled ?? [];
+      const targets = Array.from(game.user.targets ?? []);
+      const tokens = targets.length
+        ? targets
+        : (canvas.tokens?.controlled ?? []);
       if (!tokens.length) {
-        ui.notifications.warn("Selecione um ou mais tokens para aplicar a cura.");
+        ui.notifications.warn("Aponte com 'T' um ou mais tokens (ou selecione) para aplicar a cura.");
         return;
       }
       for (const t of tokens) await t.actor?.curar?.(cura);
