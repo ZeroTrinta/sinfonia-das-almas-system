@@ -1,6 +1,6 @@
 {
   "name": "sinfonia-das-almas-system",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "description": "Build tooling para o sistema Sinfonia das Almas (Foundry VTT v12)",
   "type": "module",
   "scripts": {

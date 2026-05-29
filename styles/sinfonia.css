@@ -2878,7 +2878,58 @@
 }
 
 /* ================================================================
-   v0.6.0 — CREPÚSCULO DA MORTE (avisos no chat)
+   v0.6.7 — Equipamento equipado (destaque visual)
+================================================================ */
+
+.v2-layout .items-list .item.equipado {
+  border-left: 2px solid var(--gold);
+  background: linear-gradient(
+    90deg,
+    rgba(200, 151, 42, 0.10) 0%,
+    rgba(200, 151, 42, 0.02) 60%,
+    transparent 100%
+  );
+}
+
+.v2-layout .item-controls .icon-equipar {
+  color: var(--silver-dim);
+  transition: all 0.2s;
+}
+.v2-layout .item-controls .icon-equipar:hover {
+  color: var(--gold-light);
+}
+.v2-layout .item-controls .icon-equipar.ativo {
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.5);
+}
+
+/* Conduíte tipo arcano/sagrado: cor distinta no border */
+.v2-layout .item.conduite-item.tipo-arcano.equipado {
+  border-left-color: #9060e8;
+  background: linear-gradient(
+    90deg,
+    rgba(144, 96, 232, 0.10) 0%,
+    transparent 100%
+  );
+}
+.v2-layout .item.conduite-item.tipo-sagrado.equipado {
+  border-left-color: #f0c060;
+  background: linear-gradient(
+    90deg,
+    rgba(240, 192, 96, 0.12) 0%,
+    transparent 100%
+  );
+}
+
+/* RD aplicada na mensagem de dano */
+.sinfonia-dano .rd-aplicada {
+  color: var(--silver-dim);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+/* ================================================================
+   v0.6.7 — Crepúsculo (cont)
 ================================================================ */
 
 .crep-aviso {

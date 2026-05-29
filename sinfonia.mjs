@@ -318,7 +318,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.6.6");
+  console.log("Sinfonia das Almas | Pronto. v0.6.7");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
@@ -416,6 +416,9 @@ Hooks.once("ready", () => {
     // Aplicar dano nos tokens-alvo (com fallback para selecionados)
     if (btn.classList.contains("btn-aplicar-dano")) {
       const dano = parseInt(btn.dataset.dano) || 0;
+      // Propriedades da arma: Contundente ignora RD leve; Crítico afeta Crepúsculo
+      const contundente = btn.dataset.contundente === "1";
+      const critico     = btn.dataset.critico === "1";
       // Prioriza tokens targetados (jogador apontou com 'T'). Se vazio, cai
       // pros selecionados como fallback (útil quando o Mestre clica o próprio token).
       const targets = Array.from(game.user.targets ?? []);
@@ -426,7 +429,7 @@ Hooks.once("ready", () => {
         ui.notifications.warn("Aponte com 'T' um ou mais tokens (ou selecione) para aplicar o dano.");
         return;
       }
-      for (const t of tokens) await t.actor?.aplicarDano?.(dano);
+      for (const t of tokens) await t.actor?.aplicarDano?.(dano, { contundente, critico });
       return;
     }
 

@@ -32,14 +32,85 @@ export class SinfoniaActor extends Actor {
     sys.recursos.pv.max = nivel + (5 * podValor);
     sys.recursos.pe.max = nivel + (5 * misValor);
 
-    // Defesa passiva = valor do dado de Agilidade
-    sys.combate.defesa = this.dadoValor("agi");
+    // ── Equipamentos equipados ──
+    // Só calculamos isso se this.items existe (em alguns ciclos do Foundry,
+    // prepareDerivedData roda antes dos items estarem carregados).
+    const items = this.items ?? new Map();
 
-    // Iniciativa = metade do dado de Agilidade (arredondado para baixo)
-    sys.combate.iniciativa = Math.floor(this.dadoValor("agi") / 2);
+    // Armadura equipada de corpo (leve/media/pesada) — substitui DEF se for maior
+    let armaduraCorpo = null;
+    // Escudos equipados — SOMAM bônus
+    let bonusEscudo = 0;
+    // Conduítes equipados — expostos pra rolarDanoMagia/curar
+    let conduiteArcanoEquipado = null;
+    let conduiteSagradoEquipado = null;
+    // Bônus de Veloz nas armas equipadas (cada arma com Veloz dá +1 INIT)
+    let bonusVeloz = 0;
+    // Modificadores extras de Conduíte (ex: Expansão: +1 ND Mística)
+    let bonusNdMistica = 0;
 
-    // ND Mística = 8 + valor dado de Misticismo
-    sys.combate.ndMistica = 8 + misValor;
+    for (const item of items) {
+      const s = item.system ?? {};
+
+      // Armaduras / Escudos
+      if (item.type === "armadura" && s.equipada) {
+        if (s.categoria === "escudo") {
+          bonusEscudo += Number(s.bonusDefesa) || 0;
+        } else if (!armaduraCorpo || (Number(s.defesaFixa) || 0) > (Number(armaduraCorpo.system.defesaFixa) || 0)) {
+          // Se mais de uma estiver marcada equipada (jogador erro), prefere a maior DEF
+          armaduraCorpo = item;
+        }
+      }
+
+      // Conduítes
+      if (item.type === "conduite" && s.equipado) {
+        if (s.tipo === "sagrado") conduiteSagradoEquipado = item;
+        else conduiteArcanoEquipado = item;
+        // Propriedade "Expansão: +1 ND Mística" — detecção por texto na propriedade
+        if (/expans[ãa]o/i.test(s.propriedades || "")) {
+          bonusNdMistica += 1;
+        }
+      }
+
+      // Armas equipadas com propriedade "Veloz"
+      if (item.type === "arma" && s.equipado) {
+        if (/\bveloz\b/i.test(s.propriedades || "")) {
+          bonusVeloz += 1;
+        }
+      }
+    }
+
+    // Defesa Passiva: maior entre AGI natural e armadura fixa, + escudos
+    const defNatural = this.dadoValor("agi");
+    const defArmadura = armaduraCorpo ? (Number(armaduraCorpo.system.defesaFixa) || 0) : 0;
+    sys.combate.defesa = Math.max(defNatural, defArmadura) + bonusEscudo;
+
+    // Redução de dano físico (só armaduras pesadas como Armadura de Guerra)
+    sys.combate.reducaoDano = armaduraCorpo ? (Number(armaduraCorpo.system.reducaoDano) || 0) : 0;
+
+    // Penalidade de deslocamento para armadura pesada: max(0, 10 - POD)
+    let deslocamentoBase = sys.combate.deslocamento ?? 9;
+    if (armaduraCorpo?.system?.categoria === "pesada") {
+      const penalidade = Math.max(0, 10 - podValor);
+      sys.combate.deslocamentoEfetivo = Math.max(0, deslocamentoBase - penalidade);
+      sys.combate.desvantagemFurtividade = true;
+    } else {
+      sys.combate.deslocamentoEfetivo = deslocamentoBase;
+      sys.combate.desvantagemFurtividade = false;
+    }
+
+    // Iniciativa = metade do dado AGI + 1 por arma Veloz
+    sys.combate.iniciativa = Math.floor(defNatural / 2) + bonusVeloz;
+
+    // ND Mística = 8 + MIS + bônus de conduítes com Expansão
+    sys.combate.ndMistica = 8 + misValor + bonusNdMistica;
+
+    // Expostos para uso pelo rolarDano* (não persistido — derivado)
+    sys.combate._armaduraCorpo  = armaduraCorpo?.id ?? null;
+    sys.combate._conduiteArcano  = conduiteArcanoEquipado?.id ?? null;
+    sys.combate._conduiteSagrado = conduiteSagradoEquipado?.id ?? null;
+    sys.combate._valorFixoArcano  = conduiteArcanoEquipado?.system?.valorFixo ?? 0;
+    sys.combate._valorFixoSagrado = conduiteSagradoEquipado?.system?.valorFixo ?? 0;
   }
 
   _prepareNpc() {
@@ -410,6 +481,14 @@ export class SinfoniaActor extends Actor {
       return;
     }
 
+    // ── Soma o Valor Fixo do Conduíte equipado (arcano ou sagrado conforme a magia) ──
+    const valorCond = magia.system.tipo === "sagrada"
+      ? (this.system.combate?._valorFixoSagrado ?? 0)
+      : (this.system.combate?._valorFixoArcano  ?? 0);
+    if (valorCond > 0) {
+      formula = `${formula} + ${valorCond}`;
+    }
+
     // Crítico dobra os dados
     if (opts.critico) {
       formula = formula.replace(/(\d+)d(\d+)/gi, (_, n, f) => `${parseInt(n) * 2}d${f}`);
@@ -492,9 +571,16 @@ export class SinfoniaActor extends Actor {
       formula = formula.replaceAll(`@${k}`, v);
     }
 
+    // Propriedades especiais da arma
+    const props = arma.system.propriedades || "";
+    const isBrutal      = /\bbrutal\b/i.test(props);
+    const isContundente = /\bcontundente\b/i.test(props);
+
     // Crítico: dobra todos os termos de dado (ex: 1d10 → 2d10)
+    // Brutal adiciona +5 ao crítico (além da duplicação)
     if (opts.critico) {
       formula = formula.replace(/(\d+)d(\d+)/gi, (_, n, f) => `${parseInt(n) * 2}d${f}`);
+      if (isBrutal) formula = `${formula} + 5`;
     }
 
     let roll;
@@ -518,6 +604,11 @@ export class SinfoniaActor extends Actor {
       return `<span class="dado-grupo"><span class="dado-tipo">d${term.faces}</span>${pills}</span>`;
     }).join("");
 
+    // Propriedades extras passadas ao botão "Aplicar Dano" (Contundente ignora RD leve)
+    const dataExtra = `data-dano="${total}"` +
+      (isContundente ? ` data-contundente="1"` : "") +
+      (opts.critico ? ` data-critico="1"` : "");
+
     const content = `
       <div class="sinfonia-dano-roll ${opts.critico ? 'critico' : ''}">
         <div class="dano-header">
@@ -531,7 +622,7 @@ export class SinfoniaActor extends Actor {
           <span class="dano-tipo">${tipoDano}</span>
         </div>
         <div class="dano-acoes">
-          <button type="button" class="btn-aplicar-dano" data-dano="${total}">
+          <button type="button" class="btn-aplicar-dano" ${dataExtra}>
             <i class="fas fa-heart-broken"></i> Aplicar Dano
           </button>
           <button type="button" class="btn-aplicar-cura" data-cura="${total}">
@@ -653,9 +744,14 @@ export class SinfoniaActor extends Actor {
    *   • Cada dano recebido no Crepúsculo: perde +1 Det (ou +2 se crítico).
    *   • Cada Det perdida vira Ponto de Corrupção.
    *
+   * Também aplica **Redução de Dano** da armadura equipada (apenas dano físico).
+   * A propriedade Contundente da arma ignora a RD de armaduras leves.
+   *
    * @param {number}  dano
    * @param {object}  [opts]
-   * @param {boolean} [opts.critico]  Marca este dano como crítico (dobra penalidade de Det no Crepúsculo)
+   * @param {boolean} [opts.critico]      Dano crítico → +1 Det extra no Crepúsculo
+   * @param {boolean} [opts.contundente]  Vindo de arma Contundente → ignora RD de armaduras leves
+   * @param {boolean} [opts.ignoreRD]     Ignora completamente a RD (magias verdadeiras, etc.)
    */
   async aplicarDano(dano, opts = {}) {
     // Normaliza entrada — aceita string "15" ou número 15
@@ -665,6 +761,26 @@ export class SinfoniaActor extends Actor {
       return;
     }
     dano = Math.max(1, Math.round(dano));
+
+    // ── Redução de Dano da Armadura ──
+    // RD física concedida pela armadura equipada (só funciona em personagem).
+    // Contundente ignora RD se a armadura for "leve".
+    let rdAplicada = 0;
+    if (this.type === "personagem" && !opts.ignoreRD) {
+      const rd = Number(this.system.combate?.reducaoDano) || 0;
+      if (rd > 0) {
+        // Descobre categoria da armadura corpo (pra checar Contundente)
+        const armaduraId = this.system.combate?._armaduraCorpo;
+        const armadura = armaduraId ? this.items?.get(armaduraId) : null;
+        const armaduraCategoria = armadura?.system?.categoria;
+
+        const contundenteIgnora = opts.contundente && armaduraCategoria === "leve";
+        if (!contundenteIgnora) {
+          rdAplicada = Math.min(rd, dano - 1); // RD nunca reduz dano abaixo de 1
+          dano = Math.max(1, dano - rdAplicada);
+        }
+      }
+    }
 
     const pv = this.system.recursos.pv ?? {};
     const pvValueAtual = Number.isFinite(pv.value) ? pv.value : 0;
@@ -713,9 +829,12 @@ export class SinfoniaActor extends Actor {
 
     await this.update(updates);
 
+    const rdMsg = rdAplicada > 0
+      ? ` <span class="rd-aplicada">(−${rdAplicada} RD da armadura)</span>`
+      : "";
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
-      content: `<div class="sinfonia-dano"><b>${this.name}</b> sofreu <b>${dano}</b> de dano! PV: ${novoValor}/${pvMaxAtual}</div>${mensagemExtra}`
+      content: `<div class="sinfonia-dano"><b>${this.name}</b> sofreu <b>${dano}</b> de dano!${rdMsg} PV: ${novoValor}/${pvMaxAtual}</div>${mensagemExtra}`
     });
   }
 

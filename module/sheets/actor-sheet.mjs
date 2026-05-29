@@ -32,6 +32,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       verTodasPericias: SinfoniaActorSheet._onVerTodasPericias,
       atacarArma:      SinfoniaActorSheet._onAtacarArma,
       rolarDanoArma:   SinfoniaActorSheet._onRolarDanoArma,
+      alternarEquipado: SinfoniaActorSheet._onAlternarEquipado,
       toggleFavorito:  SinfoniaActorSheet._onToggleFavorito
     }
   };
@@ -131,6 +132,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       magiasSagradas:  doc.items.filter(i => i.type === "magia" && i.system.tipo === "sagrada").sort((a,b) => a.system.circulo - b.system.circulo),
       armas:           doc.items.filter(i => i.type === "arma"),
       armaduras:       doc.items.filter(i => i.type === "armadura"),
+      conduites:       doc.items.filter(i => i.type === "conduite"),
       inventario:      doc.items.filter(i => i.type === "inventario"),
       // Tudo que pode ser favoritado, marcado pelo usuário
       favoritos:       doc.items.filter(i => i.system?.favorito === true),
@@ -840,6 +842,61 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     });
 
     await this.document.rolarDano(arma, { critico: !!critico });
+  }
+
+  /**
+   * Alterna o estado equipado/desequipado de uma arma, armadura ou conduíte.
+   * Reflete imediatamente nas estatísticas derivadas (DEF, INIT, ND Mística).
+   *
+   * Regras de conflito:
+   *   • Armaduras de corpo: desequipa outras armaduras não-escudo antes
+   *   • Conduítes: desequipa outros conduítes do mesmo tipo (arcano/sagrado)
+   */
+  static async _onAlternarEquipado(event, target) {
+    event.preventDefault();
+    event.stopPropagation();
+    const itemId = target.closest("[data-item-id]")?.dataset.itemId;
+    const item = this.document.items.get(itemId);
+    if (!item) return;
+
+    // Define o campo correto e qual conflitar com
+    const tipo = item.type;
+    const campo = tipo === "armadura" ? "equipada" : "equipado";
+    const atual = item.system?.[campo] === true;
+    const novo  = !atual;
+
+    // Se está equipando, desequipa conflitantes primeiro
+    if (novo) {
+      let conflitantes = [];
+      if (tipo === "armadura") {
+        // Só desequipa outras armaduras de corpo (escudos podem coexistir)
+        if (item.system.categoria !== "escudo") {
+          conflitantes = this.document.items.filter(i =>
+            i.type === "armadura"
+            && i.id !== item.id
+            && i.system.categoria !== "escudo"
+            && i.system.equipada === true
+          );
+        }
+      } else if (tipo === "conduite") {
+        // Só 1 conduíte por tipo (arcano XOR sagrado)
+        conflitantes = this.document.items.filter(i =>
+          i.type === "conduite"
+          && i.id !== item.id
+          && i.system.tipo === item.system.tipo
+          && i.system.equipado === true
+        );
+      }
+      // Armas não têm limite (pode equipar várias — estoque/cinturão)
+
+      for (const c of conflitantes) {
+        const campoC = c.type === "armadura" ? "equipada" : "equipado";
+        await c.update({ [`system.${campoC}`]: false }, { render: false });
+      }
+    }
+
+    // Aplica o toggle no item alvo (com render pra atualizar a ficha)
+    await item.update({ [`system.${campo}`]: novo });
   }
 
   /**

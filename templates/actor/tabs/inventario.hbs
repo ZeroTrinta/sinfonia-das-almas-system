@@ -1,4 +1,4 @@
-{{!-- TAB INVENTÁRIO: Armas + Armaduras + Utilizáveis --}}
+{{!-- TAB INVENTÁRIO: Armas + Armaduras + Conduítes + Utilizáveis --}}
 <div class="inventario-layout">
 
   {{!-- ═══ ARMAS ═══ --}}
@@ -9,7 +9,7 @@
     </div>
     <ul class="items-list">
       {{#each armas as |item|}}
-      <li class="item arma-item" data-item-id="{{item.id}}">
+      <li class="item arma-item{{#if item.system.equipado}} equipado{{/if}}" data-item-id="{{item.id}}">
         <a class="fav-toggle{{#if item.system.favorito}} is-fav{{/if}}" data-action="toggleFavorito" data-item-id="{{item.id}}" title="{{#if item.system.favorito}}Desfavoritar{{else}}Favoritar{{/if}}">
           <i class="fas fa-star"></i>
         </a>
@@ -19,6 +19,9 @@
           <span class="item-sub">{{item.system.dano}} {{item.system.tipoDano}}{{#if item.system.propriedades}} · {{item.system.propriedades}}{{/if}}</span>
         </div>
         <div class="item-controls">
+          <a data-action="alternarEquipado" data-item-id="{{item.id}}" title="{{#if item.system.equipado}}Desequipar{{else}}Equipar{{/if}}" class="icon-equipar{{#if item.system.equipado}} ativo{{/if}}">
+            <i class="fas {{#if item.system.equipado}}fa-hand-fist{{else}}fa-hand-paper{{/if}}"></i>
+          </a>
           <a data-action="atacarArma"    data-item-id="{{item.id}}" title="Atacar" class="icon-atacar"><i class="fas fa-crosshairs"></i></a>
           <a data-action="rolarDanoArma" data-item-id="{{item.id}}" title="Só Dano" class="icon-dano"><i class="fas fa-dice-d20"></i></a>
           <a data-action="editarItem"   data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
@@ -31,30 +34,71 @@
     </ul>
   </section>
 
-  {{!-- ═══ ARMADURAS ═══ --}}
+  {{!-- ═══ ARMADURAS & ESCUDOS ═══ --}}
   <section class="panel itens-panel">
     <div class="panel-header">
-      <h3 class="panel-title"><i class="fas fa-shield-alt"></i> Armaduras</h3>
+      <h3 class="panel-title"><i class="fas fa-shield-alt"></i> Armaduras & Escudos</h3>
       <a data-action="criarItem" data-tipo="armadura" title="Adicionar armadura"><i class="fas fa-plus"></i></a>
     </div>
     <ul class="items-list">
       {{#each armaduras as |item|}}
-      <li class="item armadura-item" data-item-id="{{item.id}}">
+      <li class="item armadura-item{{#if item.system.equipada}} equipado{{/if}}" data-item-id="{{item.id}}">
         <a class="fav-toggle{{#if item.system.favorito}} is-fav{{/if}}" data-action="toggleFavorito" data-item-id="{{item.id}}" title="{{#if item.system.favorito}}Desfavoritar{{else}}Favoritar{{/if}}">
           <i class="fas fa-star"></i>
         </a>
         <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
         <div class="item-info">
           <span class="item-nome">{{item.name}}</span>
-          <span class="item-sub">Defesa +{{item.system.bonusDefesa}}{{#if item.system.equipada}} · Equipada{{/if}}</span>
+          <span class="item-sub">
+            {{#if (eq item.system.categoria "escudo")}}+{{item.system.bonusDefesa}} DEF (escudo){{else}}DEF {{item.system.defesaFixa}}{{#if item.system.reducaoDano}} · RD {{item.system.reducaoDano}}{{/if}}{{/if}}
+            {{#if item.system.equipada}} · <b>Equipada</b>{{/if}}
+          </span>
         </div>
         <div class="item-controls">
+          <a data-action="alternarEquipado" data-item-id="{{item.id}}" title="{{#if item.system.equipada}}Desequipar{{else}}Equipar{{/if}}" class="icon-equipar{{#if item.system.equipada}} ativo{{/if}}">
+            <i class="fas {{#if item.system.equipada}}fa-shield{{else}}fa-shield-halved{{/if}}"></i>
+          </a>
           <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
           <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
         </div>
       </li>
       {{else}}
       <li class="items-vazio">Nenhuma armadura.</li>
+      {{/each}}
+    </ul>
+  </section>
+
+  {{!-- ═══ CONDUÍTES MÁGICOS ═══ --}}
+  <section class="panel itens-panel">
+    <div class="panel-header">
+      <h3 class="panel-title"><i class="fas fa-wand-magic-sparkles"></i> Conduítes</h3>
+      <a data-action="criarItem" data-tipo="conduite" title="Adicionar conduíte"><i class="fas fa-plus"></i></a>
+    </div>
+    <ul class="items-list">
+      {{#each conduites as |item|}}
+      <li class="item conduite-item tipo-{{item.system.tipo}}{{#if item.system.equipado}} equipado{{/if}}" data-item-id="{{item.id}}">
+        <a class="fav-toggle{{#if item.system.favorito}} is-fav{{/if}}" data-action="toggleFavorito" data-item-id="{{item.id}}" title="{{#if item.system.favorito}}Desfavoritar{{else}}Favoritar{{/if}}">
+          <i class="fas fa-star"></i>
+        </a>
+        <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
+        <div class="item-info">
+          <span class="item-nome">{{item.name}}</span>
+          <span class="item-sub">
+            {{#if (eq item.system.tipo "sagrado")}}Sagrado{{else}}Arcano{{/if}} · Valor Fixo +{{item.system.valorFixo}}
+            {{#if item.system.propriedades}} · {{item.system.propriedades}}{{/if}}
+            {{#if item.system.equipado}} · <b>Equipado</b>{{/if}}
+          </span>
+        </div>
+        <div class="item-controls">
+          <a data-action="alternarEquipado" data-item-id="{{item.id}}" title="{{#if item.system.equipado}}Desequipar{{else}}Equipar{{/if}}" class="icon-equipar{{#if item.system.equipado}} ativo{{/if}}">
+            <i class="fas fa-wand-sparkles"></i>
+          </a>
+          <a data-action="editarItem"  data-item-id="{{item.id}}" title="Editar"><i class="fas fa-edit"></i></a>
+          <a data-action="deletarItem" data-item-id="{{item.id}}" title="Deletar"><i class="fas fa-trash"></i></a>
+        </div>
+      </li>
+      {{else}}
+      <li class="items-vazio">Nenhum conduíte. Arraste do compendium ou clique em +</li>
       {{/each}}
     </ul>
   </section>
@@ -67,14 +111,18 @@
     </div>
     <ul class="items-list">
       {{#each inventario as |item|}}
-      <li class="item inventario-item" data-item-id="{{item.id}}">
+      <li class="item inventario-item cat-{{item.system.categoria}}" data-item-id="{{item.id}}">
         <a class="fav-toggle{{#if item.system.favorito}} is-fav{{/if}}" data-action="toggleFavorito" data-item-id="{{item.id}}" title="{{#if item.system.favorito}}Desfavoritar{{else}}Favoritar{{/if}}">
           <i class="fas fa-star"></i>
         </a>
         <img class="item-img" src="{{item.img}}" alt="{{item.name}}"/>
         <div class="item-info">
           <span class="item-nome">{{item.name}}</span>
-          <span class="item-sub">x{{item.system.quantidade}}{{#if item.system.custoPI}} · {{item.system.custoPI}} PI{{/if}}</span>
+          <span class="item-sub">
+            x{{item.system.quantidade}}
+            {{#if (eq item.system.categoria "consumivel")}}{{#if item.system.custoPI}} · {{item.system.custoPI}} PI{{/if}}{{/if}}
+            {{#unless (eq item.system.categoria "outro")}} · {{item.system.categoria}}{{/unless}}
+          </span>
         </div>
         <div class="item-controls">
           <a data-action="usarItem"    data-item-id="{{item.id}}" title="Usar"><i class="fas fa-hand-paper"></i></a>
