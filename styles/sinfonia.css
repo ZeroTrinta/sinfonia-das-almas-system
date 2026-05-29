@@ -2577,13 +2577,33 @@
   gap: 1px;
 }
 .v2-layout .rail-stat-input-with-suffix input {
-  width: 28px;
+  width: 42px;
+  text-align: right;
+  padding-right: 2px;
 }
 .v2-layout .rail-stat .rail-stat-suffix {
   font-size: 10px;
   color: var(--silver-dim);
   margin: 0;
   line-height: 1;
+}
+
+/* ─── Rail: stats derivados (não-editáveis) ─── */
+.v2-layout .rail-stat.derived {
+  cursor: default;
+}
+.v2-layout .rail-stat.derived:hover {
+  border-left-color: var(--gold-dim);
+  background: rgba(200, 151, 42, 0.06);
+}
+.v2-layout .rail-stat-value {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold-light);
+  width: 40px;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.2);
 }
 
 /* ─── Rail: botões com layout próprio pra não quebrar texto ─── */

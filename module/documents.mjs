@@ -576,6 +576,8 @@ export class SinfoniaActor extends Actor {
       return this._estilhacarAlma();
     }
     const novaDet = det - 1;
+    // {render:false} mantém a animação suave — a sheet (action handler
+    // `_onCorromper`) atualiza as barras manualmente via JS depois do update.
     await this.update({ "system.alma.determinacao": novaDet }, { render: false });
 
     if (novaDet === 0) {

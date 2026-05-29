@@ -188,6 +188,11 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
       try {
         await this.document.update({ [name]: value }, { render: false });
+        // Se o usuário mudou um atributo (dado d6–d12), atualiza os stats
+        // derivados da rail (INIT, DEF, ND M.) manualmente — sem re-render.
+        if (name.startsWith("system.atributos.")) {
+          this._atualizarStatsDerivados();
+        }
       } catch (err) {
         console.error("Sinfonia | Falha ao salvar campo", name, err);
         ui.notifications.error(`Não foi possível salvar ${name}.`);
@@ -543,30 +548,12 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
   static async _onAlternarDet(event, target) {
     // Ajuste manual de Determinação (setas +/-). NÃO dispara Estilhaço automático
-    // — esse é considerado ajuste do Mestre. Para corrupção que conta no cabo de
-    // guerra, use o botão "Corromper Alma" (chama document.corromper()).
+    // — esse é considerado ajuste do Mestre.
     const det  = this.document.system.alma.determinacao;
     const novo = Math.clamp(det + (parseInt(target.dataset.delta)||0), 0, 10);
-    // {render:false} é essencial: sem ele, clicar nas setas refaz o HTML
-    // e a barra "piscaria". O _onRender já redesenha as barras manualmente
-    // via Handlebars na próxima abertura, e enquanto isso o valor já está
-    // persistido. Se quiser feedback visual imediato, atualize as barras
-    // aqui manualmente antes do update.
     await this.document.update({ "system.alma.determinacao": novo }, { render: false });
-
-    // Atualiza as barras de alma na hora, sem re-render da ficha inteira
-    const el = this.element;
-    if (el) {
-      const cor = 10 - novo;
-      const detBar = el.querySelector(".det-fill");
-      const corBar = el.querySelector(".cor-fill");
-      const detVal = el.querySelector(".det-lado .alma-valor");
-      const corVal = el.querySelector(".cor-lado .alma-valor");
-      if (detBar) detBar.style.width = (novo * 10) + "%";
-      if (corBar) corBar.style.width = (cor  * 10) + "%";
-      if (detVal) detVal.textContent = novo;
-      if (corVal) corVal.textContent = cor;
-    }
+    // Atualiza as barras na hora com transição CSS suave
+    this._atualizarBarrasAlma();
   }
 
   static async _onAbrirArvore(event, target) {
@@ -587,7 +574,55 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
                <p>Se a Determinação zerar, você recebe um <b>Estilhaço da Alma</b>.</p>
                <p>Continuar?</p>`
     });
-    if (ok) await this.document.corromper();
+    if (!ok) return;
+    await this.document.corromper();
+
+    // ✨ Animação manual das barras (sem re-render da sheet inteira).
+    // O método corromper() usa {render:false}, então atualizamos o DOM
+    // diretamente — isso dispara as transições CSS das barras.
+    this._atualizarBarrasAlma();
+  }
+
+  /**
+   * Atualiza as barras de Determinação/Corrupção e os contadores numéricos
+   * no DOM após mudança no eixo da alma, sem re-render completo da sheet.
+   * Dispara a transição CSS `width 0.4s ease` ao trocar `style.width`.
+   */
+  _atualizarBarrasAlma() {
+    const el = this.element;
+    if (!el) return;
+    const det = this.document.system.alma.determinacao;
+    const cor = 10 - det;
+    const detBar = el.querySelector(".det-fill");
+    const corBar = el.querySelector(".cor-fill");
+    const detVal = el.querySelector(".det-lado .alma-valor");
+    const corVal = el.querySelector(".cor-lado .alma-valor");
+    const detNum = el.querySelector("input[name='system.alma.determinacao']");
+    if (detBar) detBar.style.width = (det * 10) + "%";
+    if (corBar) corBar.style.width = (cor * 10) + "%";
+    if (detVal) detVal.textContent = det;
+    if (corVal) corVal.textContent = cor;
+    if (detNum) detNum.value = det;
+  }
+
+  /**
+   * Atualiza os 3 stats derivados na rail (INIT, DEF, ND M.) após mudança
+   * de atributo — sem re-render completo. O document.system já foi atualizado
+   * pelo prepareDerivedData internamente do Foundry, então só lemos os valores.
+   *
+   * INIT = floor(dado AGI / 2)
+   * DEF  = dado AGI
+   * ND M.= 8 + dado MIS
+   */
+  _atualizarStatsDerivados() {
+    const el = this.element;
+    if (!el) return;
+    const c = this.document.system.combate;
+    const stats = el.querySelectorAll(".rail-stat.derived .rail-stat-value");
+    // Ordem: INIT, DEF, ND M. (mesma do template)
+    if (stats[0]) stats[0].textContent = c.iniciativa;
+    if (stats[1]) stats[1].textContent = c.defesa;
+    if (stats[2]) stats[2].textContent = c.ndMistica;
   }
 
   static async _onDescansar(event, target) {

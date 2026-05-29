@@ -1,34 +1,5 @@
-{{!-- TAB PRINCIPAL: Perícias (3 colunas) + Favoritos --}}
+{{!-- TAB PRINCIPAL: Favoritos (em cima) + Perícias (3 colunas) --}}
 <div class="principal-layout">
-
-  {{!-- ═══ PERÍCIAS — TODAS, EM 3 COLUNAS, INLINE ═══ --}}
-  <section class="panel pericias-grid-panel">
-    <div class="panel-header">
-      <h3 class="panel-title">Perícias</h3>
-      <span class="panel-hint">Clique no nome para rolar.</span>
-    </div>
-    <div class="pericias-grid">
-      {{#each periciasTodas}}
-      <div class="pericia-row maestria-{{this.maestria}}{{#if this.isNone}} sem-maestria{{/if}}" data-key="{{this.key}}">
-        <a class="pericia-rolar"
-           data-action="rolarPericia"
-           data-pericia="{{this.key}}"
-           data-atrib-a="{{this.atribA}}"
-           data-atrib-b="{{this.atribB}}"
-           title="Rolar {{this.label}}">
-          <span class="pericia-nome">{{this.label}}</span>
-          <span class="pericia-atribs">{{upper this.atribA}}+{{upper this.atribB}}</span>
-        </a>
-        <select class="sel-maestria" name="system.pericias.{{this.key}}" title="Maestria">
-          <option value=""           {{#if this.isNone}}selected{{/if}}>—</option>
-          <option value="iniciante"  {{#if this.isIniciante}}selected{{/if}}>I (+2)</option>
-          <option value="treinado"   {{#if this.isTreinado}}selected{{/if}}>T (+4)</option>
-          <option value="experiente" {{#if this.isExperiente}}selected{{/if}}>E (+6)</option>
-        </select>
-      </div>
-      {{/each}}
-    </div>
-  </section>
 
   {{!-- ═══ FAVORITOS ═══ --}}
   <section class="panel favoritos-panel">
@@ -70,6 +41,35 @@
       </li>
       {{/each}}
     </ul>
+  </section>
+
+  {{!-- ═══ PERÍCIAS — TODAS, EM 3 COLUNAS, INLINE ═══ --}}
+  <section class="panel pericias-grid-panel">
+    <div class="panel-header">
+      <h3 class="panel-title">Perícias</h3>
+      <span class="panel-hint">Clique no nome para rolar.</span>
+    </div>
+    <div class="pericias-grid">
+      {{#each periciasTodas}}
+      <div class="pericia-row maestria-{{this.maestria}}{{#if this.isNone}} sem-maestria{{/if}}" data-key="{{this.key}}">
+        <a class="pericia-rolar"
+           data-action="rolarPericia"
+           data-pericia="{{this.key}}"
+           data-atrib-a="{{this.atribA}}"
+           data-atrib-b="{{this.atribB}}"
+           title="Rolar {{this.label}}">
+          <span class="pericia-nome">{{this.label}}</span>
+          <span class="pericia-atribs">{{upper this.atribA}}+{{upper this.atribB}}</span>
+        </a>
+        <select class="sel-maestria" name="system.pericias.{{this.key}}" title="Maestria">
+          <option value=""           {{#if this.isNone}}selected{{/if}}>—</option>
+          <option value="iniciante"  {{#if this.isIniciante}}selected{{/if}}>I (+2)</option>
+          <option value="treinado"   {{#if this.isTreinado}}selected{{/if}}>T (+4)</option>
+          <option value="experiente" {{#if this.isExperiente}}selected{{/if}}>E (+6)</option>
+        </select>
+      </div>
+      {{/each}}
+    </div>
   </section>
 
 </div>

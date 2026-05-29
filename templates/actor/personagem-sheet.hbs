@@ -73,15 +73,15 @@
       </div>
 
       <div class="rail-stats">
-        <div class="rail-stat" title="Iniciativa">
+        <div class="rail-stat derived" title="Iniciativa (metade do dado AGI)">
           <span class="rail-stat-icon">⚡</span>
           <span class="rail-stat-label">INIT</span>
-          <input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/>
+          <span class="rail-stat-value">{{system.combate.iniciativa}}</span>
         </div>
-        <div class="rail-stat" title="Defesa Passiva">
+        <div class="rail-stat derived" title="Defesa Passiva (valor do dado AGI)">
           <span class="rail-stat-icon">🛡</span>
           <span class="rail-stat-label">DEF</span>
-          <input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/>
+          <span class="rail-stat-value">{{system.combate.defesa}}</span>
         </div>
         <div class="rail-stat" title="Deslocamento (metros)">
           <span class="rail-stat-icon">⇄</span>
@@ -91,10 +91,10 @@
             <span class="rail-stat-suffix">m</span>
           </div>
         </div>
-        <div class="rail-stat" title="ND Mística">
+        <div class="rail-stat derived" title="ND Mística (8 + dado MIS)">
           <span class="rail-stat-icon">✦</span>
           <span class="rail-stat-label">ND M.</span>
-          <input type="number" name="system.combate.ndMistica" value="{{system.combate.ndMistica}}"/>
+          <span class="rail-stat-value">{{system.combate.ndMistica}}</span>
         </div>
         <div class="rail-stat estilhacos" title="Estilhaços da Alma">
           <span class="rail-stat-icon">◈</span>
