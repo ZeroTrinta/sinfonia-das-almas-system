@@ -1,0 +1,170 @@
+[
+  {
+    "name": "Cajado de Aprendiz",
+    "type": "conduite",
+    "img": "icons/weapons/staves/staff-simple-gold.webp",
+    "system": {
+      "tipo": "arcano",
+      "valorFixo": 4,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Arcano</p><p><strong>Valor Fixo:</strong> +4</p><p><strong>Custo:</strong> 100 Zênites</p><p><em>Somado ao dano/cura de magias arcanas conjuradas com ele.</em></p>",
+      "peso": 3
+    }
+  },
+  {
+    "name": "Varinha de Foco",
+    "type": "conduite",
+    "img": "icons/weapons/wands/wand-gem-violet.webp",
+    "system": {
+      "tipo": "arcano",
+      "valorFixo": 5,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Leve",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Arcano · Leve</p><p><strong>Valor Fixo:</strong> +5</p><p><strong>Custo:</strong> 150 Zênites</p><p><strong>Leve:</strong> Pode ser empunhada com uma mão, liberando a outra para escudo.</p>",
+      "peso": 1
+    }
+  },
+  {
+    "name": "Cajado de Batalha",
+    "type": "conduite",
+    "img": "icons/weapons/staves/staff-ornate-runes-blue.webp",
+    "system": {
+      "tipo": "arcano",
+      "valorFixo": 7,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Corpo a corpo: MIS+MIS+7 Físico",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Arcano · Marcial</p><p><strong>Valor Fixo:</strong> +7</p><p><strong>Custo:</strong> 250 Zênites</p><p><strong>Corpo a corpo:</strong> Pode atacar em melee causando MIS+MIS+7 — Físico (Perícia: Armas Brancas).</p>",
+      "peso": 4
+    }
+  },
+  {
+    "name": "Tomo Arcano",
+    "type": "conduite",
+    "img": "icons/sundries/books/book-tooled-silver-purple.webp",
+    "system": {
+      "tipo": "arcano",
+      "valorFixo": 6,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Grimório: +1 magia conhecida",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Arcano · Grimório</p><p><strong>Valor Fixo:</strong> +6</p><p><strong>Custo:</strong> 300 Zênites</p><p><strong>Grimório:</strong> +1 magia conhecida enquanto carregar este tomo.</p>",
+      "peso": 2
+    }
+  },
+  {
+    "name": "Orbe de Cristal",
+    "type": "conduite",
+    "img": "icons/magic/light/orb-lightbulb-purple.webp",
+    "system": {
+      "tipo": "arcano",
+      "valorFixo": 8,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Expansão: +1 ND Mística",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Arcano · Expansão</p><p><strong>Valor Fixo:</strong> +8</p><p><strong>Custo:</strong> 400 Zênites</p><p><strong>Expansão:</strong> +1 na ND Mística do conjurador.</p>",
+      "peso": 2
+    }
+  },
+  {
+    "name": "Cajado do Arcano Superior",
+    "type": "conduite",
+    "img": "icons/weapons/staves/staff-skull-purple.webp",
+    "system": {
+      "tipo": "arcano",
+      "valorFixo": 10,
+      "equipado": false,
+      "duasMaos": true,
+      "propriedades": "Duas Mãos. Expansão: +1 ND Mística",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Arcano · Duas Mãos · Expansão</p><p><strong>Valor Fixo:</strong> +10</p><p><strong>Custo:</strong> 600 Zênites</p><p><strong>Expansão:</strong> +1 na ND Mística do conjurador.</p>",
+      "peso": 5
+    }
+  },
+  {
+    "name": "Símbolo Sagrado Simples",
+    "type": "conduite",
+    "img": "icons/equipment/neck/amulet-medallion-cross.webp",
+    "system": {
+      "tipo": "sagrado",
+      "valorFixo": 4,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Sagrado</p><p><strong>Valor Fixo:</strong> +4</p><p><strong>Custo:</strong> 100 Zênites</p><p><em>Somado ao dano/cura de magias sagradas conjuradas com ele.</em></p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Rosário Abençoado",
+    "type": "conduite",
+    "img": "icons/equipment/neck/necklace-prayer-beads-fancy.webp",
+    "system": {
+      "tipo": "sagrado",
+      "valorFixo": 5,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Leve",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Sagrado · Leve</p><p><strong>Valor Fixo:</strong> +5</p><p><strong>Custo:</strong> 150 Zênites</p><p><strong>Leve:</strong> Pode ser empunhado com uma mão.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Relíquia de Batalha",
+    "type": "conduite",
+    "img": "icons/weapons/maces/mace-warhammer-gold.webp",
+    "system": {
+      "tipo": "sagrado",
+      "valorFixo": 7,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Corpo a corpo: CAR+INT+7 Luz",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Sagrado · Marcial</p><p><strong>Valor Fixo:</strong> +7</p><p><strong>Custo:</strong> 250 Zênites</p><p><strong>Corpo a corpo:</strong> Pode atacar em melee causando CAR+INT+7 — Dano de Luz.</p>",
+      "peso": 3
+    }
+  },
+  {
+    "name": "Tomo Divino",
+    "type": "conduite",
+    "img": "icons/sundries/books/book-clasped-gold.webp",
+    "system": {
+      "tipo": "sagrado",
+      "valorFixo": 6,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Sagrado: +1 magia sagrada conhecida",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Sagrado · Grimório Divino</p><p><strong>Valor Fixo:</strong> +6</p><p><strong>Custo:</strong> 300 Zênites</p><p><strong>Sagrado:</strong> +1 magia sagrada conhecida.</p>",
+      "peso": 2
+    }
+  },
+  {
+    "name": "Símbolo Sagrado Abençoado",
+    "type": "conduite",
+    "img": "icons/equipment/neck/amulet-medallion-bronze.webp",
+    "system": {
+      "tipo": "sagrado",
+      "valorFixo": 8,
+      "equipado": false,
+      "duasMaos": false,
+      "propriedades": "Expansão: +1 ND Mística",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Sagrado · Expansão</p><p><strong>Valor Fixo:</strong> +8</p><p><strong>Custo:</strong> 400 Zênites</p><p><strong>Expansão:</strong> +1 na ND Mística.</p>",
+      "peso": 0
+    }
+  },
+  {
+    "name": "Relíquia Ancestral",
+    "type": "conduite",
+    "img": "icons/weapons/staves/staff-ornate-gold.webp",
+    "system": {
+      "tipo": "sagrado",
+      "valorFixo": 10,
+      "equipado": false,
+      "duasMaos": true,
+      "propriedades": "Duas Mãos. Expansão: +1 ND Mística",
+      "descricao": "<p><strong>Tipo:</strong> Conduíte Sagrado · Duas Mãos · Expansão</p><p><strong>Valor Fixo:</strong> +10</p><p><strong>Custo:</strong> 600 Zênites</p><p><strong>Expansão:</strong> +1 na ND Mística.</p>",
+      "peso": 5
+    }
+  }
+]

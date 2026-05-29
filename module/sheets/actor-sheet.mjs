@@ -225,32 +225,72 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       }
     });
 
-    // ── Retrato/avatar: abre FilePicker ao clicar em [data-edit="img"] ──
+    // ── Imagens editáveis: retrato da ficha + imagem do token ──
     // DocumentSheetV2 não conecta isso automaticamente, então fazemos manual.
+    // Dois alvos distintos:
+    //   • [data-edit="img"]       → muda actor.img (retrato grande, lado esquerdo)
+    //   • [data-edit="token-img"] → muda prototypeToken.texture.src + sincroniza
+    //                                tokens já colocados nas cenas (banner pequeno, círculo)
     // Fallback robusto: tenta o caminho v13 (foundry.applications.apps.FilePicker.implementation)
     // e, se não existir, usa o FilePicker global (v12).
     const FilePickerClass =
       foundry.applications?.apps?.FilePicker?.implementation ??
       globalThis.FilePicker;
+
+    // Helper compartilhado: abre o FilePicker e roda o callback
+    const abrirFilePicker = (currentPath, callback) => {
+      if (!FilePickerClass) {
+        ui.notifications.error("FilePicker indisponível nesta versão do Foundry.");
+        return;
+      }
+      const fp = new FilePickerClass({
+        type: "image",
+        current: currentPath,
+        callback,
+        top:  (this.position?.top  ?? 100) + 40,
+        left: (this.position?.left ?? 100) + 10
+      });
+      fp.browse();
+    };
+
+    // Retrato da ficha (rail esquerda + qualquer outro [data-edit="img"])
     this.element.querySelectorAll('[data-edit="img"]').forEach(el => {
       el.style.cursor = "pointer";
       el.addEventListener("click", (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        if (!FilePickerClass) {
-          ui.notifications.error("FilePicker indisponível nesta versão do Foundry.");
-          return;
-        }
-        const fp = new FilePickerClass({
-          type: "image",
-          current: this.document.img,
-          callback: async (path) => {
-            await this.document.update({ img: path });
-          },
-          top: (this.position?.top ?? 100) + 40,
-          left: (this.position?.left ?? 100) + 10
+        abrirFilePicker(this.document.img, async (path) => {
+          await this.document.update({ img: path });
         });
-        fp.browse();
+      }, { signal: sig });
+    });
+
+    // Imagem do TOKEN (círculo do banner superior)
+    this.element.querySelectorAll('[data-edit="token-img"]').forEach(el => {
+      el.style.cursor = "pointer";
+      el.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const current = this.document.prototypeToken?.texture?.src ?? this.document.img;
+        abrirFilePicker(current, async (path) => {
+          // 1) Atualiza o prototypeToken (afeta tokens FUTUROS)
+          await this.document.update({ "prototypeToken.texture.src": path });
+
+          // 2) Sincroniza tokens JÁ colocados em TODAS as cenas
+          let count = 0;
+          for (const scene of game.scenes) {
+            const tokensDeste = scene.tokens.filter(t => t.actorId === this.document.id);
+            for (const token of tokensDeste) {
+              await token.update({ "texture.src": path });
+              count++;
+            }
+          }
+          if (count > 0) {
+            ui.notifications.info(`Imagem do token atualizada em ${count} token(s) das cenas.`);
+          } else {
+            ui.notifications.info(`Imagem do token atualizada no prototype.`);
+          }
+        });
       }, { signal: sig });
     });
 

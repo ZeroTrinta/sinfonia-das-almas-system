@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Poção de Cura Menor",
+    "type": "inventario",
+    "img": "icons/consumables/potions/potion-tube-corked-red.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 1,
+      "efeito": "20",
+      "tipoEfeito": "cura",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 1 PI</p><p><strong>Efeito:</strong> Restaura 20 PV</p><p><strong>Custo:</strong> 30 Zênites</p><p><em>Usar custa uma Ação Parcial.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Poção de Cura",
+    "type": "inventario",
+    "img": "icons/consumables/potions/bottle-round-corked-red.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 2,
+      "efeito": "40",
+      "tipoEfeito": "cura",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 2 PI</p><p><strong>Efeito:</strong> Restaura 40 PV</p><p><strong>Custo:</strong> 80 Zênites</p><p><em>Usar custa uma Ação Parcial.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Poção de Cura Maior",
+    "type": "inventario",
+    "img": "icons/consumables/potions/bottle-pill-large-corked-red.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 3,
+      "efeito": "80",
+      "tipoEfeito": "cura",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 3 PI</p><p><strong>Efeito:</strong> Restaura 80 PV</p><p><strong>Custo:</strong> 180 Zênites</p><p><em>Usar custa uma Ação Parcial.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Poção de Energia Menor",
+    "type": "inventario",
+    "img": "icons/consumables/potions/potion-tube-corked-blue.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 1,
+      "efeito": "20",
+      "tipoEfeito": "buff",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 1 PI</p><p><strong>Efeito:</strong> Restaura 20 PE</p><p><strong>Custo:</strong> 30 Zênites</p><p><em>Usar custa uma Ação Parcial. (Use o botão de Aplicar Cura no campo PE manualmente.)</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Poção de Energia",
+    "type": "inventario",
+    "img": "icons/consumables/potions/bottle-round-corked-blue.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 2,
+      "efeito": "40",
+      "tipoEfeito": "buff",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 2 PI</p><p><strong>Efeito:</strong> Restaura 40 PE</p><p><strong>Custo:</strong> 80 Zênites</p><p><em>Usar custa uma Ação Parcial.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Poção de Energia Maior",
+    "type": "inventario",
+    "img": "icons/consumables/potions/bottle-pill-large-corked-blue.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 3,
+      "efeito": "80",
+      "tipoEfeito": "buff",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 3 PI</p><p><strong>Efeito:</strong> Restaura 80 PE</p><p><strong>Custo:</strong> 180 Zênites</p><p><em>Usar custa uma Ação Parcial.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Poção de Purificação",
+    "type": "inventario",
+    "img": "icons/consumables/potions/bottle-round-corked-white.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 2,
+      "efeito": "",
+      "tipoEfeito": "none",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 2 PI</p><p><strong>Efeito:</strong> Remove uma condição negativa ativa à escolha do usuário.</p><p><strong>Custo:</strong> 100 Zênites</p><p><em>Usar custa uma Ação Parcial. O Mestre deve confirmar qual condição será removida.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  },
+  {
+    "name": "Elixir da Alma",
+    "type": "inventario",
+    "img": "icons/consumables/potions/bottle-pill-large-corked-gold.webp",
+    "system": {
+      "categoria": "consumivel",
+      "quantidade": 1,
+      "custoPI": 3,
+      "efeito": "40",
+      "tipoEfeito": "cura",
+      "descricao": "<p><strong>Tipo:</strong> Consumível · 3 PI</p><p><strong>Efeito:</strong> Restaura 40 PV e 40 PE simultaneamente</p><p><strong>Custo:</strong> 250 Zênites</p><p><em>Usar custa uma Ação Parcial. Aplica 40 PV automaticamente; o usuário deve aplicar 40 PE manualmente.</em></p>",
+      "peso": 0.5,
+      "favorito": false
+    }
+  }
+]

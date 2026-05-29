@@ -260,8 +260,45 @@ export class ArmaduraDataModel extends BaseItemModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),
-      bonusDefesa: new NumberField({ required: true, integer: true, initial: 0 }),
-      equipada:    new BooleanField({ required: true, initial: false })
+      // Tipo de armadura:
+      //   • leve   — sem penalidade
+      //   • media  — sem penalidade mágica
+      //   • pesada — penalidade de deslocamento (POD−10) + Desvantagem em Furtividade
+      //   • escudo — bônus em Defesa, exige uma mão livre
+      categoria: new StringField({
+        required: true, blank: false, initial: "leve",
+        choices: ["leve", "media", "pesada", "escudo"]
+      }),
+      // Defesa fixa concedida (substitui DEF natural se maior). Pra escudos, soma.
+      defesaFixa:   new NumberField({ required: true, integer: true, initial: 0 }),
+      // Reduzão de dano físico (somente armaduras pesadas: Armadura de Guerra tem 3)
+      reducaoDano:  new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
+      // Mantido por compatibilidade — quem usar isso ainda funciona
+      bonusDefesa:  new NumberField({ required: true, integer: true, initial: 0 }),
+      equipada:     new BooleanField({ required: true, initial: false }),
+      propriedades: new StringField({ required: true, blank: true, initial: "" })
+    };
+  }
+}
+
+/**
+ * Conduíte Mágico: cajados, varinhas, tomos, símbolos sagrados, relíquias.
+ * Cada conduíte tem um Valor Fixo somado ao dano/cura das magias conjuradas.
+ */
+export class ConduiteDataModel extends BaseItemModel {
+  static defineSchema() {
+    return {
+      ...super.defineSchema(),
+      // arcano | sagrado — define quais magias se beneficiam dele
+      tipo: new StringField({
+        required: true, blank: false, initial: "arcano",
+        choices: ["arcano", "sagrado"]
+      }),
+      // Valor fixo somado ao dano/cura de magias compatíveis
+      valorFixo:    new NumberField({ required: true, integer: true, min: 0, initial: 4 }),
+      equipado:     new BooleanField({ required: true, initial: false }),
+      duasMaos:     new BooleanField({ required: true, initial: false }),
+      propriedades: new StringField({ required: true, blank: true, initial: "" })
     };
   }
 }
@@ -270,8 +307,27 @@ export class InventarioDataModel extends BaseItemModel {
   static defineSchema() {
     return {
       ...super.defineSchema(),
+      // Categoria do item — controla a regra de PI e o agrupamento na ficha:
+      //   • consumivel — GASTA PI (poções, antidotos, comida, munição, etc).
+      //   • ferramenta — Não gasta PI (kits, lupa, corda, pé-de-cabra...).
+      //   • equipamento — Não gasta PI (mochila, lampião, vestimenta...).
+      //   • valioso    — Não gasta PI (jóias, moedas, gemas, artefatos).
+      //   • outro      — Não gasta PI (item genérico).
+      categoria: new StringField({
+        required: true, blank: false, initial: "outro",
+        choices: ["consumivel", "ferramenta", "equipamento", "valioso", "outro"]
+      }),
       quantidade: new NumberField({ required: true, integer: true, min: 0, initial: 1 }),
-      custoPI:    new NumberField({ required: true, integer: true, min: 0, initial: 1 })
+      // Só consumíveis devem ter custoPI > 0. Outras categorias deixam em 0.
+      custoPI:    new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
+      // Para consumíveis: efeito automático ao usar (cura, dano, etc).
+      // Formato: "3d8" ou "@pod+2". Vazio = só mensagem no chat.
+      efeito:     new StringField({ required: true, blank: true, initial: "" }),
+      // Tipo do efeito: cura | dano | none. Define o que o botão "usar" faz.
+      tipoEfeito: new StringField({
+        required: true, blank: false, initial: "none",
+        choices: ["none", "cura", "dano", "resistencia", "buff"]
+      })
     };
   }
 }

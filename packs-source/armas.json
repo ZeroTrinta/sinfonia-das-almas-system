@@ -1,20 +1,38 @@
 [
   {
-    "name": "Greatsword",
+    "name": "Adaga",
     "type": "arma",
-    "img": "icons/weapons/swords/greatsword-blue.webp",
+    "img": "icons/weapons/daggers/dagger-curved-bone.webp",
     "system": {
-      "categoria": "espada",
-      "dano": "@pod+@agi+13",
+      "categoria": "leve",
+      "dano": "@agi+@agi+6",
       "tipoDano": "fisico",
       "alcance": 1.5,
       "bonus": 0,
       "equipado": false,
-      "duasMaos": true,
+      "duasMaos": false,
+      "duplaEmpunhadura": true,
+      "propriedades": "Dupla Empunhadura",
+      "descricao": "<p><strong>Categoria:</strong> Espada · Leve · Dupla Empunhadura</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> AGI + AGI + 6 — Físico</p><p><strong>Custo:</strong> 50 Zênites</p><p><em>Apenas armas com Dupla Empunhadura podem ser empunhadas uma em cada mão. Ataque com a segunda arma gasta Ação Parcial e usa apenas o valor fixo (sem dados de atributo).</em></p>",
+      "peso": 1
+    }
+  },
+  {
+    "name": "Short Sword",
+    "type": "arma",
+    "img": "icons/weapons/swords/shortsword-guard-bronze.webp",
+    "system": {
+      "categoria": "espada",
+      "dano": "@agi+@pod+7",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
       "duplaEmpunhadura": false,
-      "propriedades": "Duas mãos",
-      "descricao": "<p><strong>Categoria:</strong> Espada, Duas mãos</p><p><strong>Perícia utilizada:</strong> Armas Brancas</p><p><strong>Dano:</strong> [Poder+Agilidade] + 13 de Dano Físico</p><p>Uma espada longa e pesada que exige duas mãos para ser empunhada com efetividade.</p>",
-      "peso": 6
+      "propriedades": "",
+      "descricao": "<p><strong>Categoria:</strong> Espada</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> AGI + POD + 7 — Físico</p><p><strong>Custo:</strong> 80 Zênites</p>",
+      "peso": 2
     }
   },
   {
@@ -30,9 +48,135 @@
       "equipado": false,
       "duasMaos": false,
       "duplaEmpunhadura": false,
-      "propriedades": "Uma mão",
-      "descricao": "<p><strong>Categoria:</strong> Espada, Uma mão</p><p><strong>Perícia Utilizada:</strong> Armas brancas</p><p><strong>Dano:</strong> [Poder+Agilidade] + 8 de Dano Físico</p><p>Uma espada longa e versátil, empunhada com uma mão.</p>",
+      "propriedades": "",
+      "descricao": "<p><strong>Categoria:</strong> Espada</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + AGI + 8 — Físico</p><p><strong>Custo:</strong> 120 Zênites</p><p>Uma espada longa e versátil, empunhada com uma mão.</p>",
       "peso": 3
+    }
+  },
+  {
+    "name": "Sabre",
+    "type": "arma",
+    "img": "icons/weapons/swords/scimitar-guard-engraved.webp",
+    "system": {
+      "categoria": "espada",
+      "dano": "@agi+@agi+9",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
+      "duplaEmpunhadura": false,
+      "propriedades": "Veloz",
+      "descricao": "<p><strong>Categoria:</strong> Espada · Veloz</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> AGI + AGI + 9 — Físico</p><p><strong>Custo:</strong> 150 Zênites</p><p><strong>Veloz:</strong> +1 na Iniciativa enquanto empunhada.</p>",
+      "peso": 2
+    }
+  },
+  {
+    "name": "Greatsword",
+    "type": "arma",
+    "img": "icons/weapons/swords/greatsword-blue.webp",
+    "system": {
+      "categoria": "espada",
+      "dano": "@pod+@agi+13",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Duas Mãos",
+      "descricao": "<p><strong>Categoria:</strong> Espada · Duas Mãos</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + AGI + 13 — Físico</p><p><strong>Custo:</strong> 250 Zênites</p><p>Uma espada longa e pesada que exige duas mãos.</p>",
+      "peso": 6
+    }
+  },
+  {
+    "name": "Lança Curta",
+    "type": "arma",
+    "img": "icons/weapons/polearms/spear-flared-iron.webp",
+    "system": {
+      "categoria": "haste",
+      "dano": "@pod+@agi+7",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
+      "duplaEmpunhadura": false,
+      "propriedades": "Arremesso (9m)",
+      "descricao": "<p><strong>Categoria:</strong> Haste · Arremesso</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + AGI + 7 — Físico</p><p><strong>Custo:</strong> 90 Zênites</p><p><strong>Arremesso:</strong> Pode ser lançada como ataque à distância até 9m. Após o arremesso, precisa ser recuperada.</p>",
+      "peso": 3
+    }
+  },
+  {
+    "name": "Lança Longa",
+    "type": "arma",
+    "img": "icons/weapons/polearms/spear-ornate-engraved.webp",
+    "system": {
+      "categoria": "haste",
+      "dano": "@pod+@agi+9",
+      "tipoDano": "fisico",
+      "alcance": 3,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance (3m)",
+      "descricao": "<p><strong>Categoria:</strong> Haste · Alcance</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + AGI + 9 — Físico</p><p><strong>Custo:</strong> 140 Zênites</p><p><strong>Alcance:</strong> Atinge alvos a até 3m.</p>",
+      "peso": 4
+    }
+  },
+  {
+    "name": "Alabarda",
+    "type": "arma",
+    "img": "icons/weapons/polearms/halberd-axe-mounted.webp",
+    "system": {
+      "categoria": "haste",
+      "dano": "@pod+@pod+11",
+      "tipoDano": "fisico",
+      "alcance": 3,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Duas Mãos. Alcance (3m)",
+      "descricao": "<p><strong>Categoria:</strong> Haste · Duas Mãos · Alcance</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + POD + 11 — Físico</p><p><strong>Custo:</strong> 200 Zênites</p><p><strong>Alcance:</strong> Atinge alvos a até 3m.</p>",
+      "peso": 6
+    }
+  },
+  {
+    "name": "Glaive",
+    "type": "arma",
+    "img": "icons/weapons/polearms/glaive-curved-purple.webp",
+    "system": {
+      "categoria": "haste",
+      "dano": "@pod+@agi+12",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Duas Mãos. Veloz",
+      "descricao": "<p><strong>Categoria:</strong> Haste · Duas Mãos · Veloz</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + AGI + 12 — Físico</p><p><strong>Custo:</strong> 220 Zênites</p><p><strong>Veloz:</strong> +1 na Iniciativa.</p>",
+      "peso": 5
+    }
+  },
+  {
+    "name": "Machado",
+    "type": "arma",
+    "img": "icons/weapons/axes/axe-broad-rivet.webp",
+    "system": {
+      "categoria": "pesada",
+      "dano": "@pod+@agi+10",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
+      "duplaEmpunhadura": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Categoria:</strong> Arma Pesada</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + AGI + 10 — Físico</p><p><strong>Custo:</strong> 130 Zênites</p>",
+      "peso": 4
     }
   },
   {
@@ -41,34 +185,160 @@
     "img": "icons/weapons/axes/axe-double-engraved.webp",
     "system": {
       "categoria": "pesada",
-      "dano": "@pod+@agi+15",
+      "dano": "@pod+@pod+15",
       "tipoDano": "fisico",
       "alcance": 1.5,
       "bonus": 0,
       "equipado": false,
       "duasMaos": true,
       "duplaEmpunhadura": false,
-      "propriedades": "Duas mãos",
-      "descricao": "<p><strong>Categoria:</strong> Arma pesada</p><p><strong>Perícia Utilizada:</strong> Armas Brancas</p><p><strong>Dano:</strong> [Poder+Agilidade] + 15 de Dano Físico</p><p>Um machado massivo que requer força e ambas as mãos para empunhar.</p>",
+      "propriedades": "Duas Mãos. Brutal",
+      "descricao": "<p><strong>Categoria:</strong> Arma Pesada · Duas Mãos · Brutal</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + POD + 15 — Físico</p><p><strong>Custo:</strong> 280 Zênites</p><p><strong>Brutal:</strong> Em caso de crítico, causa +5 de dano além do dano dobrado.</p>",
       "peso": 8
     }
   },
   {
-    "name": "Adaga",
+    "name": "Maça",
     "type": "arma",
-    "img": "icons/weapons/daggers/dagger-curved-bone.webp",
+    "img": "icons/weapons/maces/mace-flanged-steel.webp",
     "system": {
-      "categoria": "leve",
-      "dano": "@agi+@agi+6",
+      "categoria": "pesada",
+      "dano": "@pod+@pod+11",
       "tipoDano": "fisico",
       "alcance": 1.5,
       "bonus": 0,
       "equipado": false,
       "duasMaos": false,
-      "duplaEmpunhadura": true,
-      "propriedades": "Dupla empunhadura",
-      "descricao": "<p><strong>Categoria:</strong> Arma Leve, Dupla empunhadura</p><p><strong>Perícia Utilizada:</strong> Armas brancas</p><p><strong>Dano:</strong> [AGI+AGI] + 6 de Dano Físico</p><p><strong>[Dupla empunhadura]:</strong> Você pode utilizar essa arma uma em cada mão, podendo atacar com uma Ação parcial. Porém o dano é apenas do modificador de dano da arma.</p>",
-      "peso": 1
+      "duplaEmpunhadura": false,
+      "propriedades": "Contundente",
+      "descricao": "<p><strong>Categoria:</strong> Arma Pesada · Contundente</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + POD + 11 — Físico</p><p><strong>Custo:</strong> 160 Zênites</p><p><strong>Contundente:</strong> Ignora completamente a RD de armaduras leves.</p>",
+      "peso": 4
+    }
+  },
+  {
+    "name": "Martelo de Guerra",
+    "type": "arma",
+    "img": "icons/weapons/hammers/hammer-double-engraved.webp",
+    "system": {
+      "categoria": "pesada",
+      "dano": "@pod+@pod+13",
+      "tipoDano": "fisico",
+      "alcance": 1.5,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Duas Mãos. Contundente",
+      "descricao": "<p><strong>Categoria:</strong> Arma Pesada · Duas Mãos · Contundente</p><p><strong>Perícia:</strong> Armas Brancas</p><p><strong>Dano:</strong> POD + POD + 13 — Físico</p><p><strong>Custo:</strong> 260 Zênites</p><p><strong>Contundente:</strong> Ignora completamente a RD de armaduras leves.</p>",
+      "peso": 7
+    }
+  },
+  {
+    "name": "Arco Curto",
+    "type": "arma",
+    "img": "icons/weapons/bows/shortbow-curved-engraved.webp",
+    "system": {
+      "categoria": "precisao",
+      "dano": "@agi+@agi+7",
+      "tipoDano": "fisico",
+      "alcance": 18,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance 18m. Duas Mãos",
+      "descricao": "<p><strong>Categoria:</strong> Precisão · Duas Mãos</p><p><strong>Perícia:</strong> Armas de Fogo</p><p><strong>Dano:</strong> AGI + AGI + 7 — Físico</p><p><strong>Alcance:</strong> 18m</p><p><strong>Custo:</strong> 100 Zênites</p>",
+      "peso": 2
+    }
+  },
+  {
+    "name": "Arco Longo",
+    "type": "arma",
+    "img": "icons/weapons/bows/longbow-recurve-leather-brown.webp",
+    "system": {
+      "categoria": "precisao",
+      "dano": "@agi+@int+10",
+      "tipoDano": "fisico",
+      "alcance": 27,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance 27m. Duas Mãos",
+      "descricao": "<p><strong>Categoria:</strong> Precisão · Duas Mãos</p><p><strong>Perícia:</strong> Armas de Fogo</p><p><strong>Dano:</strong> AGI + INT + 10 — Físico</p><p><strong>Alcance:</strong> 27m</p><p><strong>Custo:</strong> 180 Zênites</p>",
+      "peso": 3
+    }
+  },
+  {
+    "name": "Besta Leve",
+    "type": "arma",
+    "img": "icons/weapons/crossbows/crossbow-simple.webp",
+    "system": {
+      "categoria": "precisao",
+      "dano": "@agi+@int+8",
+      "tipoDano": "fisico",
+      "alcance": 18,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance 18m. Recarga: Ação Parcial",
+      "descricao": "<p><strong>Categoria:</strong> Precisão · Recarga</p><p><strong>Perícia:</strong> Armas de Fogo</p><p><strong>Dano:</strong> AGI + INT + 8 — Físico</p><p><strong>Alcance:</strong> 18m</p><p><strong>Recarga:</strong> Ação Parcial</p><p><strong>Custo:</strong> 120 Zênites</p>",
+      "peso": 3
+    }
+  },
+  {
+    "name": "Besta Pesada",
+    "type": "arma",
+    "img": "icons/weapons/crossbows/crossbow-heavy.webp",
+    "system": {
+      "categoria": "precisao",
+      "dano": "@agi+@int+13",
+      "tipoDano": "fisico",
+      "alcance": 27,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance 27m. Recarga: Ação Inicial. Duas Mãos",
+      "descricao": "<p><strong>Categoria:</strong> Precisão · Duas Mãos · Recarga</p><p><strong>Perícia:</strong> Armas de Fogo</p><p><strong>Dano:</strong> AGI + INT + 13 — Físico</p><p><strong>Alcance:</strong> 27m</p><p><strong>Recarga:</strong> Ação Inicial</p><p><strong>Custo:</strong> 350 Zênites</p>",
+      "peso": 7
+    }
+  },
+  {
+    "name": "Pistola",
+    "type": "arma",
+    "img": "icons/weapons/guns/gun-pistol-flintlock-pirate.webp",
+    "system": {
+      "categoria": "fogo",
+      "dano": "@agi+@int+9",
+      "tipoDano": "fisico",
+      "alcance": 12,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": false,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance 12m. Recarga: Ação Parcial",
+      "descricao": "<p><strong>Categoria:</strong> Fogo · Recarga</p><p><strong>Perícia:</strong> Armas de Fogo</p><p><strong>Dano:</strong> AGI + INT + 9 — Físico</p><p><strong>Alcance:</strong> 12m</p><p><strong>Recarga:</strong> Ação Parcial</p><p><strong>Custo:</strong> 200 Zênites</p>",
+      "peso": 2
+    }
+  },
+  {
+    "name": "Rifle",
+    "type": "arma",
+    "img": "icons/weapons/guns/gun-rifle-flintlock.webp",
+    "system": {
+      "categoria": "fogo",
+      "dano": "@agi+@int+15",
+      "tipoDano": "fisico",
+      "alcance": 36,
+      "bonus": 0,
+      "equipado": false,
+      "duasMaos": true,
+      "duplaEmpunhadura": false,
+      "propriedades": "Alcance 36m. Recarga: Ação Inicial. Duas Mãos",
+      "descricao": "<p><strong>Categoria:</strong> Fogo · Duas Mãos · Recarga</p><p><strong>Perícia:</strong> Armas de Fogo</p><p><strong>Dano:</strong> AGI + INT + 15 — Físico</p><p><strong>Alcance:</strong> 36m</p><p><strong>Recarga:</strong> Ação Inicial</p><p><strong>Custo:</strong> 400 Zênites</p>",
+      "peso": 5
     }
   }
 ]

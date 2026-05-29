@@ -1130,16 +1130,122 @@ export class SinfoniaItem extends Item {
     });
   }
 
+  /**
+   * Usar um item de inventário.
+   * • Se for categoria "consumivel": gasta 1 quantidade + custoPI (se tiver).
+   *   Se tiver efeito (fórmula tipo "3d8"), rola e oferece botão de aplicar.
+   * • Outras categorias: apenas mostra um card descritivo no chat (sem gastar PI).
+   */
   async _usarConsumivel(actor) {
     const sys = this.system;
+    const categoria = sys.categoria || "outro";
+
+    // Categorias que NÃO gastam PI nem quantidade — só mostram descrição
+    if (categoria !== "consumivel") {
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `
+          <div class="sinfonia-item-card">
+            <div class="item-card-header">
+              <img src="${this.img}" alt=""/>
+              <div>
+                <span class="item-card-nome">${this.name}</span>
+                <span class="item-card-tipo">${categoria}</span>
+              </div>
+            </div>
+            ${sys.descricao ? `<div class="item-card-desc">${sys.descricao}</div>` : ""}
+          </div>`
+      });
+      return;
+    }
+
+    // ── Caminho de CONSUMÍVEL ──
     if (sys.quantidade <= 0) {
       ui.notifications.warn(`${this.name} está esgotado!`);
       return;
     }
+
+    // Verifica PI do ator (se o consumível custar PI)
+    const custoPI = Math.max(0, Number(sys.custoPI) || 0);
+    if (custoPI > 0) {
+      const pi = actor.system.recursos?.pi;
+      if (!pi || pi.value < custoPI) {
+        ui.notifications.warn(`${actor.name} não tem Pontos de Inventário suficientes (${custoPI} PI).`);
+        return;
+      }
+      await actor.update({ "system.recursos.pi.value": pi.value - custoPI }, { render: false });
+    }
+
+    // Gasta uma unidade
     await this.update({ "system.quantidade": sys.quantidade - 1 });
+
+    // Card base no chat
+    const piTag = custoPI > 0 ? ` <span class="item-card-pi">−${custoPI} PI</span>` : "";
+    const desc = sys.descricao ? `<div class="item-card-desc">${sys.descricao}</div>` : "";
+    let acaoHtml = "";
+
+    // Se tiver efeito + tipoEfeito, rola e mostra botão
+    const formula = (sys.efeito || "").trim();
+    const tipo    = sys.tipoEfeito || "none";
+    if (formula && tipo !== "none") {
+      // Substitui @attr pelos valores numéricos
+      let resolved = formula;
+      const subs = {
+        pod: actor.dadoValor?.("pod") ?? 6,
+        agi: actor.dadoValor?.("agi") ?? 6,
+        int: actor.dadoValor?.("int") ?? 6,
+        car: actor.dadoValor?.("car") ?? 6,
+        mis: actor.dadoValor?.("mis") ?? 6
+      };
+      for (const [k, v] of Object.entries(subs)) {
+        resolved = resolved.replaceAll(`@${k}`, v);
+      }
+
+      try {
+        const roll = new Roll(resolved);
+        await roll.evaluate();
+        const total = roll.total;
+
+        const dadosHtml = roll.dice.map(term => {
+          const pills = term.results.map(r =>
+            `<span class="dado-pill ativo" title="d${term.faces}">${r.result}</span>`
+          ).join("");
+          return `<span class="dado-grupo"><span class="dado-tipo">d${term.faces}</span>${pills}</span>`;
+        }).join("");
+
+        const acaoBtn = tipo === "cura"
+          ? `<button type="button" class="btn-aplicar-cura" data-cura="${total}"><i class="fas fa-heart"></i> Aplicar Cura</button>`
+          : tipo === "dano"
+          ? `<button type="button" class="btn-aplicar-dano" data-dano="${total}"><i class="fas fa-heart-broken"></i> Aplicar Dano</button>`
+          : "";
+
+        acaoHtml = `
+          <div class="sinfonia-dano-roll" style="margin-top:6px;">
+            <div class="dano-formula">${formula} → ${resolved}</div>
+            <div class="roll-dados">${dadosHtml}</div>
+            <div class="dano-total"><span class="total">${total}</span></div>
+            <div class="dano-acoes">${acaoBtn}</div>
+          </div>`;
+      } catch (err) {
+        console.error("Sinfonia | Fórmula de efeito inválida:", formula, err);
+      }
+    }
+
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor }),
-      content: `<div class="sinfonia-consumivel"><b>${actor.name}</b> usa <b>${this.name}</b>. Restam: ${sys.quantidade - 1}</div>`
+      content: `
+        <div class="sinfonia-item-card">
+          <div class="item-card-header">
+            <img src="${this.img}" alt=""/>
+            <div>
+              <span class="item-card-nome">${this.name}</span>
+              <span class="item-card-tipo">consumível${piTag}</span>
+            </div>
+          </div>
+          ${desc}
+          ${acaoHtml}
+          <p class="item-card-restam">Restam: ${sys.quantidade - 1}</p>
+        </div>`
     });
   }
 }

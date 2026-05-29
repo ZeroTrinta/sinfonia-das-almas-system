@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Armadura de Couro",
+    "type": "armadura",
+    "img": "icons/equipment/chest/breastplate-leather-brown-belted.webp",
+    "system": {
+      "categoria": "leve",
+      "defesaFixa": 9,
+      "reducaoDano": 0,
+      "bonusDefesa": 0,
+      "equipada": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Tipo:</strong> Armadura Leve</p><p><strong>Defesa Fixa:</strong> 9</p><p><strong>Custo:</strong> 80 Zênites</p><p><em>Substitui a Defesa natural (AGI) se for maior. Sem penalidades.</em></p>",
+      "peso": 4
+    }
+  },
+  {
+    "name": "Armadura de Couro Reforçado",
+    "type": "armadura",
+    "img": "icons/equipment/chest/breastplate-leather-steel-studded.webp",
+    "system": {
+      "categoria": "leve",
+      "defesaFixa": 10,
+      "reducaoDano": 0,
+      "bonusDefesa": 0,
+      "equipada": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Tipo:</strong> Armadura Leve</p><p><strong>Defesa Fixa:</strong> 10</p><p><strong>Custo:</strong> 140 Zênites</p>",
+      "peso": 5
+    }
+  },
+  {
+    "name": "Cota de Malha",
+    "type": "armadura",
+    "img": "icons/equipment/chest/breastplate-banded-steel-grey.webp",
+    "system": {
+      "categoria": "media",
+      "defesaFixa": 12,
+      "reducaoDano": 0,
+      "bonusDefesa": 0,
+      "equipada": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Tipo:</strong> Armadura Média</p><p><strong>Defesa Fixa:</strong> 12</p><p><strong>Custo:</strong> 200 Zênites</p>",
+      "peso": 8
+    }
+  },
+  {
+    "name": "Armadura de Placas Parcial",
+    "type": "armadura",
+    "img": "icons/equipment/chest/breastplate-collared-steel.webp",
+    "system": {
+      "categoria": "media",
+      "defesaFixa": 13,
+      "reducaoDano": 0,
+      "bonusDefesa": 0,
+      "equipada": false,
+      "propriedades": "",
+      "descricao": "<p><strong>Tipo:</strong> Armadura Média</p><p><strong>Defesa Fixa:</strong> 13</p><p><strong>Custo:</strong> 300 Zênites</p>",
+      "peso": 10
+    }
+  },
+  {
+    "name": "Armadura de Placas Completa",
+    "type": "armadura",
+    "img": "icons/equipment/chest/breastplate-layered-steel.webp",
+    "system": {
+      "categoria": "pesada",
+      "defesaFixa": 15,
+      "reducaoDano": 0,
+      "bonusDefesa": 0,
+      "equipada": false,
+      "propriedades": "Penalidade deslocamento (POD−10). Desvantagem em Furtividade",
+      "descricao": "<p><strong>Tipo:</strong> Armadura Pesada</p><p><strong>Defesa Fixa:</strong> 15</p><p><strong>Penalidades:</strong> Deslocamento reduzido pela diferença POD−10. Desvantagem em testes de Furtividade.</p><p><strong>Custo:</strong> 500 Zênites</p>",
+      "peso": 15
+    }
+  },
+  {
+    "name": "Armadura de Guerra",
+    "type": "armadura",
+    "img": "icons/equipment/chest/breastplate-cuirass-steel-grey.webp",
+    "system": {
+      "categoria": "pesada",
+      "defesaFixa": 16,
+      "reducaoDano": 3,
+      "bonusDefesa": 0,
+      "equipada": false,
+      "propriedades": "Penalidade deslocamento (POD−10). Desvantagem em Furtividade. RD 3 físico",
+      "descricao": "<p><strong>Tipo:</strong> Armadura Pesada</p><p><strong>Defesa Fixa:</strong> 16</p><p><strong>Redução de Dano:</strong> 3 (físico)</p><p><strong>Penalidades:</strong> Deslocamento reduzido pela diferença POD−10. Desvantagem em testes de Furtividade.</p><p><strong>Custo:</strong> 750 Zênites</p>",
+      "peso": 18
+    }
+  },
+  {
+    "name": "Escudo Leve",
+    "type": "armadura",
+    "img": "icons/equipment/shield/round-wooden-boss-steel.webp",
+    "system": {
+      "categoria": "escudo",
+      "defesaFixa": 0,
+      "reducaoDano": 0,
+      "bonusDefesa": 1,
+      "equipada": false,
+      "propriedades": "Exige mão livre",
+      "descricao": "<p><strong>Tipo:</strong> Escudo</p><p><strong>Bônus de Defesa:</strong> +1</p><p><strong>Custo:</strong> 60 Zênites</p><p><em>Exige uma mão livre para empunhar.</em></p>",
+      "peso": 3
+    }
+  },
+  {
+    "name": "Escudo de Torre",
+    "type": "armadura",
+    "img": "icons/equipment/shield/heater-steel-segmented.webp",
+    "system": {
+      "categoria": "escudo",
+      "defesaFixa": 0,
+      "reducaoDano": 0,
+      "bonusDefesa": 2,
+      "equipada": false,
+      "propriedades": "Exige mão livre",
+      "descricao": "<p><strong>Tipo:</strong> Escudo</p><p><strong>Bônus de Defesa:</strong> +2</p><p><strong>Custo:</strong> 150 Zênites</p><p><em>Exige uma mão livre para empunhar.</em></p>",
+      "peso": 6
+    }
+  }
+]

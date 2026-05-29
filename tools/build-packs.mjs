@@ -25,8 +25,11 @@ const PACKS_DIR  = join(ROOT, "packs");
 
 // Mapeamento: arquivo JSON → nome do pack (deve bater com system.json)
 const PACK_MAP = {
-  "armas.json":   "armas-nucleo",
-  "magias.json":  "magias-nucleo"
+  "armas.json":      "armas-nucleo",
+  "magias.json":     "magias-nucleo",
+  "armaduras.json":  "armaduras-nucleo",
+  "conduites.json":  "conduites-nucleo",
+  "itens.json":      "itens-nucleo"
 };
 
 /** Gera um _id determinístico baseado no nome (consistência entre builds) */
@@ -69,7 +72,7 @@ async function buildPack(sourceFile, packName) {
     item.ownership = item.ownership ?? { default: 0 };
     item._stats = item._stats ?? {
       systemId: "sinfonia-das-almas",
-      systemVersion: "0.6.3",
+      systemVersion: "0.6.6",
       coreVersion: "12",
       createdTime: Date.now(),
       modifiedTime: Date.now(),
