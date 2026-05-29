@@ -259,6 +259,36 @@ Hooks.once("init", () => {
     }
   };
 
+  // ── Defaults do prototypeToken: token com Ring dourado automático ──
+  // Para todo Actor novo criado, o token vem com o Dynamic Token Ring (anel
+  // colorido em volta do retrato). Quem já existia precisa abrir as configurações
+  // do prototype token e ativar manualmente — ou usar a macro de "converter tokens".
+  Hooks.on("preCreateActor", (actor, data, options, userId) => {
+    // Só mexe se for personagem (não em NPCs, a não ser que o GM queira)
+    if (actor.type !== "personagem") return;
+
+    actor.updateSource({
+      prototypeToken: {
+        // Liga o anel dinâmico de Foundry v12+
+        ring: {
+          enabled: true,
+          colors: {
+            ring: "#c8972a",        // dourado da ficha
+            background: "#1a1a1a"   // preto sutil atrás
+          },
+          // Sem efeitos especiais por padrão; subsystem ativa o anel
+          effects: 1
+        },
+        // Outros defaults sensatos
+        actorLink: true,            // token reflete a ficha em tempo real
+        disposition: 1,              // amigável
+        sight: { enabled: true },    // jogador vê através do token
+        displayName: 30,             // hover sobre o token mostra nome
+        displayBars: 20              // hover mostra barras
+      }
+    });
+  });
+
   // Templates de Handlebars
   loadTemplates([
     "systems/sinfonia-das-almas/templates/actor/personagem-sheet.hbs",
@@ -286,7 +316,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.6.2");
+  console.log("Sinfonia das Almas | Pronto. v0.6.3");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
@@ -440,9 +470,23 @@ Hooks.once("init", () => {
     return Math.round((value / max) * 100);
   });
 
-  // Comparação simples
-  Handlebars.registerHelper("eq", (a, b) => a === b);
-  Handlebars.registerHelper("gt", (a, b) => a > b);
+  // Comparação simples — funciona como FUNCTION helper {{eq a b}} (retorna true/false)
+  // E como BLOCK helper {{#eq a b}}...{{else}}...{{/eq}} (renderiza bloco condicional)
+  Handlebars.registerHelper("eq", function(a, b, options) {
+    const result = a === b;
+    // Se foi chamado como block helper, `options.fn` existe
+    if (options && typeof options.fn === "function") {
+      return result ? options.fn(this) : options.inverse(this);
+    }
+    return result;
+  });
+  Handlebars.registerHelper("gt", function(a, b, options) {
+    const result = a > b;
+    if (options && typeof options.fn === "function") {
+      return result ? options.fn(this) : options.inverse(this);
+    }
+    return result;
+  });
 
   // Uppercase para abreviar atributos no template
   Handlebars.registerHelper("upper", (str) => String(str ?? "").toUpperCase());
