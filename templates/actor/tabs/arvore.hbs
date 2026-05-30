@@ -1,25 +1,96 @@
-{{!-- Sinfonia das Almas — Janela da Árvore de Habilidades --}}
-{{!-- ApplicationV2: PARTS exige UM único elemento raiz --}}
-<div class="arvore-root"><div class="arvore-wrapper">
+{{!-- Árvore de Habilidades — v0.7.0 (lista flat por classe) --}}
+<div class="arvore-habilidades">
 
-  <div class="arvore-topbar">
-    <div class="arvore-tabs">
-      <button class="arvore-tab active" data-cls="all">Todas</button>
-      <button class="arvore-tab" data-cls="guerreiro">Guerreiro</button>
-      <button class="arvore-tab" data-cls="gatuno">Gatuno</button>
-      <button class="arvore-tab" data-cls="arqueiro">Arqueiro</button>
-      <button class="arvore-tab" data-cls="mago">Mago</button>
+  {{#if semClasse}}
+    <div class="arvore-sem-classe">
+      <i class="fas fa-exclamation-triangle"></i>
+      <h3>Nenhuma Classe Selecionada</h3>
+      <p>Volte para a ficha e escolha uma classe no banner superior antes de gastar Pontos de Habilidade.</p>
     </div>
-    <span class="arvore-actor-name">{{actorName}}</span>
-    <button id="arvore-reset" class="arvore-reset-btn">Resetar</button>
-  </div>
+  {{else}}
 
-  <div class="arvore-canvas-container">
-    <canvas id="arvore-canvas"></canvas>
-  </div>
+    {{!-- ═══ HEADER ═══ --}}
+    <header class="arvore-header" style="border-color: {{classeMeta.color}};">
+      <div class="arvore-header-info">
+        <h2 style="color: {{classeMeta.color}};">{{classeLabel}}</h2>
+        <span class="arvore-subtitle">Árvore de Habilidades</span>
+      </div>
+      <div class="arvore-pontos">
+        <div class="pontos-bloco">
+          <span class="pontos-label">Disponíveis</span>
+          <span class="pontos-valor disponivel">{{ptsLivres}}</span>
+        </div>
+        <div class="pontos-bloco">
+          <span class="pontos-label">Investidos</span>
+          <span class="pontos-valor gastos">{{ptsGastos}}</span>
+        </div>
+        <div class="pontos-bloco">
+          <span class="pontos-label">Total</span>
+          <span class="pontos-valor total">{{ptsTotal}}</span>
+        </div>
+        <button type="button" class="btn-resetar" data-action="resetar" title="Devolver todos os pontos investidos">
+          <i class="fas fa-undo"></i> Resetar
+        </button>
+      </div>
+    </header>
 
-  <div class="arvore-bottombar">
-    <span class="arvore-hint">Scroll: zoom &nbsp;|&nbsp; Drag: mover &nbsp;|&nbsp; Click: ativar nó</span>
-  </div>
+    {{!-- ═══ LISTA DE HABILIDADES ═══ --}}
+    <ul class="arvore-lista">
+      {{#each habilidades}}
+      <li class="arvore-item {{#if passiva}}passiva{{/if}} {{#if (gt nh 0)}}ativa{{/if}}" data-hab-id="{{this.id}}">
+        <div class="arvore-item-main">
+          <div class="arvore-item-head">
+            <h4 class="arvore-item-nome">
+              {{this.label}}
+              <span class="arvore-item-maxnh">[{{this.maxNH}}X]</span>
+            </h4>
+            <div class="arvore-item-tags">
+              {{#each tags}}
+                <span class="arvore-tag">{{this}}</span>
+              {{/each}}
+            </div>
+          </div>
 
-</div></div>
+          <p class="arvore-item-desc">{{this.desc}}</p>
+
+          {{#if this.efeitoAtual}}
+            <p class="arvore-item-efeito">
+              <i class="fas fa-bolt"></i>
+              <span>{{this.efeitoAtual}}</span>
+            </p>
+          {{/if}}
+        </div>
+
+        <div class="arvore-item-controle">
+          {{!-- Botões +/− --}}
+          <div class="arvore-botoes">
+            <button type="button"
+                    class="btn-nh dec"
+                    data-action="decHab"
+                    {{#unless this.canDec}}disabled{{/unless}}
+                    title="Retirar 1 ponto">
+              <i class="fas fa-minus"></i>
+            </button>
+            <span class="arvore-nh-valor">{{this.nh}}/{{this.maxNH}}</span>
+            <button type="button"
+                    class="btn-nh inc"
+                    data-action="incHab"
+                    {{#unless this.canInc}}disabled{{/unless}}
+                    title="Investir 1 ponto">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+
+          {{!-- Slots visuais (bolinhas) --}}
+          <div class="arvore-slots">
+            {{#each this.slots}}
+              <span class="arvore-slot {{#if this.preenchido}}preenchido{{/if}}" title="NH {{this.indice}}"></span>
+            {{/each}}
+          </div>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+
+  {{/if}}
+</div>

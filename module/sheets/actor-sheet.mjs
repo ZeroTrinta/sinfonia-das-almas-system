@@ -93,26 +93,43 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       };
     });
 
-    // ── Aba Habilidades: agrupa nós ativos da árvore por classe ──────────────
-    const ativos = doc.getFlag("sinfonia-das-almas", "arvoreAtiva") ?? {};
-    const nodesAtivos = (SINFONIA.NODES || []).filter(n => ativos[n.id] === true);
-    const ptsUsados = nodesAtivos.reduce((acc, n) => acc + (n.cost || 0), 0);
-    const ptsTotal = sys.progressao?.pontosHabilidade ?? 0;
-    // Agrupa por classe usando CLS_META (label, color)
-    const ordemClasses = ["guerreiro", "gatuno", "arqueiro", "mago"];
-    const porClasse = ordemClasses
-      .map(cls => {
-        const meta = SINFONIA.CLS_META?.[cls] ?? { label: cls, color: "#888" };
-        const nodes = nodesAtivos
-          .filter(n => n.cls === cls)
-          .map(n => ({ ...n, color: meta.color }));
-        return { cls, label: meta.label, color: meta.color, nodes };
-      })
-      .filter(g => g.nodes.length > 0);
+    // ── Aba Habilidades: lista as habilidades investidas (v0.7.0 reformulado) ──
+    const arvoreNH = doc.getFlag("sinfonia-das-almas", "arvoreNH") ?? {};
+    const classe = sys.progressao?.classe ?? "";
+    const habsDef = (globalThis.SINFONIA?.HABILIDADES_CLASSE?.[classe]) ?? [];
+    const classeMeta = globalThis.SINFONIA?.CLS_META?.[classe];
+
+    // Lista só habilidades com NH > 0, com efeito atual já resolvido
+    const investidas = habsDef
+      .filter(h => (arvoreNH[h.id] ?? 0) > 0)
+      .map(h => {
+        const nh = Math.max(0, Math.min(arvoreNH[h.id] ?? 0, h.maxNH));
+        let efeitoAtual = "";
+        if (typeof h.efeito === "function") {
+          try { efeitoAtual = h.efeito(nh); } catch {}
+        }
+        return {
+          id: h.id,
+          label: h.label,
+          nh,
+          maxNH: h.maxNH,
+          desc: h.desc || "",
+          efeitoAtual,
+          passiva: !!h.passiva
+        };
+      });
+
+    const ptsTotal = sys.progressao?.nivel ?? 5;
+    const ptsUsados = Object.values(arvoreNH).reduce((acc, v) => acc + (Number(v) || 0), 0);
     const habArvore = {
+      ptsTotal,
       ptsUsados,
       ptsLivres: Math.max(0, ptsTotal - ptsUsados),
-      porClasse
+      semClasse: !classe,
+      classe,
+      classeLabel: globalThis.SINFONIA?.CLASSES?.[classe] ?? "",
+      classeColor: classeMeta?.color ?? "#c8972a",
+      investidas
     };
 
     return {

@@ -1,42 +1,51 @@
-{{!-- TAB HABILIDADES: lista dos nós ativos na árvore --}}
+{{!-- TAB HABILIDADES: resumo das habilidades investidas (v0.7.0) --}}
 <div class="habilidades-arvore-layout">
 
   <div class="panel-header arvore-summary">
     <h3 class="panel-title">Habilidades Aprendidas</h3>
     <div class="arvore-pts">
-      <span>Pts Usados: <b>{{habArvore.ptsUsados}}</b></span>
+      <span>Investidos: <b>{{habArvore.ptsUsados}}</b></span>
       <span>· Disponíveis: <b>{{habArvore.ptsLivres}}</b></span>
+      <span>· Total (Nível): <b>{{habArvore.ptsTotal}}</b></span>
       <button type="button" data-action="abrirArvore" class="btn-link">abrir árvore →</button>
     </div>
   </div>
 
-  {{#if habArvore.porClasse.length}}
-    {{#each habArvore.porClasse as |grupo|}}
-    <section class="panel habilidade-classe-panel" data-cls="{{grupo.cls}}">
-      <h4 class="classe-titulo" style="color: {{grupo.color}}; border-color: {{grupo.color}};">
-        {{grupo.label}}
+  {{#if habArvore.semClasse}}
+    <p class="items-vazio">
+      Nenhuma classe selecionada. Volte para a ficha e escolha uma classe no banner superior.
+    </p>
+  {{else}}
+    {{#if habArvore.investidas.length}}
+    <section class="panel habilidade-classe-panel" data-cls="{{habArvore.classe}}">
+      <h4 class="classe-titulo" style="color: {{habArvore.classeColor}}; border-color: {{habArvore.classeColor}};">
+        {{habArvore.classeLabel}}
       </h4>
       <ul class="hab-arvore-list">
-        {{#each grupo.nodes as |node|}}
-        <li class="hab-arvore-item tipo-{{node.type}}">
-          <span class="hab-bolha" style="background: {{node.color}}; box-shadow: 0 0 6px {{node.color}};"></span>
+        {{#each habArvore.investidas as |hab|}}
+        <li class="hab-arvore-item {{#if hab.passiva}}passiva{{/if}}">
+          <span class="hab-bolha" style="background: {{../habArvore.classeColor}}; box-shadow: 0 0 6px {{../habArvore.classeColor}};">{{hab.nh}}</span>
           <div class="hab-info">
             <div class="hab-nome">
-              {{node.label}}
-              {{#if (gt node.cost 0)}}<span class="hab-cost">({{node.cost}} pt)</span>{{/if}}
+              {{hab.label}}
+              <span class="hab-nh">NH {{hab.nh}}/{{hab.maxNH}}</span>
             </div>
-            <div class="hab-desc">{{node.desc}}</div>
+            {{#if hab.efeitoAtual}}
+              <div class="hab-desc"><i class="fas fa-bolt"></i> {{hab.efeitoAtual}}</div>
+            {{else}}
+              <div class="hab-desc">{{hab.desc}}</div>
+            {{/if}}
           </div>
         </li>
         {{/each}}
       </ul>
     </section>
-    {{/each}}
-  {{else}}
-    <p class="items-vazio">
-      Nenhuma habilidade selecionada na árvore.
-      <button type="button" data-action="abrirArvore" class="btn-link">Abrir árvore</button>
-    </p>
+    {{else}}
+      <p class="items-vazio">
+        Nenhuma habilidade investida ainda. Você tem <b>{{habArvore.ptsLivres}}</b> ponto(s) disponíveis.
+        <button type="button" data-action="abrirArvore" class="btn-link">Abrir árvore</button>
+      </p>
+    {{/if}}
   {{/if}}
 
 </div>

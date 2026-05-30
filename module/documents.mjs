@@ -25,12 +25,36 @@ export class SinfoniaActor extends Actor {
   _preparePersonagem() {
     const sys = this.system;
 
-    // PV máx: nível + 5 × dado de Poder
+    // PV/PE máximos base: nível + 5 × dado
     const nivel = sys.progressao.nivel;
     const podValor = this.dadoValor("pod");
     const misValor = this.dadoValor("mis");
-    sys.recursos.pv.max = nivel + (5 * podValor);
-    sys.recursos.pe.max = nivel + (5 * misValor);
+    let pvMaxBase = nivel + (5 * podValor);
+    let peMaxBase = nivel + (5 * misValor);
+
+    // ── Habilidades investidas (árvore) ─────────────────────────────────
+    // Estrutura: flag "arvoreNH" = { habId: nh }. Cada NH escala um efeito.
+    // Só aplica bonus de habilidades da classe ATUAL.
+    const arvoreNH = this.getFlag?.("sinfonia-das-almas", "arvoreNH") ?? {};
+    const classe = sys.progressao?.classe ?? "";
+    const habsDaClasse = (globalThis.SINFONIA?.HABILIDADES_CLASSE?.[classe]) ?? [];
+
+    // Bonus agregados (zerados antes de iterar)
+    let bonusPv = 0, bonusPe = 0, bonusNdMistica = 0, bonusDanoArcoBesta = 0;
+
+    for (const hab of habsDaClasse) {
+      const nh = Math.max(0, Math.min(arvoreNH[hab.id] ?? 0, hab.maxNH));
+      if (nh <= 0 || !hab.escala) continue;
+      const e = hab.escala;
+      if (e.pvBonus)         bonusPv         += e.pvBonus * nh;
+      if (e.peBonus)         bonusPe         += e.peBonus * nh;
+      if (e.ndMisticaBonus)  bonusNdMistica  += e.ndMisticaBonus * nh;
+      if (e.danoArcoBesta)   bonusDanoArcoBesta += e.danoArcoBesta * nh;
+    }
+
+    // Aplica nos máximos
+    sys.recursos.pv.max = pvMaxBase + bonusPv;
+    sys.recursos.pe.max = peMaxBase + bonusPe;
 
     // ── Equipamentos equipados ──
     // Só calculamos isso se this.items existe (em alguns ciclos do Foundry,
@@ -47,7 +71,7 @@ export class SinfoniaActor extends Actor {
     // Bônus de Veloz nas armas equipadas (cada arma com Veloz dá +1 INIT)
     let bonusVeloz = 0;
     // Modificadores extras de Conduíte (ex: Expansão: +1 ND Mística)
-    let bonusNdMistica = 0;
+    let bonusNdMisticaCond = 0;
 
     for (const item of items) {
       const s = item.system ?? {};
@@ -68,7 +92,7 @@ export class SinfoniaActor extends Actor {
         else conduiteArcanoEquipado = item;
         // Propriedade "Expansão: +1 ND Mística" — detecção por texto na propriedade
         if (/expans[ãa]o/i.test(s.propriedades || "")) {
-          bonusNdMistica += 1;
+          bonusNdMisticaCond += 1;
         }
       }
 
@@ -102,8 +126,11 @@ export class SinfoniaActor extends Actor {
     // Iniciativa = metade do dado AGI + 1 por arma Veloz
     sys.combate.iniciativa = Math.floor(defNatural / 2) + bonusVeloz;
 
-    // ND Mística = 8 + MIS + bônus de conduítes com Expansão
-    sys.combate.ndMistica = 8 + misValor + bonusNdMistica;
+    // ND Mística = 8 + MIS + bônus de conduítes com Expansão + Expansão Mística (habilidade)
+    sys.combate.ndMistica = 8 + misValor + bonusNdMistica + bonusNdMisticaCond;
+
+    // Bônus de dano em Arco/Besta da habilidade Concentração (lido pelo rolarDano)
+    sys.combate._bonusDanoArcoBesta = bonusDanoArcoBesta;
 
     // Expostos para uso pelo rolarDano* (não persistido — derivado)
     sys.combate._armaduraCorpo  = armaduraCorpo?.id ?? null;
@@ -575,6 +602,18 @@ export class SinfoniaActor extends Actor {
     const props = arma.system.propriedades || "";
     const isBrutal      = /\bbrutal\b/i.test(props);
     const isContundente = /\bcontundente\b/i.test(props);
+
+    // ── Bônus da habilidade Concentração (Arqueiro) ──
+    // +2 dano fixo por NH em ataques com Arco/Besta. Detecção pela categoria
+    // "precisao" + nome com Arco ou Besta.
+    const ehArcoOuBesta = arma.system.categoria === "precisao"
+      && /\b(arco|besta)\b/i.test(arma.name || "");
+    const bonusConcentracao = ehArcoOuBesta
+      ? (this.system.combate?._bonusDanoArcoBesta ?? 0)
+      : 0;
+    if (bonusConcentracao > 0) {
+      formula = `${formula} + ${bonusConcentracao}`;
+    }
 
     // Crítico: dobra todos os termos de dado (ex: 1d10 → 2d10)
     // Brutal adiciona +5 ao crítico (além da duplicação)

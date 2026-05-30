@@ -3007,4 +3007,296 @@
   padding: 4px 8px;
 }
 
+/* ================================================================
+   v0.7.0 — ÁRVORE DE HABILIDADES (reformulada)
+================================================================ */
+
+.arvore-habilidades {
+  padding: 0;
+  background: #060709;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.arvore-habilidades .arvore-sem-classe {
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--silver-dim);
+}
+.arvore-habilidades .arvore-sem-classe i {
+  font-size: 48px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: block;
+}
+.arvore-habilidades .arvore-sem-classe h3 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+/* ─── Header ─── */
+.arvore-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: linear-gradient(180deg, #0d1018, #060709);
+  border-bottom: 2px solid var(--gold-dim);
+}
+.arvore-header-info h2 {
+  font-family: 'Cinzel', serif;
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 3px;
+}
+.arvore-header-info .arvore-subtitle {
+  font-size: 11px;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.arvore-pontos {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.pontos-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+.pontos-label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+.pontos-valor {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+.pontos-valor.disponivel { color: #80e890; text-shadow: 0 0 8px rgba(128,232,144,0.4); }
+.pontos-valor.gastos     { color: var(--gold-light); }
+.pontos-valor.total      { color: var(--silver-dim); }
+.btn-resetar {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--cor-color);
+  color: #e0a0a0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-resetar:hover {
+  background: rgba(200, 64, 64, 0.12);
+  color: #ff8a8a;
+}
+
+/* ─── Lista de habilidades ─── */
+.arvore-lista {
+  list-style: none;
+  padding: 12px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.arvore-item {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #0a0d14;
+  border: 1px solid #1a1d28;
+  border-left: 3px solid #1a1d28;
+  transition: all 0.2s;
+}
+.arvore-item.ativa {
+  border-left-color: var(--gold);
+  background: linear-gradient(
+    90deg,
+    rgba(200, 151, 42, 0.06) 0%,
+    rgba(200, 151, 42, 0.01) 50%,
+    transparent 100%
+  );
+}
+.arvore-item.passiva.ativa {
+  border-left-color: #6aa0ff;
+  background: linear-gradient(
+    90deg,
+    rgba(106, 160, 255, 0.06) 0%,
+    transparent 100%
+  );
+}
+.arvore-item:hover {
+  border-color: var(--gold-dim);
+}
+
+.arvore-item-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.arvore-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.arvore-item-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--gold-light);
+  margin: 0;
+}
+.arvore-item-maxnh {
+  font-size: 10px;
+  color: var(--silver-dim);
+  font-weight: normal;
+  margin-left: 4px;
+}
+.arvore-item-tags {
+  display: flex;
+  gap: 4px;
+}
+.arvore-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  background: rgba(106, 160, 255, 0.1);
+  border: 1px solid rgba(106, 160, 255, 0.3);
+  color: #8ab8ff;
+}
+.arvore-item-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  margin: 0;
+}
+.arvore-item-efeito {
+  font-size: 12px;
+  color: var(--gold-light);
+  margin: 2px 0 0;
+  padding: 4px 8px;
+  background: rgba(200, 151, 42, 0.08);
+  border-left: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.arvore-item-efeito i {
+  color: var(--gold);
+}
+
+/* ─── Controle (botões +/− e slots) ─── */
+.arvore-item-controle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 100px;
+}
+.arvore-botoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-nh {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-nh:hover:not(:disabled) {
+  background: rgba(200, 151, 42, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.5);
+}
+.btn-nh:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.btn-nh.dec:hover:not(:disabled) {
+  border-color: var(--cor-color);
+  color: #ff8a8a;
+}
+.arvore-nh-valor {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gold-light);
+  min-width: 40px;
+  text-align: center;
+}
+
+.arvore-slots {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100px;
+}
+.arvore-slot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1a1d28;
+  border: 1px solid #2a2d38;
+  transition: all 0.2s;
+}
+.arvore-slot.preenchido {
+  background: var(--gold);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 4px rgba(240, 192, 96, 0.6);
+}
+
+/* ─── Aba Habilidades (resumo) ─── */
+.habilidades-arvore-layout .hab-nh {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+  margin-left: 8px;
+  text-transform: uppercase;
+}
+.habilidades-arvore-layout .hab-arvore-item.passiva .hab-bolha {
+  background: #6aa0ff !important;
+  box-shadow: 0 0 6px #6aa0ff !important;
+}
+.habilidades-arvore-layout .arvore-pts {
+  font-size: 12px;
+  color: var(--silver-dim);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.habilidades-arvore-layout .arvore-pts b {
+  color: var(--gold-light);
+}
+
+
 

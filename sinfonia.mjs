@@ -35,7 +35,8 @@ globalThis.SINFONIA = {
     guerreiro: "Guerreiro",
     gatuno:    "Gatuno",
     arqueiro:  "Arqueiro",
-    mago:      "Mago"
+    mago:      "Mago",
+    sacerdote: "Sacerdote"
   },
   ESCOLAS: {
     abjuracao:    "Abjuração",
@@ -101,6 +102,169 @@ globalThis.SINFONIA = {
     gatuno:    { label:"Gatuno",    color:"#40b8c8", glow:"#80e8f8", cx: 500, cy:-100 },
     arqueiro:  { label:"Arqueiro",  color:"#58c858", glow:"#90f890", cx:-500, cy: 300 },
     mago:      { label:"Mago",      color:"#9060e8", glow:"#c090ff", cx: 500, cy: 300 },
+    sacerdote: { label:"Sacerdote", color:"#f0c060", glow:"#ffe080", cx: 0,   cy: 400 },
+  },
+
+  /* ============================================================
+     ÁRVORE DE HABILIDADES — v0.7.0
+     Lista de habilidades por classe. Cada habilidade tem:
+       • id          — identificador único
+       • label       — nome exibido
+       • maxNH       — máximo de Pontos de Habilidade que pode investir (1, 2, 3, 5 ou 10)
+       • custoPI/custoPE — (opcional) custo de ativação
+       • efeito      — função que recebe o NH atual e retorna o texto do efeito atual
+       • passiva     — true = aplica automático em estatísticas; false = ativa manual
+       • escala      — (opcional) código de escala numérica que prepareDerivedData usa:
+           • pvBonus: +N PV por ponto (Vigor: 3)
+           • peBonus: +N PE por ponto (Mente Expandida, Fé Expandida: 10)
+           • ndMisticaBonus: +1 ND Mística por ponto (Expansão Mística)
+           • danoArcoBesta: +N dano em ataques c/ Arco/Besta (Concentração: 2)
+       • desc        — descrição base (mostrada antes do efeito atual)
+  ============================================================ */
+  HABILIDADES_CLASSE: {
+    guerreiro: [
+      { id: "g_per_espadas",  label: "Perícia com Espadas",     maxNH: 1, passiva: true,
+        desc: "Você se torna capaz de utilizar Espadas sem penalidade." },
+      { id: "g_per_hastes",   label: "Perícia com Armas de Haste", maxNH: 1, passiva: true,
+        desc: "Você se torna capaz de utilizar armas de Haste sem penalidade." },
+      { id: "g_per_pesadas",  label: "Perícia com Armas Pesadas",  maxNH: 1, passiva: true,
+        desc: "Você se torna capaz de utilizar armas Pesadas sem penalidade." },
+      { id: "g_vigor",        label: "Vigor",                     maxNH: 3, passiva: true,
+        escala: { pvBonus: 3 },
+        efeito: (nh) => `+${nh * 3} PV Máximos.`,
+        desc: "Aumenta seus pontos de vida Máximo em [3 × NH]." },
+      { id: "g_manobra",      label: "Manobra de Combate",        maxNH: 10, passiva: false,
+        efeito: (nh) => `Conhece ${nh} manobra(s) de combate da lista.`,
+        desc: "Cada ponto aprende uma manobra nova. Lista no final da classe." },
+      { id: "g_milagre",      label: "Iniciado em Milagres",      maxNH: 5, passiva: false,
+        efeito: (nh) => nh < 5
+          ? `Aprende magias Sagradas de 1º Círculo. (${nh}/5)`
+          : `Acesso a 2 magias de 2º Círculo Sagrado.` ,
+        desc: "Comunhão com divindades. Aprende magias Sagradas." },
+      { id: "g_provocar",     label: "Provocar",                  maxNH: 5, passiva: false, custoPE: 5,
+        efeito: (nh) => `Custa 5 PE. Afeta até ${nh} alvo(s). Teste de Intimidação vs Intuição.`,
+        desc: "Provoca inimigos a te atacarem. Falha = condição Provocado." },
+      { id: "g_ataque_extra", label: "Ataque Extra",              maxNH: 2, passiva: true,
+        efeito: (nh) => nh === 1 ? "Realiza um segundo ataque em sequência." : "Realiza dois ataques extras em sequência.",
+        desc: "Quando tomar a ação de atacar, realiza ataque(s) extra(s). Comprar pela 2ª vez custa 2 pontos." },
+      { id: "g_arcano",       label: "Iniciado em Magia Arcana",  maxNH: 5, passiva: false,
+        efeito: (nh) => nh < 5
+          ? `Aprende magias Arcanas de 1º Círculo. (${nh}/5)`
+          : `Acesso a 2 magias de 2º Círculo Arcano.`,
+        desc: "Estudo do arcano. Aprende magias Arcanas." }
+    ],
+
+    gatuno: [
+      { id: "r_per_leves",    label: "Perícia com Armas Leves",   maxNH: 1, passiva: true,
+        desc: "Adagas, Facas e Espadas Curtas sem penalidade." },
+      { id: "r_per_precisao", label: "Perícia com Armas de Precisão", maxNH: 1, passiva: true,
+        desc: "Bestas Leves, Pistolas e Facas de Arremesso sem penalidade. Use a perícia Armas de Fogo para atacar." },
+      { id: "r_reflexos",     label: "Reflexos Apurados",         maxNH: 1, passiva: false, custoPE: 5,
+        efeito: () => "5 PE: +5 em testes de Reflexos.",
+        desc: "Reflexos afiados como navalha." },
+      { id: "r_esquiva",      label: "Esquiva Implacável",        maxNH: 1, passiva: false, custoPE: 10,
+        efeito: () => "10 PE: reduz pela metade o dano recebido.",
+        desc: "Escapa por um triz de perigos mortais." },
+      { id: "r_venenos",      label: "Iniciado em Venenos",       maxNH: 5, passiva: false,
+        efeito: (nh) => `Fabrica e aplica ${nh} tipo(s) de veneno básico.`,
+        desc: "Compreende toxinas. Fabrica venenos em Áreas de Descanso (2 PI cada, teste de Ofício ND 12)." },
+      { id: "r_truques",      label: "Truques Sujos",             maxNH: 10, passiva: false,
+        efeito: (nh) => `Conhece ${nh} truque(s) sujo(s) da lista.`,
+        desc: "Cada ponto aprende um Truque Sujo da lista." },
+      { id: "r_prodigio",     label: "Prodígio",                  maxNH: 2, passiva: true,
+        efeito: (nh) => `${nh} perícia(s) considerada(s) Experiente.`,
+        desc: "Escolha uma perícia para ser considerado Experiente." },
+      { id: "r_resist_veneno",label: "Corpo Resistente a Venenos", maxNH: 1, passiva: true,
+        desc: "Vantagem em testes de resistência contra venenos." },
+      { id: "r_ataque_extra", label: "Ataque Extra",              maxNH: 1, passiva: true,
+        desc: "Quando tomar a ação de atacar, realiza um segundo ataque em sequência." }
+    ],
+
+    arqueiro: [
+      { id: "a_per_arcos",    label: "Perícia com Arcos",         maxNH: 1, passiva: true,
+        desc: "Arcos Curtos e Longos sem penalidade de empunhadura/distância." },
+      { id: "a_per_bestas",   label: "Perícia com Bestas",        maxNH: 1, passiva: true,
+        desc: "Bestas Leves e Pesadas sem penalidade de recarga." },
+      { id: "a_olhos_aguia",  label: "Olhos de Águia",            maxNH: 1, passiva: true,
+        desc: "Visão 2× normal. Vê através de fumaças e lugares obscurecidos em combate." },
+      { id: "a_encantamento", label: "Iniciado em Magia de Encantamento", maxNH: 5, passiva: false,
+        efeito: (nh) => `Conhece ${nh} magia(s) Arcana de Encantamento.`,
+        desc: "Cada ponto aprende uma magia Arcana de Encantamento." },
+      { id: "a_armadilha",    label: "Armadilha de Caça",         maxNH: 1, passiva: false, custoPI: 2,
+        efeito: () => "2 PI: arma armadilha camuflada ND 12. Dano: 2×AGI + 12. Falha = Imobilizado.",
+        desc: "Carrega e arma dispositivos táticos mecânicos." },
+      { id: "a_concentracao", label: "Concentração",              maxNH: 3, passiva: true,
+        escala: { danoArcoBesta: 2 },
+        efeito: (nh) => `+${nh * 2} dano fixo em ataques com Arco/Besta.`,
+        desc: "Maior precisão e letalidade." },
+      { id: "a_ataque_extra", label: "Ataque Extra",              maxNH: 1, passiva: true,
+        desc: "Quando tomar a ação de atacar, realiza um segundo ataque em sequência." },
+      { id: "a_disparos",     label: "Disparos Especiais",        maxNH: 10, passiva: false,
+        efeito: (nh) => `Conhece ${nh} disparo(s) especial(is) da lista.`,
+        desc: "Cada ponto aprende um Disparo Especial." }
+    ],
+
+    mago: [
+      { id: "m_per_conduites",label: "Perícia com Conduítes Arcanos", maxNH: 1, passiva: true,
+        desc: "Cajados, Varinhas e Tomos Místicos sem penalidade de conjuração." },
+      { id: "m_mente",        label: "Mente Expandida",           maxNH: 3, passiva: true,
+        escala: { peBonus: 10 },
+        efeito: (nh) => `+${nh * 10} PE Máximos.`,
+        desc: "Estudos e meditações expandem sua capacidade mental." },
+      { id: "m_dominio_arc",  label: "Domínio das Magias Arcanas", maxNH: 10, passiva: false,
+        efeito: (nh) => {
+          if (nh < 1) return "";
+          if (nh === 1) return "6 magias iniciais de 1º Círculo (qualquer escola).";
+          if (nh < 4)  return `6 + ${nh - 1} magia(s) adicional(is). (1º Círculo)`;
+          if (nh < 8)  return `6 + ${nh - 1} magias. Desbloqueia 2º Círculo.`;
+          return `6 + ${nh - 1} magias. Desbloqueia 3º Círculo.`;
+        },
+        desc: "Grimório pessoal. NH 4: desbloqueia 2º Círculo. NH 8: desbloqueia 3º Círculo." },
+      { id: "m_lamina",       label: "Lâmina Arcana",             maxNH: 1, passiva: false, custoPE: 15,
+        efeito: () => "15 PE, Ação Parcial: manifesta arma de energia por 1 min. Acerto: Arcanismo vs Defesa. Dano: dado MIS + 15 (místico).",
+        desc: "Canaliza fluxo místico em uma lâmina de energia." },
+      { id: "m_expansao",     label: "Expansão Mística",          maxNH: 3, passiva: true,
+        escala: { ndMisticaBonus: 1 },
+        efeito: (nh) => `+${nh} na ND Mística.`,
+        desc: "Condensa e intensifica a pressão de sua energia mística." },
+      { id: "m_recuperacao",  label: "Recuperação Arcana",        maxNH: 5, passiva: false,
+        efeito: (nh) => `Ação Parcial: recupera ${nh * 10} PE.`,
+        desc: "Comunhão com fluxos místicos pra reabastecer energia." }
+    ],
+
+    sacerdote: [
+      { id: "s_per_simbolos", label: "Perícia com Símbolos Sagrados", maxNH: 1, passiva: true,
+        desc: "Rosários, Símbolos Sagrados e Relíquias Místicas sem penalidade de conjuração." },
+      { id: "s_fe",           label: "Fé Expandida",              maxNH: 3, passiva: true,
+        escala: { peBonus: 10 },
+        efeito: (nh) => `+${nh * 10} PE Máximos.`,
+        desc: "Devoção e comunhão com o divino expandem capacidade espiritual." },
+      { id: "s_dominio_sag",  label: "Domínio das Magias Sagradas", maxNH: 10, passiva: false,
+        efeito: (nh) => {
+          if (nh < 1) return "";
+          if (nh === 1) return "6 magias iniciais de 1º Círculo (qualquer escola sagrada).";
+          if (nh < 4)  return `6 + ${nh - 1} magia(s) adicional(is). (1º Círculo)`;
+          if (nh < 8)  return `6 + ${nh - 1} magias. Desbloqueia 2º Círculo.`;
+          return `6 + ${nh - 1} magias. Desbloqueia 3º Círculo.`;
+        },
+        desc: "Preces e Orações. NH 4: 2º Círculo. NH 8: 3º Círculo." },
+      { id: "s_kyrie",        label: "Kyrie Eleison",             maxNH: 3, passiva: false, custoPE: 20,
+        efeito: (nh) => `20 PE, Ação Parcial: escudo de PVT = dado CAR + 15 + ${nh * 5} extra. Imune a empurrão/derrubada.`,
+        desc: "Barreira de luz sagrada que absorve impactos físicos." },
+      { id: "s_magnificat",   label: "Magnificat",                maxNH: 5, passiva: false, custoPE: 25,
+        efeito: (nh) => `25 PE, Ação Inicial: aura por 1 min. Alvos recuperam ${5 + (nh - 1) * 2} PE/turno.`,
+        desc: "Hino sagrado que acelera recuperação de energia." },
+      { id: "s_lex_divina",   label: "Lex Divina",                maxNH: 1, passiva: false, custoPE: 15,
+        efeito: () => "15 PE, Ação Padrão: alvo testa Vontade vs ND Mística. Falha = Silenciado por 1 rodada.",
+        desc: "Silência um conjurador inimigo." },
+      { id: "s_exorcizar",    label: "Exorcizar",                 maxNH: 3, passiva: false, custoPE: 20,
+        efeito: (nh) => {
+          const danoExtra = nh * 10;
+          const margem = ["1/4", "1/3", "1/2"][Math.min(nh - 1, 2)];
+          return `20 PE, Ação Padrão: morto-vivo testa Fortitude vs ND Mística. Dano Luz: dado MIS + ${20 + danoExtra}. Execução se PV < ${margem}.`;
+        },
+        desc: "Luz divina concentrada que purga corrompidos e mortos-vivos." }
+    ]
   },
 
   NODES: [
@@ -318,7 +482,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.6.8");
+  console.log("Sinfonia das Almas | Pronto. v0.7.0");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
