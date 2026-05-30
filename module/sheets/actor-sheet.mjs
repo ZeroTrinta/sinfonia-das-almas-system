@@ -275,22 +275,47 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         ev.stopPropagation();
         const current = this.document.prototypeToken?.texture?.src ?? this.document.img;
         abrirFilePicker(current, async (path) => {
-          // 1) Atualiza o prototypeToken (afeta tokens FUTUROS)
-          await this.document.update({ "prototypeToken.texture.src": path });
+          // 1) Atualiza o prototypeToken inteiro de uma vez:
+          //    • texture.src — imagem principal exibida (afeta tokens FUTUROS)
+          //    • ring.enabled + ring.subject.texture — anel dourado dinâmico em v12.
+          //      O `subject.texture` deve apontar pra MESMA imagem, senão o anel
+          //      fica desenhado mas o conteúdo fica invisível.
+          //    • ring.colors.ring — cor dourada do anel
+          //    • ring.effects — valor 1 = anel básico (visualizado)
+          //    • actorLink — token sincronizado com a ficha (recomendado pra PCs)
+          await this.document.update({
+            "prototypeToken.texture.src":              path,
+            "prototypeToken.ring.enabled":             true,
+            "prototypeToken.ring.subject.texture":     path,
+            "prototypeToken.ring.colors.ring":         "#c8972a",
+            "prototypeToken.ring.colors.background":   "#1a1a1a",
+            "prototypeToken.ring.effects":             1,
+            "prototypeToken.actorLink":                true
+          });
 
           // 2) Sincroniza tokens JÁ colocados em TODAS as cenas
+          //    Para o anel funcionar nos tokens existentes, precisa atualizar
+          //    cada um deles individualmente — mudanças no prototype NÃO propagam
+          //    pra tokens já instanciados.
           let count = 0;
           for (const scene of game.scenes) {
             const tokensDeste = scene.tokens.filter(t => t.actorId === this.document.id);
             for (const token of tokensDeste) {
-              await token.update({ "texture.src": path });
+              await token.update({
+                "texture.src":              path,
+                "ring.enabled":             true,
+                "ring.subject.texture":     path,
+                "ring.colors.ring":         "#c8972a",
+                "ring.colors.background":   "#1a1a1a",
+                "ring.effects":             1
+              });
               count++;
             }
           }
           if (count > 0) {
-            ui.notifications.info(`Imagem do token atualizada em ${count} token(s) das cenas.`);
+            ui.notifications.info(`Imagem do token + anel dourado atualizados em ${count} token(s) das cenas.`);
           } else {
-            ui.notifications.info(`Imagem do token atualizada no prototype.`);
+            ui.notifications.info(`Imagem do token + anel dourado salvos no prototype.`);
           }
         });
       }, { signal: sig });

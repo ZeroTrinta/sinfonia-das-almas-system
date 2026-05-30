@@ -72,7 +72,7 @@ async function buildPack(sourceFile, packName) {
     item.ownership = item.ownership ?? { default: 0 };
     item._stats = item._stats ?? {
       systemId: "sinfonia-das-almas",
-      systemVersion: "0.6.7",
+      systemVersion: "0.6.8",
       coreVersion: "12",
       createdTime: Date.now(),
       modifiedTime: Date.now(),
