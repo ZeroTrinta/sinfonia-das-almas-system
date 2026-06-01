@@ -66,7 +66,15 @@
     </div>
 
     {{!-- Crepúsculo da Morte: indicador que só aparece quando system.alma.crepusculo === true --}}
-    {{#if system.alma.crepusculo}}
+    {{#if system.alma.morto}}
+    <div class="banner-crepusculo morte">
+      <div class="crep-banner-icon">☠</div>
+      <div class="crep-banner-info">
+        <span class="crep-banner-title">MORTO</span>
+        <span class="crep-banner-sub">A alma se dissipou. Sem retorno.</span>
+      </div>
+    </div>
+    {{else}}{{#if system.alma.crepusculo}}
     <div class="banner-crepusculo">
       <div class="crep-banner-icon">⚱</div>
       <div class="crep-banner-info">
@@ -84,7 +92,7 @@
         <i class="fas fa-dice"></i> Rolar Vontade
       </button>
     </div>
-    {{/if}}
+    {{/if}}{{/if}}
   </header>
 
   {{!-- ═══════ CORPO PRINCIPAL EM 3 COLUNAS ═══════ --}}

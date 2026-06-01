@@ -1015,15 +1015,21 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         content: `<div class="crep-aviso saiu"><b>✨ ${actor.name} resiste e retorna do Crepúsculo da Morte.</b></div>`
       });
     } else {
-      // Falha: morte
+      // Falha: morte definitiva — mensagem dramática
       await ChatMessage.implementation.create({
         speaker: ChatMessage.getSpeaker({ actor }),
-        content: `<div class="crep-aviso morte"><h3>☠ ${actor.name} morreu.</h3><p>A alma se rompeu no Crepúsculo.</p></div>`
+        content: `
+          <div class="crep-aviso morte">
+            <h2>☠ ${actor.name} morreu ☠</h2>
+            <p>A alma se rompeu no Crepúsculo. O cabo de guerra foi perdido.</p>
+            <p><em>O corpo cessa. O que restava da vontade, dissipa-se em silêncio.</em></p>
+          </div>`
       });
-      // Zera Det e mantém no Crepúsculo (gameplay decide se ressuscitar)
+      // Zera Det e marca como morto. Mantém crep=true pra continuar mostrando estado.
       await actor.update({
-        "system.alma.determinacao": 0
-      }, { render: false });
+        "system.alma.determinacao": 0,
+        "system.alma.morto":       true
+      });
     }
   }
 

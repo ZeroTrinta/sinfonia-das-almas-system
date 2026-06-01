@@ -407,7 +407,7 @@ export class SinfoniaActor extends Actor {
     const acoesHtml = resultado.sucesso
       ? `<div class="sinfonia-ataque-acoes">
            <button type="button" class="btn-rolar-dano"
-             data-actor-id="${this.id}" data-arma-id="${arma.id}">
+             data-actor-uuid="${this.uuid}" data-actor-id="${this.id}" data-arma-id="${arma.id}">
              <i class="fas fa-dice-d20"></i> Rolar Dano
            </button>
          </div>`
@@ -469,7 +469,7 @@ export class SinfoniaActor extends Actor {
     const acoesHtml = (resultado.sucesso && analise.dano)
       ? `<div class="sinfonia-ataque-acoes">
            <button type="button" class="btn-magia-dano"
-             data-actor-id="${this.id}" data-item-id="${magia.id}">
+             data-actor-uuid="${this.uuid}" data-actor-id="${this.id}" data-item-id="${magia.id}">
              <i class="fas fa-dice-d20"></i> Rolar Dano (${analise.dano.formula}${analise.dano.tipoDano ? " " + analise.dano.tipoDano : ""})
            </button>
          </div>`
@@ -867,6 +867,9 @@ export class SinfoniaActor extends Actor {
     }
 
     await this.update(updates);
+    // Força re-render da sheet pra mostrar o banner do Crepúsculo / barras atualizadas
+    // (DocumentSheetV2 com submitOnChange:false não re-renderiza sempre que o doc muda).
+    this.sheet?.render(false);
 
     const rdMsg = rdAplicada > 0
       ? ` <span class="rd-aplicada">(−${rdAplicada} RD da armadura)</span>`
@@ -907,6 +910,8 @@ export class SinfoniaActor extends Actor {
     }
 
     await this.update(updates);
+    // Força re-render da sheet pra atualizar Crepúsculo/PV/Det
+    this.sheet?.render(false);
 
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
@@ -926,12 +931,19 @@ export class SinfoniaActor extends Actor {
 
     const detAtual = this.system.alma.determinacao;
 
-    // Det 0 → morte
+    // Det 0 → morte (sem teste de Vontade possível — alma já se esvaiu)
     if (detAtual <= 0) {
       await ChatMessage.implementation.create({
         speaker: ChatMessage.getSpeaker({ actor: this }),
-        content: `<div class="crep-aviso morte"><h3>☠ ${this.name} morreu.</h3><p>Sua alma se dissipou no Crepúsculo.</p></div>`
+        content: `
+          <div class="crep-aviso morte">
+            <h2>☠ ${this.name} morreu ☠</h2>
+            <p>A alma se dissipou no Crepúsculo. Sem retorno.</p>
+          </div>`
       });
+      // Marca explicitamente como morto (mantém crep=true pra continuar mostrando o aviso)
+      await this.update({ "system.alma.morto": true }, { render: false });
+      this.sheet?.render(false);
       return;
     }
 
@@ -1284,7 +1296,7 @@ export class SinfoniaItem extends Item {
     // Mensagem com botão de rolar resistência + (se houver dano) rolar dano
     const danoBtn = analise.dano
       ? `<button type="button" class="btn-magia-dano"
-           data-actor-id="${actor.id}" data-item-id="${this.id}">
+           data-actor-uuid="${actor.uuid}" data-actor-id="${actor.id}" data-item-id="${this.id}">
            <i class="fas fa-dice-d20"></i> Rolar Dano (${analise.dano.formula}${analise.dano.tipoDano ? " " + analise.dano.tipoDano : ""})
          </button>`
       : "";
@@ -1330,7 +1342,7 @@ export class SinfoniaItem extends Item {
         <div class="sinfonia-magia-resist">
           <div class="magia-resist-acoes">
             <button type="button" class="btn-magia-dano"
-              data-actor-id="${actor.id}" data-item-id="${this.id}">
+              data-actor-uuid="${actor.uuid}" data-actor-id="${actor.id}" data-item-id="${this.id}">
               <i class="fas fa-dice-d20"></i> Rolar (${analise.dano.formula})
             </button>
           </div>
@@ -1367,7 +1379,7 @@ export class SinfoniaItem extends Item {
       continuaHtml = `
         <div class="magia-continua-acoes">
           <button type="button" class="btn-toggle-continua ${ativa ? 'ativa' : ''}"
-            data-actor-id="${actor.id}" data-magia-id="${this.id}">
+            data-actor-uuid="${actor.uuid}" data-actor-id="${actor.id}" data-magia-id="${this.id}">
             <i class="fas ${iconCls}"></i> ${label}
           </button>
         </div>`;

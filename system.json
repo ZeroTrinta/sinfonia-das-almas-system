@@ -2,7 +2,7 @@
   "id": "sinfonia-das-almas",
   "title": "Sinfonia das Almas",
   "description": "Sistema homebrew de RPG com mecânicas de Determinação e Corrupção da Alma, atributos em dados (d6–d12) e árvore de habilidades por classe.",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "compatibility": {
     "minimum": "12",
     "verified": "12"

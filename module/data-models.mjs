@@ -91,6 +91,8 @@ export class PersonagemDataModel extends BaseActorModel {
         estilhacos:   new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
         // Crepúsculo da Morte: ativo quando PV = 0. Det atual vira contagem regressiva.
         crepusculo:   new BooleanField({ required: true, initial: false }),
+        // Marcador de morte definitiva (falha no teste de Vontade ou Det 0 no Crepúsculo).
+        morto:        new BooleanField({ required: true, initial: false }),
         // Quantas vezes já fez o teste de Vontade no Crepúsculo nesta queda
         // (usado para escalar a ND: 10 → 16 → 16 → 20 → 25 → 30).
         testesVontade: new NumberField({ required: true, integer: true, min: 0, initial: 0 }),

@@ -602,7 +602,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.7.2");
+  console.log("Sinfonia das Almas | Pronto. v0.7.3");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
@@ -627,9 +627,12 @@ Hooks.once("ready", () => {
 
     // Ativar/desativar magia contínua
     if (btn.classList.contains("btn-toggle-continua")) {
-      const actorId = btn.dataset.actorId;
-      const magiaId = btn.dataset.magiaId;
-      const actor = game.actors.get(actorId);
+      const actorUuid = btn.dataset.actorUuid;
+      const actorId   = btn.dataset.actorId;
+      const magiaId   = btn.dataset.magiaId;
+      let actor = null;
+      if (actorUuid) { try { actor = fromUuidSync(actorUuid); } catch {} }
+      if (!actor && actorId) actor = game.actors.get(actorId);
       const magia = actor?.items?.get(magiaId);
       if (!actor || !magia) {
         ui.notifications.warn("Ator ou magia não encontrados.");
@@ -641,10 +644,16 @@ Hooks.once("ready", () => {
 
     // Rolar dano da arma (botão no cabeçalho de ataque)
     if (btn.classList.contains("btn-rolar-dano")) {
-      const actorId = btn.dataset.actorId;
-      const armaId  = btn.dataset.armaId;
-      const actor = game.actors.get(actorId);
-      const arma  = actor?.items?.get(armaId);
+      // v0.7.3: aceita actorUuid (token unlinked) OU actorId (legado)
+      const actorUuid = btn.dataset.actorUuid;
+      const actorId   = btn.dataset.actorId;
+      const armaId    = btn.dataset.armaId;
+      let actor = null;
+      if (actorUuid) {
+        try { actor = fromUuidSync(actorUuid); } catch {}
+      }
+      if (!actor && actorId) actor = game.actors.get(actorId);
+      const arma = actor?.items?.get(armaId);
       if (!actor || !arma) {
         ui.notifications.warn("Ator ou arma não encontrados.");
         return;
@@ -661,9 +670,12 @@ Hooks.once("ready", () => {
 
     // Rolar dano de MAGIA (botão no card de ataque/resistência mística)
     if (btn.classList.contains("btn-magia-dano")) {
-      const actorId = btn.dataset.actorId;
-      const itemId  = btn.dataset.itemId;
-      const actor = game.actors.get(actorId);
+      const actorUuid = btn.dataset.actorUuid;
+      const actorId   = btn.dataset.actorId;
+      const itemId    = btn.dataset.itemId;
+      let actor = null;
+      if (actorUuid) { try { actor = fromUuidSync(actorUuid); } catch {} }
+      if (!actor && actorId) actor = game.actors.get(actorId);
       const magia = actor?.items?.get(itemId);
       if (!actor || !magia) {
         ui.notifications.warn("Ator ou magia não encontrados.");
