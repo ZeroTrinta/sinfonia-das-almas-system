@@ -59,6 +59,24 @@
               <span>{{this.efeitoAtual}}</span>
             </p>
           {{/if}}
+
+          {{!-- Sublista: itens escolhidos (Manobras, Truques, Venenos, Disparos) --}}
+          {{#if this.sublistaItens}}
+            {{#if this.sublistaItens.length}}
+            <ul class="arvore-sublista">
+              {{#each this.sublistaItens}}
+              <li class="arvore-sub-item">
+                <a data-action="verSubItem" data-hab-id="{{../this.id}}" data-sub-id="{{this.id}}" title="Ver detalhes">
+                  <i class="fas fa-bookmark"></i>
+                  <span class="sub-item-label">{{this.label}}</span>
+                  {{#if this.custoPE}}<span class="sub-item-cost">{{this.custoPE}} PE</span>{{/if}}
+                  {{#if this.custoPI}}<span class="sub-item-cost">{{this.custoPI}} PI</span>{{/if}}
+                </a>
+              </li>
+              {{/each}}
+            </ul>
+            {{/if}}
+          {{/if}}
         </div>
 
         <div class="arvore-item-controle">

@@ -33,7 +33,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       atacarArma:      SinfoniaActorSheet._onAtacarArma,
       rolarDanoArma:   SinfoniaActorSheet._onRolarDanoArma,
       alternarEquipado: SinfoniaActorSheet._onAlternarEquipado,
-      toggleFavorito:  SinfoniaActorSheet._onToggleFavorito
+      toggleFavorito:  SinfoniaActorSheet._onToggleFavorito,
+      rolarTesteCrepusculo: SinfoniaActorSheet._onRolarTesteCrepusculo
     }
   };
 
@@ -954,6 +955,76 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     const atual = item.system?.favorito === true;
     await item.update({ "system.favorito": !atual });
     this.render(false);
+  }
+
+  /**
+   * Rola o teste de Vontade do Crepúsculo da Morte com a ND escalada do doc:
+   *   1ª: 10 · 2ª-3ª: 16 · 4ª: 20 · 5ª: 25 · 6ª+: 30
+   * Falha = morte (estilhaço + zera Det). Sucesso = sai do Crepúsculo.
+   * O contador `system.alma.testesVontade` registra quantas vezes já rolou
+   * nesta queda — a ND escala com base nele.
+   */
+  static async _onRolarTesteCrepusculo(event, target) {
+    event.preventDefault();
+    const actor = this.document;
+    if (!actor.system.alma?.crepusculo) {
+      ui.notifications.warn("O personagem não está no Crepúsculo da Morte.");
+      return;
+    }
+
+    // ND escalada conforme o doc oficial
+    const NDS = [10, 16, 16, 20, 25, 30];
+    const tentativa = actor.system.alma.testesVontade ?? 0;
+    const nd = NDS[Math.min(tentativa, NDS.length - 1)];
+
+    // Confirmação antes de rolar
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Teste de Vontade — Crepúsculo da Morte" },
+      content: `
+        <p><b>${actor.name}</b> agarra-se à vida pela <b>${tentativa + 1}ª vez</b>.</p>
+        <p>Teste de Força de Vontade contra <b>ND ${nd}</b>.</p>
+        <p><em>Em caso de falha, a alma se rompe e o personagem morre.</em></p>
+        <p><em>Em caso de sucesso, o personagem sai do Crepúsculo.</em></p>`
+    });
+    if (!ok) return;
+
+    // Incrementa contador de tentativas (ND aumenta na próxima)
+    await actor.update({ "system.alma.testesVontade": tentativa + 1 }, { render: false });
+
+    // Rola usando o dialog enxuto de perícia (Força de Vontade: POD+CAR)
+    const cfg = SINFONIA.PERICIAS.forcaDeVontade;
+    const opcoes = await SinfoniaActorSheet._dialogND(actor, cfg.atribA, cfg.atribB);
+    if (!opcoes) {
+      // Reverte contador se cancelou (não deveria rolar)
+      await actor.update({ "system.alma.testesVontade": tentativa }, { render: false });
+      return;
+    }
+
+    const resultado = await actor.rolarPericia("forcaDeVontade", cfg.atribA, cfg.atribB, nd, opcoes);
+
+    if (!resultado) return;
+
+    if (resultado.sucesso) {
+      // Sucesso: sai do Crepúsculo
+      await actor.update({
+        "system.alma.crepusculo":    false,
+        "system.alma.testesVontade": 0
+      });
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<div class="crep-aviso saiu"><b>✨ ${actor.name} resiste e retorna do Crepúsculo da Morte.</b></div>`
+      });
+    } else {
+      // Falha: morte
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor }),
+        content: `<div class="crep-aviso morte"><h3>☠ ${actor.name} morreu.</h3><p>A alma se rompeu no Crepúsculo.</p></div>`
+      });
+      // Zera Det e mantém no Crepúsculo (gameplay decide se ressuscitar)
+      await actor.update({
+        "system.alma.determinacao": 0
+      }, { render: false });
+    }
   }
 
   /**

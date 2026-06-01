@@ -3008,6 +3008,99 @@
 }
 
 /* ================================================================
+   v0.7.1 — Pts Hab. como fração livres/total no banner
+================================================================ */
+.banner-pts-fracao {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 18px;
+  padding: 4px 12px;
+  background: #0d1018;
+  border: 1px solid var(--gold-dim);
+  min-width: 60px;
+  justify-content: center;
+}
+.banner-pts-fracao .pts-livres {
+  color: #80e890;
+  text-shadow: 0 0 4px rgba(128,232,144,0.4);
+}
+.banner-pts-fracao .pts-sep {
+  color: var(--silver-dim);
+  margin: 0 2px;
+}
+.banner-pts-fracao .pts-total {
+  color: var(--gold-light);
+}
+
+/* ================================================================
+   v0.7.1 — Crepúsculo da Morte no banner (indicador + botão)
+================================================================ */
+.banner-crepusculo {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: linear-gradient(90deg, rgba(200, 64, 64, 0.18), rgba(200, 64, 64, 0.04));
+  border: 1px solid var(--cor-color);
+  border-left: 3px solid #ff6060;
+}
+.banner-crepusculo .crep-banner-icon {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  color: #ff6060;
+  text-shadow: 0 0 10px rgba(255, 96, 96, 0.6);
+  line-height: 1;
+}
+.banner-crepusculo .crep-banner-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.banner-crepusculo .crep-banner-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #ff8080;
+  text-shadow: 0 0 6px rgba(255, 96, 96, 0.4);
+}
+.banner-crepusculo .crep-banner-sub {
+  font-size: 11px;
+  color: #e0c0c0;
+  letter-spacing: 0.5px;
+}
+.banner-crepusculo .crep-banner-sub b {
+  color: #ffaaaa;
+  font-weight: 700;
+}
+.banner-crepusculo .btn-crep-rolar {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  background: rgba(255, 96, 96, 0.12);
+  border: 1px solid var(--cor-color);
+  color: #ffb0b0;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.banner-crepusculo .btn-crep-rolar:hover {
+  background: rgba(255, 96, 96, 0.25);
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 96, 96, 0.6);
+  border-color: #ff8080;
+}
+
+
+/* ================================================================
    v0.7.0 — ÁRVORE DE HABILIDADES (reformulada)
 ================================================================ */
 
@@ -3297,6 +3390,247 @@
 .habilidades-arvore-layout .arvore-pts b {
   color: var(--gold-light);
 }
+
+/* ================================================================
+   v0.7.2 — SUBLISTAS (Manobras, Truques, Venenos, Disparos)
+================================================================ */
+
+/* Lista de itens da sublista já escolhidos, abaixo do efeito atual */
+.arvore-sublista {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.arvore-sub-item {
+  display: inline-flex;
+}
+.arvore-sub-item a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(106, 160, 255, 0.08);
+  border: 1px solid rgba(106, 160, 255, 0.3);
+  border-left: 2px solid #6aa0ff;
+  font-size: 11px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.arvore-sub-item a:hover {
+  background: rgba(106, 160, 255, 0.18);
+  border-color: #8ab8ff;
+  color: #c0e0ff;
+}
+.arvore-sub-item .sub-item-label {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+}
+.arvore-sub-item .sub-item-cost {
+  font-size: 9px;
+  color: var(--silver-dim);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0 4px;
+  border-left: 1px solid var(--silver-dim);
+  margin-left: 2px;
+}
+.arvore-sub-item i {
+  color: #6aa0ff;
+  font-size: 10px;
+}
+
+/* Dialog de escolha (Aprender) e remoção (Esquecer) */
+.sinfonia-dialog-sublista {
+  font-family: 'EB Garamond', serif;
+}
+.sinfonia-dialog-sublista .sub-intro {
+  margin: 0 0 12px;
+  color: var(--silver-dim);
+  font-size: 13px;
+}
+.sinfonia-dialog-sublista .sub-intro b {
+  color: var(--gold-light);
+}
+.sinfonia-dialog-sublista .sub-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+.sinfonia-dialog-sublista.compact .sub-lista {
+  max-height: 240px;
+}
+.sub-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #0a0d14;
+  border: 1px solid #1a1d28;
+  border-left: 3px solid #1a1d28;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sub-opcao:hover:not(.disabled) {
+  border-color: var(--gold-dim);
+  background: #0d1018;
+}
+.sub-opcao input[type="radio"] {
+  margin-top: 2px;
+  cursor: pointer;
+}
+.sub-opcao.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.sub-opcao.disabled input { cursor: not-allowed; }
+.sub-opcao-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sub-opcao-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sub-opcao-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--gold-light);
+}
+.sub-opcao-tags {
+  display: flex;
+  gap: 3px;
+}
+.sub-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  background: rgba(106, 160, 255, 0.1);
+  border: 1px solid rgba(106, 160, 255, 0.3);
+  color: #8ab8ff;
+}
+.sub-conhecida {
+  font-size: 10px;
+  font-style: italic;
+  color: var(--cor-color);
+  margin-left: 6px;
+}
+.sub-opcao-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+}
+.sub-aprimorado {
+  font-size: 11px;
+  color: #c0d8ff;
+  background: rgba(106, 160, 255, 0.06);
+  padding: 4px 8px;
+  border-left: 2px solid #6aa0ff;
+  margin-top: 4px;
+}
+.sub-aprimorado b { color: #8ab8ff; }
+
+/* Dialog de detalhe de subitem (clique em item já aprendido) */
+.sinfonia-subitem-detalhe {
+  font-family: 'EB Garamond', serif;
+  padding: 4px;
+}
+.sinfonia-subitem-detalhe .sub-tags {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.sinfonia-subitem-detalhe .sub-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+/* ================================================================
+   v0.7.2 — Custo Contínuo de magias
+================================================================ */
+.magia-continua-acoes {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-toggle-continua {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: rgba(106, 160, 255, 0.10);
+  border: 1px solid rgba(106, 160, 255, 0.40);
+  color: #8ab8ff;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-toggle-continua:hover {
+  background: rgba(106, 160, 255, 0.20);
+  color: #c0e0ff;
+  text-shadow: 0 0 6px rgba(106, 160, 255, 0.5);
+}
+.btn-toggle-continua.ativa {
+  background: rgba(200, 64, 64, 0.12);
+  border-color: var(--cor-color);
+  color: #ff9090;
+}
+.btn-toggle-continua.ativa:hover {
+  background: rgba(200, 64, 64, 0.22);
+  color: #ffbbbb;
+}
+.magia-continuo {
+  color: #8ab8ff !important;
+  font-style: italic;
+}
+.sinfonia-magia-continua {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-left: 2px solid var(--gold);
+  background: rgba(200, 151, 42, 0.08);
+  color: var(--text);
+}
+.sinfonia-magia-continua.ativou {
+  border-left-color: #6aa0ff;
+  background: rgba(106, 160, 255, 0.10);
+  color: #c0d8ff;
+}
+.sinfonia-magia-continua.dispersou {
+  border-left-color: var(--cor-color);
+  background: rgba(200, 64, 64, 0.10);
+  color: #ffb0b0;
+}
+.sinfonia-magia-continua.mantida {
+  border-left-color: var(--gold-dim);
+  font-size: 11px;
+  color: var(--silver-dim);
+}
+.continua-cost {
+  margin-left: 8px;
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  font-size: 10px;
+}
+
+
 
 
 

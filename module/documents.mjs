@@ -972,6 +972,112 @@ export class SinfoniaActor extends Actor {
       content: `<div class="crep-aviso turno"><b>Crepúsculo:</b> ${this.name} perde 1 Determinação no início do turno. Det: ${novaDet}.</div>`
     });
   }
+
+  /* ============================================================
+     CUSTO CONTÍNUO de magias (v0.7.2)
+     Magias com `custoContinuo > 0` cobram PE a cada início de turno.
+     Se faltar PE, a magia se dispersa automaticamente.
+     Armazenamento: flag "magiasContinuas" = [magiaId, ...]
+  ============================================================ */
+
+  /**
+   * Ativa ou desativa uma magia como "contínua".
+   * Ao ATIVAR: cobra o custoContinuo (1ª parcela) e adiciona ao registro.
+   * Ao DESATIVAR: remove do registro (sem reembolso).
+   */
+  async toggleMagiaContinua(magia) {
+    if (this.type !== "personagem") return;
+    if (!magia || magia.type !== "magia") return;
+    const custo = Math.max(0, Number(magia.system.custoContinuo) || 0);
+    if (custo <= 0) {
+      ui.notifications.warn(`${magia.name} não tem custo contínuo.`);
+      return;
+    }
+
+    const lista = this.getFlag("sinfonia-das-almas", "magiasContinuas") ?? [];
+    const jaAtiva = lista.includes(magia.id);
+
+    if (jaAtiva) {
+      // Desativar — remove da lista (sem reembolso)
+      const nova = lista.filter(id => id !== magia.id);
+      await this.unsetFlag("sinfonia-das-almas", "magiasContinuas");
+      if (nova.length > 0) await this.setFlag("sinfonia-das-almas", "magiasContinuas", nova);
+
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        content: `<div class="sinfonia-magia-continua dispersou"><b>${this.name}</b> dispersa <b>${magia.name}</b>.</div>`
+      });
+      return;
+    }
+
+    // Ativar — cobra a 1ª parcela
+    const pe = this.system.recursos.pe;
+    if (pe.value < custo) {
+      ui.notifications.warn(`${this.name} não tem PE suficientes para sustentar ${magia.name} (precisa de ${custo}).`);
+      return;
+    }
+    await this.update({ "system.recursos.pe.value": pe.value - custo }, { render: false });
+
+    const nova = [...lista, magia.id];
+    await this.unsetFlag("sinfonia-das-almas", "magiasContinuas");
+    await this.setFlag("sinfonia-das-almas", "magiasContinuas", nova);
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this }),
+      content: `
+        <div class="sinfonia-magia-continua ativou">
+          <b>✨ ${this.name}</b> mantém <b>${magia.name}</b> ativa.
+          <p>Custo contínuo: <b>${custo} PE</b> por turno.</p>
+        </div>`
+    });
+  }
+
+  /**
+   * Cobra o custoContinuo de cada magia contínua ativa.
+   * Se faltar PE pra qualquer uma, ela dispersa e posta aviso no chat.
+   * Chamado pelo hook combatTurnChange no início do turno.
+   */
+  async processarMagiasContinuas() {
+    if (this.type !== "personagem") return;
+    const lista = this.getFlag("sinfonia-das-almas", "magiasContinuas") ?? [];
+    if (lista.length === 0) return;
+
+    const remanescentes = [];
+    let peValue = this.system.recursos.pe.value;
+
+    for (const magiaId of lista) {
+      const magia = this.items.get(magiaId);
+      if (!magia) continue; // Magia foi deletada — pula
+      const custo = Math.max(0, Number(magia.system.custoContinuo) || 0);
+      if (custo <= 0) {
+        // Magia perdeu o custo contínuo — mantém sem cobrar
+        remanescentes.push(magiaId);
+        continue;
+      }
+      if (peValue >= custo) {
+        peValue -= custo;
+        remanescentes.push(magiaId);
+        await ChatMessage.implementation.create({
+          speaker: ChatMessage.getSpeaker({ actor: this }),
+          content: `<div class="sinfonia-magia-continua mantida"><b>${this.name}</b> sustenta <b>${magia.name}</b>. <span class="continua-cost">−${custo} PE</span></div>`
+        });
+      } else {
+        // PE insuficiente — dispersa
+        await ChatMessage.implementation.create({
+          speaker: ChatMessage.getSpeaker({ actor: this }),
+          content: `<div class="sinfonia-magia-continua dispersou"><b>${this.name}</b>: <b>${magia.name}</b> dispersou (PE insuficientes).</div>`
+        });
+      }
+    }
+
+    // Aplica novo PE + atualiza a lista de contínuas
+    const updates = { "system.recursos.pe.value": peValue };
+    await this.update(updates, { render: false });
+    await this.unsetFlag("sinfonia-das-almas", "magiasContinuas");
+    if (remanescentes.length > 0) {
+      await this.setFlag("sinfonia-das-almas", "magiasContinuas", remanescentes);
+    }
+  }
 }
 
 /* ============================================================
@@ -1250,6 +1356,23 @@ export class SinfoniaItem extends Item {
       utilitaria:  `<span class="magia-tag util">✨ Utilitária</span>`
     }[modo] ?? "";
 
+    // Botão de toggle de Contínua — só aparece se a magia tem custoContinuo > 0
+    const custoCont = Math.max(0, Number(sys.custoContinuo) || 0);
+    let continuaHtml = "";
+    if (custoCont > 0) {
+      const lista = actor.getFlag("sinfonia-das-almas", "magiasContinuas") ?? [];
+      const ativa = lista.includes(this.id);
+      const label = ativa ? "Dispersar" : `Ativar Contínua (${custoCont} PE/turno)`;
+      const iconCls = ativa ? "fa-circle-stop" : "fa-infinity";
+      continuaHtml = `
+        <div class="magia-continua-acoes">
+          <button type="button" class="btn-toggle-continua ${ativa ? 'ativa' : ''}"
+            data-actor-id="${actor.id}" data-magia-id="${this.id}">
+            <i class="fas ${iconCls}"></i> ${label}
+          </button>
+        </div>`;
+    }
+
     const content = `
       <div class="sinfonia-magia">
         <div class="magia-header">
@@ -1258,11 +1381,13 @@ export class SinfoniaItem extends Item {
         </div>
         <div class="magia-detalhes">
           <span>⚡ ${sys.custoPE} PE</span>
+          ${custoCont > 0 ? `<span class="magia-continuo">∞ ${custoCont} PE/turno</span>` : ""}
           <span>📏 ${sys.alcance}</span>
           <span>⏱ ${sys.duracao}</span>
           ${modoTag}
         </div>
         <div class="magia-desc">${sys.descricao || ""}</div>
+        ${continuaHtml}
       </div>
     `;
     await ChatMessage.implementation.create({

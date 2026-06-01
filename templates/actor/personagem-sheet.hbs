@@ -21,7 +21,9 @@
         </div>
         <div class="banner-pts">
           <span class="banner-mini-label">Pts Hab.</span>
-          <input type="number" name="system.progressao.pontosHabilidade" value="{{system.progressao.pontosHabilidade}}" min="0"/>
+          <span class="banner-pts-fracao" title="Pontos disponíveis / Total (= nível)">
+            <span class="pts-livres">{{habArvore.ptsLivres}}</span><span class="pts-sep">/</span><span class="pts-total">{{habArvore.ptsTotal}}</span>
+          </span>
         </div>
       </div>
     </div>
@@ -62,6 +64,27 @@
         </div>
       </div>
     </div>
+
+    {{!-- Crepúsculo da Morte: indicador que só aparece quando system.alma.crepusculo === true --}}
+    {{#if system.alma.crepusculo}}
+    <div class="banner-crepusculo">
+      <div class="crep-banner-icon">⚱</div>
+      <div class="crep-banner-info">
+        <span class="crep-banner-title">Crepúsculo da Morte</span>
+        <span class="crep-banner-sub">
+          Det: <b>{{system.alma.determinacao}}</b> ·
+          {{#if (gt system.alma.determinacao 1)}}
+            − 1 Det por turno
+          {{else}}
+            Teste de Vontade ao iniciar turno
+          {{/if}}
+        </span>
+      </div>
+      <button type="button" data-action="rolarTesteCrepusculo" class="btn-crep-rolar" title="Rola o teste de Vontade do Crepúsculo agora">
+        <i class="fas fa-dice"></i> Rolar Vontade
+      </button>
+    </div>
+    {{/if}}
   </header>
 
   {{!-- ═══════ CORPO PRINCIPAL EM 3 COLUNAS ═══════ --}}

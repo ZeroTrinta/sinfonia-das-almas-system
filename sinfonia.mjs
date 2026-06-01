@@ -134,6 +134,7 @@ globalThis.SINFONIA = {
         efeito: (nh) => `+${nh * 3} PV Máximos.`,
         desc: "Aumenta seus pontos de vida Máximo em [3 × NH]." },
       { id: "g_manobra",      label: "Manobra de Combate",        maxNH: 10, passiva: false,
+        sublistaId: "g_manobra",
         efeito: (nh) => `Conhece ${nh} manobra(s) de combate da lista.`,
         desc: "Cada ponto aprende uma manobra nova. Lista no final da classe." },
       { id: "g_milagre",      label: "Iniciado em Milagres",      maxNH: 5, passiva: false,
@@ -166,9 +167,11 @@ globalThis.SINFONIA = {
         efeito: () => "10 PE: reduz pela metade o dano recebido.",
         desc: "Escapa por um triz de perigos mortais." },
       { id: "r_venenos",      label: "Iniciado em Venenos",       maxNH: 5, passiva: false,
+        sublistaId: "r_venenos",
         efeito: (nh) => `Fabrica e aplica ${nh} tipo(s) de veneno básico.`,
         desc: "Compreende toxinas. Fabrica venenos em Áreas de Descanso (2 PI cada, teste de Ofício ND 12)." },
       { id: "r_truques",      label: "Truques Sujos",             maxNH: 10, passiva: false,
+        sublistaId: "r_truques",
         efeito: (nh) => `Conhece ${nh} truque(s) sujo(s) da lista.`,
         desc: "Cada ponto aprende um Truque Sujo da lista." },
       { id: "r_prodigio",     label: "Prodígio",                  maxNH: 2, passiva: true,
@@ -200,6 +203,7 @@ globalThis.SINFONIA = {
       { id: "a_ataque_extra", label: "Ataque Extra",              maxNH: 1, passiva: true,
         desc: "Quando tomar a ação de atacar, realiza um segundo ataque em sequência." },
       { id: "a_disparos",     label: "Disparos Especiais",        maxNH: 10, passiva: false,
+        sublistaId: "a_disparos",
         efeito: (nh) => `Conhece ${nh} disparo(s) especial(is) da lista.`,
         desc: "Cada ponto aprende um Disparo Especial." }
     ],
@@ -264,6 +268,122 @@ globalThis.SINFONIA = {
           return `20 PE, Ação Padrão: morto-vivo testa Fortitude vs ND Mística. Dano Luz: dado MIS + ${20 + danoExtra}. Execução se PV < ${margem}.`;
         },
         desc: "Luz divina concentrada que purga corrompidos e mortos-vivos." }
+    ]
+  },
+
+  /* ============================================================
+     SUBLISTAS — v0.7.2
+     Cada habilidade do tipo "desbloqueio" (Manobra de Combate, Truques
+     Sujos, Disparos Especiais, Venenos) tem uma lista de opções que o
+     jogador escolhe ao investir um ponto. O NH da habilidade-mãe dita
+     quantas opções ele pode aprender.
+
+     Cada entrada tem:
+       • id        — identificador único
+       • label     — nome exibido
+       • custoPE   — (opcional) custo de ativação em PE
+       • custoPI   — (opcional) custo em Pontos de Inventário
+       • acao     — "parcial" | "inicial" | "reacao" | "livre" | "" (reação conta como reação)
+       • desc      — descrição do efeito
+       • efeitoAprimorado — (opcional) variante com custo extra de PE
+     Armazenamento no actor: flag "sublistas" = { habId: [subId, subId, ...] }
+  ============================================================ */
+  SUBLISTAS: {
+    // ── GUERREIRO: Manobras de Combate ──
+    g_manobra: [
+      { id: "giratorio",   label: "Golpe Giratório", custoPE: 10, acao: "livre",
+        desc: "Ataque corpo-a-corpo em área de 3m. Alvos atingidos recebem seu Dado de Poder de dano adicional.",
+        efeitoAprimorado: "+5 PE e todas as ações (Inicial+Parcial+Movimento): área aumenta para 6m, alvos testam Fortitude vs seu Acerto ou ficam Atordoados." },
+      { id: "rude_buster", label: "Rude Buster [3X]", custoPE: 15, acao: "livre",
+        desc: "Canaliza energia na arma e ataca um alvo a 9m. Pode ser comprado mais de uma vez — adiciona +1 dado de dano por NH.",
+        efeitoAprimorado: "+5 PE: alveja mais um alvo no alcance de 9m." },
+      { id: "rompe_defesas", label: "Rompe Defesas", custoPE: 10, acao: "livre",
+        desc: "Próximo ataque acertado reduz a Defesa do alvo em −2." },
+      { id: "contra_ataque", label: "Contra Ataque", custoPE: 0, acao: "reacao",
+        desc: "Quando um inimigo acerta ou erra ataque corpo-a-corpo contra você e o valor do dado de ataque for PAR, use sua reação para atacar o alvo." },
+      { id: "ripostar", label: "Ripostar", custoPE: 0, acao: "reacao",
+        desc: "Quando um inimigo ataca corpo-a-corpo e o dado for ÍMPAR, você bloqueia (sem dano) e inflige Enfraquecido até o início do turno dele." },
+      { id: "ataque_descuidado", label: "Ataque Descuidado", custoPE: 10, acao: "livre",
+        desc: "Durante o turno inteiro: +5 acerto e dano, −5 Defesa até o início da próxima rodada." },
+      { id: "postura_aco", label: "Postura de Aço", custoPE: 10, acao: "parcial",
+        desc: "Adota postura defensiva: −10 dano recebido e +5 Defesa até o final do próximo turno." },
+      { id: "precisao", label: "Precisão", custoPE: 10, acao: "livre",
+        desc: "No próximo ataque: +5 de acerto." },
+      { id: "retomar_folego", label: "Retomar o Fôlego", custoPE: 10, acao: "parcial",
+        desc: "Cura igual ao resultado de 5 dados de Poder rolados." },
+      { id: "lider_inspirador", label: "Líder Inspirador", custoPE: 15, acao: "livre",
+        desc: "Dá PVT a aliaíos = 3× seu dado de Poder. Enquanto têm PVT: +5 contra Amedrontado." }
+    ],
+
+    // ── GATUNO: Truques Sujos ──
+    r_truques: [
+      { id: "ataque_vital", label: "Ataque Vital [5X]", custoPE: 0, acao: "livre",
+        desc: "Reserva de dados d6 = NH desta habilidade. Contra Desprevenido ou alvo com aliado adjacente, gaste dados desta reserva para +dano. Reserva restaura no início do seu turno." },
+      { id: "passo_sombras", label: "Passo das Sombras", custoPE: 10, acao: "parcial",
+        desc: "Move 6m (4 quadrados) instantaneamente sem provocar ataques de oportunidade. Em quadrado com cobertura, teste de Furtividade imediato." },
+      { id: "bomba_fumaca", label: "Bomba de Fumaça", custoPE: 15, acao: "livre",
+        desc: "Esfera de 3m de raio com cobertura total e bloqueio de linha de visão.",
+        efeitoAprimorado: "+10 PE: fumaça tóxica por 2 rodadas. Escolha um veneno fabricado que exija teste de resistência. Inimigos no início do turno testam contra a ND do veneno." },
+      { id: "mao_leve", label: "Mão Leve", custoPE: 0, acao: "reacao",
+        desc: "Se o dado de ataque corpo-a-corpo do inimigo contra você for ÍMPAR: teste de Ladinagem. Sucesso = rouba 2 PI do alvo." },
+      { id: "areia_olhos", label: "Areia nos Olhos", custoPE: 10, acao: "parcial",
+        desc: "Teste de Ladinagem vs Reflexos (AGI+AGI) do alvo adjacente. Sucesso = Cego por uma rodada." },
+      { id: "redirecionar", label: "Redirecionar Ataque", custoPE: 10, acao: "reacao",
+        desc: "Se o dado de ataque contra você for PAR: puxa um alvo adjacente para a trajetória. Ataque resolve contra a Defesa dele." },
+      { id: "finta", label: "Finta Ardilosa", custoPE: 5, acao: "parcial",
+        desc: "Teste de Ladinagem vs Percepção do alvo adjacente. Sucesso = alvo Desprevenido contra seu próximo ataque (ativa Ataque Vital)." },
+      { id: "espinhos", label: "Espinhos de Bolso", custoPI: 1, acao: "parcial",
+        desc: "Área 3×3m a até 4m vira Terreno Difícil até o fim do combate. Inimigos que cruzam sofrem 1d6 de dano físico por quadrado atravessado." },
+      { id: "canelada", label: "Canelada de Interrupção", custoPE: 5, acao: "reacao",
+        desc: "Ataque de Oportunidade modificado. Se acertar, o deslocamento restante do alvo vira 0 metros, ele para imediatamente." },
+      { id: "afanar_vitae", label: "Afanar Vitae", custoPE: 0, acao: "reacao",
+        desc: "Se você reduzir um inimigo a 0 PV com Ataque Vital, gaste sua reação para curar metade do dano causado." },
+      { id: "copiar_magia", label: "Copiar Magia", custoPE: 0, acao: "reacao",
+        desc: "Quando uma criatura conjura magia em seu campo de visão: reação + teste de Misticismo vs ND do Mestre. Sucesso = aprende a magia para usar UMA vez (segue regras originais)." }
+    ],
+
+    // ── GATUNO: Venenos ──
+    r_venenos: [
+      { id: "peconha_estagnante", label: "Peçonha Estagnante", custoPE: 0, acao: "",
+        desc: "Alvo testa Fortitude vs ND do seu ataque. Falha = Atordoado até o final do próximo turno + deslocamento reduzido a 0m." },
+      { id: "beladona", label: "Extrato de Beladona", custoPE: 0, acao: "",
+        desc: "Alvo testa Fortitude vs ND do seu ataque. Falha = Enfraquecido até o final do próximo turno." },
+      { id: "lagrima_nevoa", label: "Lágrima de Névoa", custoPE: 0, acao: "",
+        desc: "Alvo testa Reflexos vs ND do seu ataque. Falha = Ofuscado até o final do próximo turno." },
+      { id: "toxina_vibora", label: "Toxina da Víbora", custoPE: 0, acao: "",
+        desc: "Ignora armaduras/escudos. Ao acertar: +1 Dado de Agilidade no dano. Por 5 rodadas, alvo sofre 10 de dano de Ácido." },
+      { id: "soro_raiva", label: "Soro da Raiva", custoPE: 0, acao: "",
+        desc: "Alvo testa Vontade vs ND do seu ataque. Falha = Provocado (ataca quem estiver próximo dele)." },
+      { id: "essencia_pesadelo", label: "Essência do Pesadelo", custoPE: 0, acao: "",
+        desc: "Alvo testa Vontade vs ND do seu ataque. Falha = Amedrontado de você (se você estiver escondido, do alvo mais próximo)." },
+      { id: "soro_letargico", label: "Soro Letárgico", custoPE: 0, acao: "",
+        desc: "Alvo testa Fortitude vs ND do seu ataque. Falha = perde Ação Inicial e iniciativa cai −3 permanentemente para o resto da cena." }
+    ],
+
+    // ── ARQUEIRO: Disparos Especiais ──
+    a_disparos: [
+      { id: "chuva_flechas", label: "Chuva de Flechas", custoPE: 15, acao: "inicial",
+        desc: "Saraivada para o alto, cai em Cubo 4,5×4,5m até 12m de você. Inimigos testam Reflexos ND 12 ou sofrem dano da arma + perdem metade do deslocamento." },
+      { id: "tiro_perfurante", label: "Tiro Perfurante", custoPE: 10, acao: "inicial",
+        desc: "Linha de 9m. Alvos testam Reflexos vs ND do seu acerto ou sofrem dobro do dano padrão.",
+        efeitoAprimorado: "+5 PE: alvos que falharem têm Defesa reduzida em −2 até o final do turno dos acertados." },
+      { id: "tiro_intercepta", label: "Tiro de Interceptação", custoPE: 10, acao: "reacao",
+        desc: "Se o valor de um ataque à distância contra alvo for PAR: dispare um projetil de aviso. Se acertar, cancela o ataque." },
+      { id: "recuo", label: "Recuo Calculado", custoPE: 10, acao: "reacao",
+        desc: "Se o ataque/aproximação do oponente for ÍMPAR: salte 3m para trás sem provocar ataques. Pode atacar à distância: se acertar, role dobro de dados de dano." },
+      { id: "marca_cacador", label: "Marca do Caçador", custoPE: 5, acao: "parcial",
+        desc: "Flecha sinalizadora. Teste de ataque vs Defesa. Sucesso = você e aliados +2 em acerto contra o alvo até o fim da cena.",
+        efeitoAprimorado: "+5 PE e Ação Inicial: alvo perde camuflagem/invisibilidade/furtividade, posição exata revelada." },
+      { id: "flecha_estilhacadora", label: "Flecha Estilhaçadora", custoPE: 15, acao: "inicial",
+        desc: "Projétil com ponta fragilizável. Se acertar: dano normal + condição Frágil no alvo." },
+      { id: "disparo_violento", label: "Disparo Violento", custoPE: 0, acao: "reacao",
+        desc: "Tiro fatal focado em finalizar alvos debilitados. Ao eliminar um alvo, recupera 15 PE." },
+      { id: "tiro_fantasma", label: "Tiro Fantasma", custoPE: 15, acao: "",
+        desc: "Ignora paredes, coberturas totais ou obstáculos sólidos. Alcance 12m, requer teste prévio de Percepção para saber a posição do alvo." },
+      { id: "flecha_armadilha", label: "Flecha Armadilha", custoPE: 10, acao: "inicial",
+        desc: "Projétil projetado para fixar-se ao solo/travar vítima. Se acertar: dano + Imobilizado (deslocamento 0m)." },
+      { id: "inimigo_eleito", label: "Inimigo Eleito", custoPE: 0, acao: "parcial",
+        desc: "Foca total atenção em 1 oponente por 1 minuto. +2 acerto e dano contra ele. Ao reduzir ele a 0 PV: +20 PV imediato. Transferir marca: ação livre + 5 PE." }
     ]
   },
 
@@ -482,23 +602,42 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.7.0");
+  console.log("Sinfonia das Almas | Pronto. v0.7.2");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
+  // Também processa magias contínuas (cobra PE de cada uma; se faltar, dispersa).
   Hooks.on("combatTurnChange", async (combat, prior, current) => {
     const combatant = combat?.combatants?.get(current?.combatantId);
     const actor = combatant?.actor;
-    if (actor?.processarTurnoCrepusculo) {
+    if (!actor) return;
+    if (actor.processarTurnoCrepusculo) {
       await actor.processarTurnoCrepusculo();
+    }
+    if (actor.processarMagiasContinuas) {
+      await actor.processarMagiasContinuas();
     }
   });
 
   // ── Listener delegado: botões dentro das mensagens de chat ──
   document.body.addEventListener("click", async (ev) => {
-    const btn = ev.target.closest(".btn-rolar-dano, .btn-aplicar-dano, .btn-aplicar-cura, .btn-magia-dano, .btn-rolar-resistencia");
+    const btn = ev.target.closest(".btn-rolar-dano, .btn-aplicar-dano, .btn-aplicar-cura, .btn-magia-dano, .btn-rolar-resistencia, .btn-toggle-continua");
     if (!btn) return;
     ev.preventDefault();
+
+    // Ativar/desativar magia contínua
+    if (btn.classList.contains("btn-toggle-continua")) {
+      const actorId = btn.dataset.actorId;
+      const magiaId = btn.dataset.magiaId;
+      const actor = game.actors.get(actorId);
+      const magia = actor?.items?.get(magiaId);
+      if (!actor || !magia) {
+        ui.notifications.warn("Ator ou magia não encontrados.");
+        return;
+      }
+      await actor.toggleMagiaContinua?.(magia);
+      return;
+    }
 
     // Rolar dano da arma (botão no cabeçalho de ataque)
     if (btn.classList.contains("btn-rolar-dano")) {
