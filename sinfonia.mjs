@@ -602,7 +602,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.7.3");
+  console.log("Sinfonia das Almas | Pronto. v0.7.4");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
@@ -617,6 +617,28 @@ Hooks.once("ready", () => {
     if (actor.processarMagiasContinuas) {
       await actor.processarMagiasContinuas();
     }
+  });
+
+  // ── Reatividade global: re-renderiza a sheet quando o actor muda externamente ──
+  // (aplicar dano/cura, hook de turno, ativar magia contínua, etc).
+  // Garante que campos derivados (DEF/INIT/ND M./PV/PE) sempre refletem o estado atual.
+  //
+  // IMPORTANTE: o `salvarCampo` da actor-sheet faz update com {render:false, sinfoniaFromSheet:true}
+  // pra evitar flicker enquanto o jogador digita. Só re-renderizamos quando o update
+  // NÃO veio do próprio formulário (ou seja, mudança externa: chat, hook, outra sheet).
+  Hooks.on("updateActor", (actor, changes, options, userId) => {
+    if (options?.sinfoniaFromSheet) return; // não re-renderiza se foi o próprio form
+    if (actor.sheet?.rendered) actor.sheet.render(false);
+  });
+  Hooks.on("updateItem", (item, changes, options, userId) => {
+    if (options?.sinfoniaFromSheet) return;
+    if (item.parent?.sheet?.rendered) item.parent.sheet.render(false);
+  });
+  Hooks.on("createItem", (item) => {
+    if (item.parent?.sheet?.rendered) item.parent.sheet.render(false);
+  });
+  Hooks.on("deleteItem", (item) => {
+    if (item.parent?.sheet?.rendered) item.parent.sheet.render(false);
   });
 
   // ── Listener delegado: botões dentro das mensagens de chat ──

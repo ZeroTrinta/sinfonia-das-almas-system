@@ -105,15 +105,17 @@
       </div>
 
       <div class="rail-stats">
-        <div class="rail-stat derived" title="Iniciativa (metade do dado AGI)">
+        <div class="rail-stat derived editable" title="Iniciativa = metade do dado AGI + bônus de armas Veloz + bônus manual">
           <span class="rail-stat-icon">⚡</span>
           <span class="rail-stat-label">INIT</span>
           <span class="rail-stat-value">{{system.combate.iniciativa}}</span>
+          <input class="rail-stat-bonus" type="number" name="system.combate.iniciativaBonus" value="{{system.combate.iniciativaBonus}}" title="Bônus manual (±)" placeholder="±0"/>
         </div>
-        <div class="rail-stat derived" title="Defesa Passiva (valor do dado AGI)">
+        <div class="rail-stat derived editable" title="Defesa = max(AGI, armadura) + escudos + bônus manual">
           <span class="rail-stat-icon">🛡</span>
           <span class="rail-stat-label">DEF</span>
           <span class="rail-stat-value">{{system.combate.defesa}}</span>
+          <input class="rail-stat-bonus" type="number" name="system.combate.defesaBonus" value="{{system.combate.defesaBonus}}" title="Bônus manual (±)" placeholder="±0"/>
         </div>
         <div class="rail-stat" title="Deslocamento (metros)">
           <span class="rail-stat-icon">⇄</span>
@@ -123,10 +125,11 @@
             <span class="rail-stat-suffix">m</span>
           </div>
         </div>
-        <div class="rail-stat derived" title="ND Mística (8 + dado MIS)">
+        <div class="rail-stat derived editable" title="ND Mística = 8 + MIS + bônus de conduíte/habilidade + bônus manual">
           <span class="rail-stat-icon">✦</span>
           <span class="rail-stat-label">ND M.</span>
           <span class="rail-stat-value">{{system.combate.ndMistica}}</span>
+          <input class="rail-stat-bonus" type="number" name="system.combate.ndMisticaBonus" value="{{system.combate.ndMisticaBonus}}" title="Bônus manual (±)" placeholder="±0"/>
         </div>
         <div class="rail-stat estilhacos" title="Estilhaços da Alma">
           <span class="rail-stat-icon">◈</span>

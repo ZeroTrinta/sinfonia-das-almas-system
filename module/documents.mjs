@@ -104,10 +104,11 @@ export class SinfoniaActor extends Actor {
       }
     }
 
-    // Defesa Passiva: maior entre AGI natural e armadura fixa, + escudos
+    // Defesa Passiva: maior entre AGI natural e armadura fixa, + escudos + bônus manual
     const defNatural = this.dadoValor("agi");
     const defArmadura = armaduraCorpo ? (Number(armaduraCorpo.system.defesaFixa) || 0) : 0;
-    sys.combate.defesa = Math.max(defNatural, defArmadura) + bonusEscudo;
+    const defBonusManual = Number(sys.combate.defesaBonus) || 0;
+    sys.combate.defesa = Math.max(defNatural, defArmadura) + bonusEscudo + defBonusManual;
 
     // Redução de dano físico (só armaduras pesadas como Armadura de Guerra)
     sys.combate.reducaoDano = armaduraCorpo ? (Number(armaduraCorpo.system.reducaoDano) || 0) : 0;
@@ -123,11 +124,13 @@ export class SinfoniaActor extends Actor {
       sys.combate.desvantagemFurtividade = false;
     }
 
-    // Iniciativa = metade do dado AGI + 1 por arma Veloz
-    sys.combate.iniciativa = Math.floor(defNatural / 2) + bonusVeloz;
+    // Iniciativa = metade do dado AGI + 1 por arma Veloz + bônus manual
+    const iniBonusManual = Number(sys.combate.iniciativaBonus) || 0;
+    sys.combate.iniciativa = Math.floor(defNatural / 2) + bonusVeloz + iniBonusManual;
 
-    // ND Mística = 8 + MIS + bônus de conduítes com Expansão + Expansão Mística (habilidade)
-    sys.combate.ndMistica = 8 + misValor + bonusNdMistica + bonusNdMisticaCond;
+    // ND Mística = 8 + MIS + bônus de conduítes Expansão + Expansão Mística (hab) + bônus manual
+    const ndmBonusManual = Number(sys.combate.ndMisticaBonus) || 0;
+    sys.combate.ndMistica = 8 + misValor + bonusNdMistica + bonusNdMisticaCond + ndmBonusManual;
 
     // Bônus de dano em Arco/Besta da habilidade Concentração (lido pelo rolarDano)
     sys.combate._bonusDanoArcoBesta = bonusDanoArcoBesta;

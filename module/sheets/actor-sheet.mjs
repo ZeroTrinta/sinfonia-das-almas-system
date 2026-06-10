@@ -207,10 +207,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       if (atual === value) return;
 
       try {
-        await this.document.update({ [name]: value }, { render: false });
-        // Se o usuário mudou um atributo (dado d6–d12), atualiza os stats
-        // derivados da rail (INIT, DEF, ND M.) manualmente — sem re-render.
-        if (name.startsWith("system.atributos.")) {
+        await this.document.update({ [name]: value }, { render: false, sinfoniaFromSheet: true });
+        // Atualiza stats derivados (INIT/DEF/ND M.) manualmente sempre que algo do combate ou atributos muda.
+        if (name.startsWith("system.atributos.") || name.startsWith("system.combate.") || name.startsWith("system.progressao.")) {
           this._atualizarStatsDerivados();
         }
       } catch (err) {
@@ -747,6 +746,16 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     if (stats[0]) stats[0].textContent = c.iniciativa;
     if (stats[1]) stats[1].textContent = c.defesa;
     if (stats[2]) stats[2].textContent = c.ndMistica;
+
+    // Atualiza também a fração de Pts Hab. no banner (livres/total = Nível)
+    const arvoreNH = this.document.getFlag("sinfonia-das-almas", "arvoreNH") ?? {};
+    const ptsTotal = this.document.system.progressao?.nivel ?? 5;
+    const ptsUsados = Object.values(arvoreNH).reduce((acc, v) => acc + (Number(v) || 0), 0);
+    const ptsLivres = Math.max(0, ptsTotal - ptsUsados);
+    const livresEl = el.querySelector(".banner-pts-fracao .pts-livres");
+    const totalEl  = el.querySelector(".banner-pts-fracao .pts-total");
+    if (livresEl) livresEl.textContent = ptsLivres;
+    if (totalEl)  totalEl.textContent  = ptsTotal;
   }
 
   static async _onDescansar(event, target) {

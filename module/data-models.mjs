@@ -69,8 +69,11 @@ export class PersonagemDataModel extends BaseActorModel {
       // Combate ───────────────────────────────────────────────
       combate: new SchemaField({
         defesa:       new NumberField({ required: true, integer: true, min: 0, initial: 8 }),
+        defesaBonus:  new NumberField({ required: true, integer: true, initial: 0 }),
         iniciativa:   new NumberField({ required: true, integer: true, min: 0, initial: 4 }),
+        iniciativaBonus: new NumberField({ required: true, integer: true, initial: 0 }),
         ndMistica:    new NumberField({ required: true, integer: true, min: 0, initial: 8 }),
+        ndMisticaBonus: new NumberField({ required: true, integer: true, initial: 0 }),
         deslocamento: new NumberField({ required: true, integer: true, min: 0, initial: 9 }),
         estilhacos:   new NumberField({ required: true, integer: true, min: 0, initial: 0 })
       }),

@@ -3036,6 +3036,180 @@
 }
 
 /* ================================================================
+   v0.7.4 — Input de bônus manual em stats derivados (DEF/INIT/ND M.)
+================================================================ */
+.rail-stat.derived.editable {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+}
+.rail-stat.derived.editable .rail-stat-value {
+  text-align: right;
+  padding-right: 4px;
+}
+.rail-stat-bonus {
+  width: 38px;
+  padding: 2px 4px;
+  font-size: 11px;
+  text-align: center;
+  background: rgba(20, 20, 28, 0.6);
+  border: 1px solid var(--gold-dim);
+  color: var(--silver-dim);
+  font-family: 'Cinzel', serif;
+  border-radius: 2px;
+}
+.rail-stat-bonus:focus {
+  outline: none;
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(40, 30, 10, 0.7);
+}
+
+/* ================================================================
+   v0.7.4 — Botões de uso de habilidade + Card no chat
+================================================================ */
+
+/* Botão "Usar" nos chips de sub-item (Manobra, Truque, etc) */
+.arvore-sub-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.btn-usar-sub {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 232, 144, 0.10);
+  border: 1px solid rgba(128, 232, 144, 0.35);
+  border-left: 2px solid #80e890;
+  color: #80e890;
+  cursor: pointer;
+  font-size: 9px;
+  transition: all 0.15s;
+}
+.btn-usar-sub:hover {
+  background: rgba(128, 232, 144, 0.25);
+  color: #b0ffc0;
+  text-shadow: 0 0 6px rgba(128, 232, 144, 0.6);
+}
+
+/* Botão "Usar" pra habilidades sem sublista (Provocar, Lâmina, etc) */
+.arvore-item-usar {
+  margin-top: 6px;
+}
+.btn-usar-hab {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  background: rgba(128, 232, 144, 0.12);
+  border: 1px solid rgba(128, 232, 144, 0.40);
+  color: #80e890;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-usar-hab:hover {
+  background: rgba(128, 232, 144, 0.25);
+  color: #b0ffc0;
+  text-shadow: 0 0 8px rgba(128, 232, 144, 0.6);
+  border-color: #b0ffc0;
+}
+
+/* Card de habilidade postado no chat */
+.sinfonia-hab-card {
+  background: linear-gradient(180deg, #0a0d14, #060709);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  font-family: 'EB Garamond', serif;
+}
+.sinfonia-hab-card .hab-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--gold-dim);
+  padding-bottom: 6px;
+}
+.sinfonia-hab-card .hab-card-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: var(--gold-light);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.3);
+}
+.sinfonia-hab-card .hab-card-origem {
+  font-size: 10px;
+  font-style: italic;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+}
+.sinfonia-hab-card .hab-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.hab-card-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 8px;
+  background: rgba(106, 160, 255, 0.10);
+  border: 1px solid rgba(106, 160, 255, 0.30);
+  color: #8ab8ff;
+}
+.sinfonia-hab-card .hab-card-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.sinfonia-hab-card .hab-card-efeito {
+  font-size: 12px;
+  color: var(--gold-light);
+  padding: 4px 8px;
+  background: rgba(200, 151, 42, 0.08);
+  border-left: 2px solid var(--gold);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sinfonia-hab-card .hab-card-aprimorado {
+  font-size: 11px;
+  color: #c0d8ff;
+  background: rgba(106, 160, 255, 0.06);
+  padding: 4px 8px;
+  border-left: 2px solid #6aa0ff;
+  margin-bottom: 6px;
+}
+.sinfonia-hab-card .hab-card-aprimorado b {
+  color: #8ab8ff;
+}
+.sinfonia-hab-card .hab-card-custo {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--cor-color);
+  text-align: right;
+  border-top: 1px solid var(--gold-dim);
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+
+
+/* ================================================================
    v0.7.1 — Crepúsculo da Morte no banner (indicador + botão)
 ================================================================ */
 .banner-crepusculo {

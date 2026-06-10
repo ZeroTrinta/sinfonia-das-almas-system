@@ -31,7 +31,9 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
       incHab: ArvoreHabilidades._onIncHab,
       decHab: ArvoreHabilidades._onDecHab,
       resetar: ArvoreHabilidades._onResetar,
-      verSubItem: ArvoreHabilidades._onVerSubItem
+      verSubItem: ArvoreHabilidades._onVerSubItem,
+      usarSubItem: ArvoreHabilidades._onUsarSubItem,
+      usarHabilidade: ArvoreHabilidades._onUsarHabilidade
     }
   };
 
@@ -111,6 +113,11 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
       if (hab.custoPI) tags.push(`${hab.custoPI} PI`);
       if (hab.passiva) tags.push("Passiva");
 
+      // Pode ser usada como macro? (tem custo + não é passiva + não tem sublista)
+      // Habilidades com sublista não são usadas direto — você usa cada sub-item.
+      const podeUsar = nh > 0 && !hab.passiva && !hab.sublistaId
+                       && ((hab.custoPE && hab.custoPE > 0) || (hab.custoPI && hab.custoPI > 0));
+
       // Sublista: se a habilidade tem sublistaId, mostra as escolhas atuais
       let sublistaItens = null;
       if (hab.sublistaId && SUBLISTAS[hab.sublistaId]) {
@@ -135,6 +142,7 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
         passiva: !!hab.passiva,
         sublistaId: hab.sublistaId ?? null,
         sublistaItens,
+        podeUsar,
         canInc: nh < hab.maxNH && this._ptsLivres() > 0,
         canDec: nh > 0,
         progressoPct: hab.maxNH > 0 ? Math.round((nh / hab.maxNH) * 100) : 0,
@@ -410,6 +418,140 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
         },
         cancel: { label: "Cancelar", callback: () => resolve(null) }
       });
+    });
+  }
+
+  /* ============================================================
+     MACROS / EXECUÇÃO DE HABILIDADES (v0.7.4)
+     Posta um card no chat com a descrição + gasta PE/PI quando aplicável.
+  ============================================================ */
+
+  /**
+   * Executa um sub-item (Manobra, Truque Sujo, Veneno, Disparo Especial).
+   * Verifica/gasta PE e PI, posta card no chat com a descrição completa.
+   */
+  static async _onUsarSubItem(event, target) {
+    event.preventDefault();
+    const habId = target.dataset.habId;
+    const subId = target.dataset.subId;
+    if (!habId || !subId) return;
+
+    const classe = this.actor.system.progressao?.classe;
+    const hab = globalThis.SINFONIA?.HABILIDADES_CLASSE?.[classe]?.find(h => h.id === habId);
+    if (!hab?.sublistaId) return;
+
+    const opcao = (globalThis.SINFONIA?.SUBLISTAS?.[hab.sublistaId] ?? []).find(o => o.id === subId);
+    if (!opcao) return;
+
+    await ArvoreHabilidades._executarMacro(this.actor, {
+      nome: opcao.label,
+      desc: opcao.desc,
+      efeitoAprimorado: opcao.efeitoAprimorado,
+      custoPE: opcao.custoPE,
+      custoPI: opcao.custoPI,
+      acao: opcao.acao,
+      tipoMacro: "sub",
+      origem: hab.label
+    });
+  }
+
+  /**
+   * Executa uma habilidade direta da árvore (sem sublista) que tenha custo.
+   * Ex: Provocar, Lâmina Arcana, Lex Divina, Recuperação Arcana.
+   */
+  static async _onUsarHabilidade(event, target) {
+    event.preventDefault();
+    const habId = target.dataset.habId;
+    if (!habId) return;
+
+    const classe = this.actor.system.progressao?.classe;
+    const hab = globalThis.SINFONIA?.HABILIDADES_CLASSE?.[classe]?.find(h => h.id === habId);
+    if (!hab) return;
+
+    const arvoreNH = this.actor.getFlag("sinfonia-das-almas", "arvoreNH") ?? {};
+    const nh = arvoreNH[hab.id] ?? 0;
+    if (nh <= 0) {
+      ui.notifications.warn(`${hab.label} ainda não foi aprendida.`);
+      return;
+    }
+
+    let efeitoAtual = "";
+    if (typeof hab.efeito === "function") {
+      try { efeitoAtual = hab.efeito(nh); } catch {}
+    }
+
+    await ArvoreHabilidades._executarMacro(this.actor, {
+      nome: hab.label,
+      desc: hab.desc,
+      efeitoAtual,
+      custoPE: hab.custoPE,
+      custoPI: hab.custoPI,
+      tipoMacro: "hab"
+    });
+  }
+
+  /**
+   * Helper compartilhado: verifica custos, gasta PE/PI e posta card no chat.
+   */
+  static async _executarMacro(actor, info) {
+    const custoPE = Math.max(0, Number(info.custoPE) || 0);
+    const custoPI = Math.max(0, Number(info.custoPI) || 0);
+
+    // Verifica recursos
+    if (custoPE > 0 && actor.system.recursos.pe.value < custoPE) {
+      ui.notifications.warn(`${actor.name} não tem PE suficiente para usar ${info.nome} (precisa de ${custoPE}).`);
+      return;
+    }
+    if (custoPI > 0 && actor.system.recursos.pi.value < custoPI) {
+      ui.notifications.warn(`${actor.name} não tem PI suficientes para usar ${info.nome} (precisa de ${custoPI}).`);
+      return;
+    }
+
+    // Gasta recursos
+    const updates = {};
+    if (custoPE > 0) updates["system.recursos.pe.value"] = actor.system.recursos.pe.value - custoPE;
+    if (custoPI > 0) updates["system.recursos.pi.value"] = actor.system.recursos.pi.value - custoPI;
+    if (Object.keys(updates).length > 0) {
+      await actor.update(updates);
+    }
+
+    // Tags pro card
+    const tags = [];
+    if (custoPE > 0) tags.push(`<span class="hab-card-tag">⚡ ${custoPE} PE</span>`);
+    if (custoPI > 0) tags.push(`<span class="hab-card-tag">◈ ${custoPI} PI</span>`);
+    if (info.acao === "parcial") tags.push(`<span class="hab-card-tag">Ação Parcial</span>`);
+    if (info.acao === "inicial") tags.push(`<span class="hab-card-tag">Ação Inicial</span>`);
+    if (info.acao === "reacao")  tags.push(`<span class="hab-card-tag">Reação</span>`);
+    if (info.acao === "livre")   tags.push(`<span class="hab-card-tag">Ação Livre</span>`);
+
+    const aprimoradoHtml = info.efeitoAprimorado
+      ? `<div class="hab-card-aprimorado"><b>Efeito Aprimorado:</b> ${info.efeitoAprimorado}</div>`
+      : "";
+
+    const efeitoHtml = info.efeitoAtual
+      ? `<div class="hab-card-efeito"><i class="fas fa-bolt"></i> ${info.efeitoAtual}</div>`
+      : "";
+
+    const origemTag = info.origem ? `<span class="hab-card-origem">${info.origem}</span>` : "";
+
+    const custoMsg = (custoPE > 0 || custoPI > 0)
+      ? `<div class="hab-card-custo">− ${custoPE > 0 ? custoPE + " PE" : ""} ${custoPI > 0 ? (custoPE > 0 ? "· " : "") + custoPI + " PI" : ""}</div>`
+      : "";
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+        <div class="sinfonia-hab-card">
+          <div class="hab-card-header">
+            <span class="hab-card-nome">${info.nome}</span>
+            ${origemTag}
+          </div>
+          ${tags.length ? `<div class="hab-card-tags">${tags.join(" ")}</div>` : ""}
+          <div class="hab-card-desc">${info.desc || ""}</div>
+          ${efeitoHtml}
+          ${aprimoradoHtml}
+          ${custoMsg}
+        </div>`
     });
   }
 }

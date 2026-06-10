@@ -72,10 +72,22 @@
                   {{#if this.custoPE}}<span class="sub-item-cost">{{this.custoPE}} PE</span>{{/if}}
                   {{#if this.custoPI}}<span class="sub-item-cost">{{this.custoPI}} PI</span>{{/if}}
                 </a>
+                <button type="button" class="btn-usar-sub" data-action="usarSubItem" data-hab-id="{{../this.id}}" data-sub-id="{{this.id}}" title="Usar">
+                  <i class="fas fa-play"></i>
+                </button>
               </li>
               {{/each}}
             </ul>
             {{/if}}
+          {{/if}}
+
+          {{!-- Botão "Usar" pra habilidades sem sublista mas com custo (Provocar, Lâmina, etc) --}}
+          {{#if this.podeUsar}}
+          <div class="arvore-item-usar">
+            <button type="button" class="btn-usar-hab" data-action="usarHabilidade" data-hab-id="{{this.id}}" title="Usar esta habilidade">
+              <i class="fas fa-play"></i> Usar
+            </button>
+          </div>
           {{/if}}
         </div>
 
