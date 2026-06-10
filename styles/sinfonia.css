@@ -74,6 +74,267 @@
   --cor-color:   #c84040;
 }
 
+/* ================================================================
+   v0.7.5 — TEMAS POR CLASSE
+   Quando uma classe é escolhida no banner, a div raiz ganha a classe
+   `cls-<classe>` e estas variáveis sobrescrevem o dourado padrão.
+   Como TODA a ficha usa --gold/--gold-light/--gold-dim/--border,
+   a mudança é global: bordas, títulos, botões, tabs, glows.
+================================================================ */
+
+/* 🗡 GUERREIRO — vermelho carmesim, sangue e aço */
+.sinfonia-sheet.cls-guerreiro {
+  --gold:        #c84040;
+  --gold-light:  #ff8a7a;
+  --gold-dim:    #5e1f1a;
+  --border:      rgba(200, 64, 64, 0.35);
+  --pi-color:    #ff8a7a;
+}
+
+/* 🌑 GATUNO — ciano das sombras, lâmina na névoa */
+.sinfonia-sheet.cls-gatuno {
+  --gold:        #2fa8ba;
+  --gold-light:  #7fe4f4;
+  --gold-dim:    #14444d;
+  --border:      rgba(64, 184, 200, 0.35);
+  --pi-color:    #7fe4f4;
+}
+
+/* 🏹 ARQUEIRO — verde da mata, olhar de águia */
+.sinfonia-sheet.cls-arqueiro {
+  --gold:        #4aa84a;
+  --gold-light:  #8af08a;
+  --gold-dim:    #1d4a1d;
+  --border:      rgba(88, 200, 88, 0.35);
+  --pi-color:    #8af08a;
+}
+
+/* ✦ MAGO — roxo arcano, tecelagem mística */
+.sinfonia-sheet.cls-mago {
+  --gold:        #8a5ce0;
+  --gold-light:  #c39aff;
+  --gold-dim:    #392560;
+  --border:      rgba(144, 96, 232, 0.35);
+  --pi-color:    #c39aff;
+}
+
+/* ☀ SACERDOTE — dourado luminoso, luz divina */
+.sinfonia-sheet.cls-sacerdote {
+  --gold:        #e0b34a;
+  --gold-light:  #ffe9a8;
+  --gold-dim:    #6e5824;
+  --border:      rgba(240, 192, 96, 0.45);
+  --pi-color:    #ffe9a8;
+}
+
+/* Transição suave quando o tema muda (afeta os elementos que usam as vars) */
+.sinfonia-sheet .sheet-banner,
+.sinfonia-sheet .rail-stat,
+.sinfonia-sheet .atrib-card,
+.sinfonia-sheet .right-tabs .vtab,
+.sinfonia-sheet .res-card,
+.sinfonia-sheet .panel,
+.sinfonia-sheet .rail-btn-arvore,
+.sinfonia-sheet .rail-btn-secondary,
+.sinfonia-sheet .banner-classe {
+  transition: border-color 0.5s ease, color 0.5s ease, background 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* ── Realces temáticos extras por classe ── */
+
+/* Glow sutil no banner com a cor da classe */
+.sinfonia-sheet.cls-guerreiro .sheet-banner,
+.sinfonia-sheet.cls-gatuno   .sheet-banner,
+.sinfonia-sheet.cls-arqueiro .sheet-banner,
+.sinfonia-sheet.cls-mago     .sheet-banner,
+.sinfonia-sheet.cls-sacerdote .sheet-banner {
+  box-shadow: inset 0 -14px 30px -22px var(--gold);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Select de classe ganha destaque com a cor do tema */
+.sinfonia-sheet.cls-guerreiro .banner-classe,
+.sinfonia-sheet.cls-gatuno   .banner-classe,
+.sinfonia-sheet.cls-arqueiro .banner-classe,
+.sinfonia-sheet.cls-mago     .banner-classe,
+.sinfonia-sheet.cls-sacerdote .banner-classe {
+  border-color: var(--gold) !important;
+  color: var(--gold-light) !important;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+
+/* Avatar do banner com anel da cor da classe */
+.sinfonia-sheet.cls-guerreiro .banner-avatar,
+.sinfonia-sheet.cls-gatuno   .banner-avatar,
+.sinfonia-sheet.cls-arqueiro .banner-avatar,
+.sinfonia-sheet.cls-mago     .banner-avatar,
+.sinfonia-sheet.cls-sacerdote .banner-avatar {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--gold) 45%, transparent);
+}
+
+/* Retrato da rail com borda temática */
+.sinfonia-sheet.cls-guerreiro .rail-portrait img,
+.sinfonia-sheet.cls-gatuno   .rail-portrait img,
+.sinfonia-sheet.cls-arqueiro .rail-portrait img,
+.sinfonia-sheet.cls-mago     .rail-portrait img,
+.sinfonia-sheet.cls-sacerdote .rail-portrait img {
+  border-color: var(--gold-dim);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--gold) 25%, transparent);
+}
+
+/* ── Símbolo da classe ao lado do select ── */
+.banner-meta { position: relative; }
+.sinfonia-sheet .banner-classe { padding-left: 26px !important; }
+.sinfonia-sheet.cls-guerreiro .banner-meta::before,
+.sinfonia-sheet.cls-gatuno    .banner-meta::before,
+.sinfonia-sheet.cls-arqueiro  .banner-meta::before,
+.sinfonia-sheet.cls-mago      .banner-meta::before,
+.sinfonia-sheet.cls-sacerdote .banner-meta::before {
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--gold-light);
+  text-shadow: 0 0 8px var(--gold);
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+}
+.sinfonia-sheet.cls-guerreiro .banner-meta::before { content: "⚔"; }
+.sinfonia-sheet.cls-gatuno    .banner-meta::before { content: "☾"; }
+.sinfonia-sheet.cls-arqueiro  .banner-meta::before { content: "➶"; }
+.sinfonia-sheet.cls-mago      .banner-meta::before { content: "✦"; }
+.sinfonia-sheet.cls-sacerdote .banner-meta::before { content: "☀"; }
+
+/* ================================================================
+   v0.7.5 — POLISH GERAL
+================================================================ */
+
+/* Cards de atributo: elevação no hover + select com cor temática */
+.sinfonia-sheet .atrib-card {
+  position: relative;
+  transition: transform 0.18s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.sinfonia-sheet .atrib-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold) !important;
+  box-shadow: 0 6px 16px -8px var(--gold);
+}
+.sinfonia-sheet .atrib-card .atrib-dado {
+  font-weight: 600;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.sinfonia-sheet .atrib-card:hover .atrib-dado {
+  color: var(--gold-light);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+/* Tab vertical ativa: barra lateral pulsante na cor do tema */
+.sinfonia-sheet .right-tabs .vtab {
+  position: relative;
+  overflow: hidden;
+}
+.sinfonia-sheet .right-tabs .vtab::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 2px;
+  background: var(--gold);
+  opacity: 0;
+  transition: opacity 0.25s ease, top 0.25s ease, bottom 0.25s ease;
+}
+.sinfonia-sheet .right-tabs .vtab.active::before {
+  opacity: 1;
+  top: 6%;
+  bottom: 6%;
+  box-shadow: 0 0 8px var(--gold);
+}
+.sinfonia-sheet .right-tabs .vtab:hover .vtab-icon {
+  text-shadow: 0 0 10px var(--gold);
+  transform: scale(1.12);
+}
+.sinfonia-sheet .right-tabs .vtab .vtab-icon {
+  transition: text-shadow 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+/* Nome do personagem: sublinhado animado no foco */
+.sinfonia-sheet .banner-name {
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-size: 0% 1.5px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  transition: background-size 0.35s ease;
+}
+.sinfonia-sheet .banner-name:focus {
+  background-size: 100% 1.5px;
+  outline: none;
+}
+
+/* Cards de recurso (PV/PE/PI): brilho sutil no hover */
+.sinfonia-sheet .res-card {
+  transition: box-shadow 0.25s ease, transform 0.18s ease;
+}
+.sinfonia-sheet .res-card:hover {
+  transform: translateY(-1px);
+}
+.sinfonia-sheet .res-card.pv:hover { box-shadow: 0 4px 14px -6px var(--pv-color); }
+.sinfonia-sheet .res-card.pe:hover { box-shadow: 0 4px 14px -6px var(--pe-color); }
+.sinfonia-sheet .res-card.pi:hover { box-shadow: 0 4px 14px -6px var(--pi-color); }
+
+/* Botões da rail: animação de brilho */
+.sinfonia-sheet .rail-btn-arvore:hover .rail-btn-icon,
+.sinfonia-sheet .rail-btn-secondary:hover .rail-btn-icon {
+  text-shadow: 0 0 12px var(--gold);
+}
+
+/* Inputs numéricos: glow no foco com a cor do tema */
+.sinfonia-sheet input[type="number"]:focus,
+.sinfonia-sheet input[type="text"]:focus,
+.sinfonia-sheet select:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 40%, transparent);
+  outline: none;
+}
+
+/* Scrollbar temática */
+.sinfonia-sheet ::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+}
+.sinfonia-sheet ::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ── Barra de título da janela tematizada por classe (via :has) ── */
+.app.sheet.actor.sinfonia-das-almas:has(.cls-guerreiro) .window-header {
+  border-bottom-color: rgba(200, 64, 64, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-guerreiro) .window-header .window-title { color: #ff8a7a !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-gatuno) .window-header {
+  border-bottom-color: rgba(64, 184, 200, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-gatuno) .window-header .window-title { color: #7fe4f4 !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-arqueiro) .window-header {
+  border-bottom-color: rgba(88, 200, 88, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-arqueiro) .window-header .window-title { color: #8af08a !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-mago) .window-header {
+  border-bottom-color: rgba(144, 96, 232, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-mago) .window-header .window-title { color: #c39aff !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-sacerdote) .window-header {
+  border-bottom-color: rgba(240, 192, 96, 0.6) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-sacerdote) .window-header .window-title { color: #ffe9a8 !important; }
+
 /* ── Base da ficha ── */
 .sinfonia-sheet {
   font-family: 'EB Garamond', 'Times New Roman', serif;

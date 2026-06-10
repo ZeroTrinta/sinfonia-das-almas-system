@@ -212,6 +212,11 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         if (name.startsWith("system.atributos.") || name.startsWith("system.combate.") || name.startsWith("system.progressao.")) {
           this._atualizarStatsDerivados();
         }
+        // Trocar de CLASSE muda o tema visual inteiro (cores da ficha).
+        // Re-renderiza pra aplicar a classe CSS `cls-<classe>` no root.
+        if (name === "system.progressao.classe") {
+          this.render(false);
+        }
       } catch (err) {
         console.error("Sinfonia | Falha ao salvar campo", name, err);
         ui.notifications.error(`Não foi possível salvar ${name}.`);
