@@ -45,6 +45,15 @@ export class ArvoreHabilidades extends HandlebarsApplicationMixin(ApplicationV2)
     return `Árvore de Habilidades — ${this.actor.name}`;
   }
 
+  /** Aplica o tema visual da classe do personagem na janela da árvore */
+  _onRender(context, options) {
+    super._onRender?.(context, options);
+    const classes = ["cls-guerreiro", "cls-gatuno", "cls-arqueiro", "cls-mago", "cls-sacerdote"];
+    this.element.classList.remove(...classes);
+    const classe = this.actor.system.progressao?.classe;
+    if (classe) this.element.classList.add(`cls-${classe}`);
+  }
+
   // ── Helpers ──────────────────────────────────────────────────
   _getArvoreNH() {
     return this.actor.getFlag("sinfonia-das-almas", "arvoreNH") ?? {};
