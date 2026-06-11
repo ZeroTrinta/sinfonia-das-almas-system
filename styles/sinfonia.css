@@ -4038,6 +4038,47 @@
   font-size: 12px;
 }
 
+/* Botão REVIVER (no banner de morto) */
+.banner-crepusculo.morte .btn-crep-rolar.reviver {
+  background: rgba(128, 232, 144, 0.10);
+  border-color: rgba(128, 232, 144, 0.45);
+  color: #90e8a0;
+}
+.banner-crepusculo.morte .btn-crep-rolar.reviver:hover {
+  background: rgba(128, 232, 144, 0.22);
+  color: #c8ffd4;
+  text-shadow: 0 0 10px rgba(128, 232, 144, 0.7);
+  border-color: #90e8a0;
+}
+
+/* Card de "retorna à vida" no chat */
+.crep-aviso.saiu.reviveu {
+  background: linear-gradient(180deg, #0a160c, #0d2212);
+  border: 2px solid #58c858;
+  border-radius: 4px;
+  padding: 14px 18px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(88, 200, 88, 0.35), inset 0 0 14px rgba(88, 200, 88, 0.12);
+}
+.crep-aviso.saiu.reviveu h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  letter-spacing: 4px;
+  color: #90f890;
+  text-shadow: 0 0 12px rgba(128, 232, 144, 0.7);
+  margin: 0 0 8px;
+  border: none;
+}
+.crep-aviso.saiu.reviveu p {
+  color: #b8e0c0;
+  font-size: 12px;
+  margin: 3px 0;
+}
+.crep-aviso.saiu.reviveu p em {
+  color: #88b890;
+  font-size: 11px;
+}
+
 
 /* ================================================================
    v0.7.0 — ÁRVORE DE HABILIDADES (reformulada)

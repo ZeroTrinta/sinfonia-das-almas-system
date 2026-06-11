@@ -5,6 +5,46 @@
 
 const { DocumentSheetV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+/**
+ * Gera uma versão RECORTADA EM CÍRCULO de uma imagem (webp transparente)
+ * e salva em worlds/<id>/tokens-circulares/. Retorna o path ou null se falhar.
+ * O Foundry não recorta imagens opacas no Dynamic Ring — a arte retangular
+ * cobre o anel. Com o recorte, a arte fica DENTRO do anel e o anel POR CIMA.
+ */
+async function gerarTokenCircular(srcPath, actorId) {
+  try {
+    const img = await new Promise((res, rej) => {
+      const i = new Image();
+      i.crossOrigin = "anonymous";
+      i.onload = () => res(i);
+      i.onerror = () => rej(new Error("load fail: " + srcPath));
+      i.src = srcPath;
+    });
+    const SIZE = 512;
+    const c = document.createElement("canvas");
+    c.width = c.height = SIZE;
+    const ctx = c.getContext("2d");
+    ctx.beginPath();
+    ctx.arc(SIZE / 2, SIZE / 2, SIZE / 2, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.clip();
+    const ratio = Math.max(SIZE / img.width, SIZE / img.height);
+    ctx.drawImage(img, (SIZE - img.width * ratio) / 2, (SIZE - img.height * ratio) / 2, img.width * ratio, img.height * ratio);
+    const blob = await new Promise(res => c.toBlob(res, "image/webp", 0.92));
+    if (!blob) return null;
+    const FP = foundry.applications?.apps?.FilePicker?.implementation ?? globalThis.FilePicker;
+    if (!FP?.upload) return null;
+    const dir = `worlds/${game.world.id}/tokens-circulares`;
+    try { await FP.createDirectory("data", dir); } catch (e) {}
+    const file = new File([blob], `token-${actorId}.webp`, { type: "image/webp" });
+    const up = await FP.upload("data", dir, file, {}, { notify: false });
+    return up?.path ?? null;
+  } catch (err) {
+    console.warn("Sinfonia | recorte circular falhou, usando original:", err);
+    return null;
+  }
+}
+
 export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheetV2) {
 
   static DEFAULT_OPTIONS = {
@@ -35,7 +75,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       alternarEquipado: SinfoniaActorSheet._onAlternarEquipado,
       toggleFavorito:  SinfoniaActorSheet._onToggleFavorito,
       rolarTesteCrepusculo: SinfoniaActorSheet._onRolarTesteCrepusculo,
-      colocarToken:    SinfoniaActorSheet._onColocarToken
+      colocarToken:    SinfoniaActorSheet._onColocarToken,
+      reviverPersonagem: SinfoniaActorSheet._onReviverPersonagem
     }
   };
 
@@ -315,6 +356,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         abrirFilePicker(current, async (path) => {
           // Cor do anel = cor da CLASSE do personagem (dourado se sem classe)
           const corAnel = this.document.corClasse;
+          // Gera versão recortada em círculo da imagem escolhida
+          const circ = await gerarTokenCircular(path, this.document.id);
+          const tex = circ ?? path;
           // 1) Atualiza o prototypeToken inteiro de uma vez:
           //    • texture.src — imagem principal exibida (afeta tokens FUTUROS)
           //    • ring.enabled + ring.subject.texture — anel dinâmico em v12.
@@ -324,9 +368,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
           //    • ring.effects — valor 1 = anel básico (visualizado)
           //    • actorLink — token sincronizado com a ficha (recomendado pra PCs)
           await this.document.update({
-            "prototypeToken.texture.src":              path,
+            "prototypeToken.texture.src":              tex,
             "prototypeToken.ring.enabled":             true,
-            "prototypeToken.ring.subject.texture":     path,
+            "prototypeToken.ring.subject.texture":     tex,
             "prototypeToken.ring.colors.ring":         corAnel,
             "prototypeToken.ring.colors.background":   "#1a1a1a",
             "prototypeToken.ring.effects":             1,
@@ -342,9 +386,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
             const tokensDeste = scene.tokens.filter(t => t.actorId === this.document.id);
             for (const token of tokensDeste) {
               await token.update({
-                "texture.src":              path,
+                "texture.src":              tex,
                 "ring.enabled":             true,
-                "ring.subject.texture":     path,
+                "ring.subject.texture":     tex,
                 "ring.colors.ring":         corAnel,
                 "ring.colors.background":   "#1a1a1a",
                 "ring.effects":             1
@@ -1090,11 +1134,15 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     // Já existe token deste ator na cena? Seleciona, centraliza e sincroniza o anel.
     const existente = canvas.tokens.placeables.find(t => t.actor?.id === actor.id);
     if (existente) {
-      // Força o anel completo com a cor da classe (mesmo se estava desligado)
-      const texExistente = existente.document.texture?.src || actor.img;
+      // Força o anel completo + recorte circular (mesmo se estava desligado)
+      const texOrig = existente.document.texture?.src || actor.img;
+      // Evita re-recortar uma imagem já circular gerada por nós
+      const jaCircular = /tokens-circulares\//.test(texOrig);
+      const texCirc = jaCircular ? texOrig : (await gerarTokenCircular(texOrig, actor.id)) ?? texOrig;
       await existente.document.update({
+        "texture.src":             texCirc,
         "ring.enabled":            true,
-        "ring.subject.texture":    texExistente,
+        "ring.subject.texture":    texCirc,
         "ring.colors.ring":        actor.corClasse,
         "ring.colors.background":  "#1a1a1a",
         "ring.effects":            1
@@ -1115,8 +1163,12 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     // o anel configurado (atores antigos), FORÇAMOS o anel completo aqui:
     // enabled + subject.texture (mesma imagem, senão o retrato some) + cor da classe.
     const tokenDoc = await actor.getTokenDocument({ x, y });
-    const tex = tokenDoc.texture?.src || actor.img;
+    // Gera versão recortada em círculo (arte dentro do anel, anel por cima)
+    const texOriginal = tokenDoc.texture?.src || actor.img;
+    const texCircular = await gerarTokenCircular(texOriginal, actor.id);
+    const tex = texCircular ?? texOriginal;
     tokenDoc.updateSource({
+      "texture.src":             tex,
       "ring.enabled":            true,
       "ring.subject.texture":    tex,
       "ring.colors.ring":        actor.corClasse,
@@ -1126,6 +1178,46 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     await scene.createEmbeddedDocuments("Token", [tokenDoc.toObject()]);
 
     ui.notifications.info(`⛨ Token de ${actor.name} colocado na cena "${scene.name}".`);
+  }
+
+  /**
+   * Reviver: tira o personagem do estado MORTO (ação do Mestre ou owner).
+   * Restaura: morto=false, crepusculo=false, testesVontade=0, Det=10, PV=1.
+   * O cabo de guerra volta ao início (Cor é derivada: 10 − Det).
+   * Estilhaços permanecem — são cicatrizes permanentes.
+   */
+  static async _onReviverPersonagem(event, target) {
+    event.preventDefault();
+    const actor = this.document;
+    if (!actor.system.alma?.morto) return;
+
+    const ok = await foundry.applications.api.DialogV2.confirm({
+      window: { title: "Reviver — " + actor.name },
+      content: `
+        <p>Trazer <b>${actor.name}</b> de volta à vida?</p>
+        <p>Restaura: Determinação 10, PV 1, sai do Crepúsculo.</p>
+        <p><em>Estilhaços da Alma permanecem — cicatrizes não somem.</em></p>`
+    });
+    if (!ok) return;
+
+    await actor.update({
+      "system.alma.morto":         false,
+      "system.alma.crepusculo":    false,
+      "system.alma.testesVontade": 0,
+      "system.alma.determinacao":  10,
+      "system.recursos.pv.value":  1
+    });
+    this.render(false);
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor }),
+      content: `
+        <div class="crep-aviso saiu reviveu">
+          <h3>✨ ${actor.name} retorna à vida ✨</h3>
+          <p>A alma encontra o caminho de volta. O coração volta a bater.</p>
+          <p><em>PV 1 · Determinação 10 · fora do Crepúsculo.</em></p>
+        </div>`
+    });
   }
 
   /**
