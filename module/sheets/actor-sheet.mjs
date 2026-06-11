@@ -213,10 +213,25 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         if (name.startsWith("system.atributos.") || name.startsWith("system.combate.") || name.startsWith("system.progressao.")) {
           this._atualizarStatsDerivados();
         }
-        // Trocar de CLASSE muda o tema visual inteiro (cores da ficha).
-        // Re-renderiza pra aplicar a classe CSS `cls-<classe>` no root.
+        // Trocar de CLASSE muda o tema visual inteiro (cores da ficha)
+        // E sincroniza a cor do anel do token (prototype + tokens nas cenas).
         if (name === "system.progressao.classe") {
           this.render(false);
+          const corAnel = this.document.corClasse;
+          // Prototype (tokens futuros)
+          await this.document.update(
+            { "prototypeToken.ring.colors.ring": corAnel },
+            { render: false, sinfoniaFromSheet: true }
+          );
+          // Tokens já colocados nas cenas (só os que têm anel ativo)
+          for (const scene of game.scenes) {
+            const tokensDeste = scene.tokens.filter(t =>
+              t.actorId === this.document.id && t.ring?.enabled
+            );
+            for (const token of tokensDeste) {
+              await token.update({ "ring.colors.ring": corAnel });
+            }
+          }
         }
       } catch (err) {
         console.error("Sinfonia | Falha ao salvar campo", name, err);
@@ -298,19 +313,21 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         ev.stopPropagation();
         const current = this.document.prototypeToken?.texture?.src ?? this.document.img;
         abrirFilePicker(current, async (path) => {
+          // Cor do anel = cor da CLASSE do personagem (dourado se sem classe)
+          const corAnel = this.document.corClasse;
           // 1) Atualiza o prototypeToken inteiro de uma vez:
           //    • texture.src — imagem principal exibida (afeta tokens FUTUROS)
-          //    • ring.enabled + ring.subject.texture — anel dourado dinâmico em v12.
+          //    • ring.enabled + ring.subject.texture — anel dinâmico em v12.
           //      O `subject.texture` deve apontar pra MESMA imagem, senão o anel
           //      fica desenhado mas o conteúdo fica invisível.
-          //    • ring.colors.ring — cor dourada do anel
+          //    • ring.colors.ring — cor temática da classe
           //    • ring.effects — valor 1 = anel básico (visualizado)
           //    • actorLink — token sincronizado com a ficha (recomendado pra PCs)
           await this.document.update({
             "prototypeToken.texture.src":              path,
             "prototypeToken.ring.enabled":             true,
             "prototypeToken.ring.subject.texture":     path,
-            "prototypeToken.ring.colors.ring":         "#c8972a",
+            "prototypeToken.ring.colors.ring":         corAnel,
             "prototypeToken.ring.colors.background":   "#1a1a1a",
             "prototypeToken.ring.effects":             1,
             "prototypeToken.actorLink":                true
@@ -328,7 +345,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
                 "texture.src":              path,
                 "ring.enabled":             true,
                 "ring.subject.texture":     path,
-                "ring.colors.ring":         "#c8972a",
+                "ring.colors.ring":         corAnel,
                 "ring.colors.background":   "#1a1a1a",
                 "ring.effects":             1
               });
@@ -336,9 +353,9 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
             }
           }
           if (count > 0) {
-            ui.notifications.info(`Imagem do token + anel dourado atualizados em ${count} token(s) das cenas.`);
+            ui.notifications.info(`Imagem do token + anel da classe atualizados em ${count} token(s) das cenas.`);
           } else {
-            ui.notifications.info(`Imagem do token + anel dourado salvos no prototype.`);
+            ui.notifications.info(`Imagem do token + anel da classe salvos no prototype.`);
           }
         });
       }, { signal: sig });
@@ -1070,9 +1087,13 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       return;
     }
 
-    // Já existe token deste ator na cena? Seleciona e centraliza nele.
+    // Já existe token deste ator na cena? Seleciona, centraliza e sincroniza o anel.
     const existente = canvas.tokens.placeables.find(t => t.actor?.id === actor.id);
     if (existente) {
+      // Sincroniza a cor do anel com a classe atual (caso tenha mudado)
+      if (existente.document.ring?.enabled) {
+        await existente.document.update({ "ring.colors.ring": actor.corClasse });
+      }
       existente.control({ releaseOthers: true });
       canvas.animatePan({ x: existente.center.x, y: existente.center.y, duration: 400 });
       ui.notifications.info(`${actor.name} já está nesta cena — token selecionado.`);
@@ -1085,8 +1106,10 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     const x = Math.round(px / grid) * grid;
     const y = Math.round(py / grid) * grid;
 
-    // getTokenDocument aplica o prototypeToken completo (imagem, anel, actorLink)
+    // getTokenDocument aplica o prototypeToken completo (imagem, anel, actorLink).
+    // Em seguida sobrescrevemos a cor do anel com a cor da CLASSE do personagem.
     const tokenDoc = await actor.getTokenDocument({ x, y });
+    tokenDoc.updateSource({ "ring.colors.ring": actor.corClasse });
     await scene.createEmbeddedDocuments("Token", [tokenDoc.toObject()]);
 
     ui.notifications.info(`⛨ Token de ${actor.name} colocado na cena "${scene.name}".`);

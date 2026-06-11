@@ -16,6 +16,15 @@ export class SinfoniaActor extends Actor {
     return SinfoniaActor.DADO_VALOR[dado] ?? 6;
   }
 
+  /**
+   * Cor temática da classe atual (usada no anel do token, etc).
+   * Cai no dourado padrão se não houver classe selecionada.
+   */
+  get corClasse() {
+    const classe = this.system?.progressao?.classe;
+    return globalThis.SINFONIA?.CLS_META?.[classe]?.color ?? "#c8972a";
+  }
+
   prepareDerivedData() {
     super.prepareDerivedData();
     if (this.type === "personagem") this._preparePersonagem();
