@@ -598,13 +598,14 @@ export class SinfoniaActor extends Actor {
 
     let formula = (arma.system.dano || "1d6").trim();
 
-    // Substitui @attr pelos valores numéricos dos dados
+    // Substitui @attr pelo DADO do atributo (ex: @pod → 1d8), não pelo valor fixo.
+    // No sistema, dano de arma = ROLAR o dado do atributo (ex: dado POD + dado AGI + 13).
     const subs = {
-      pod: this.dadoValor("pod"),
-      agi: this.dadoValor("agi"),
-      int: this.dadoValor("int"),
-      car: this.dadoValor("car"),
-      mis: this.dadoValor("mis")
+      pod: `1${this.system.atributos?.pod ?? "d6"}`,
+      agi: `1${this.system.atributos?.agi ?? "d6"}`,
+      int: `1${this.system.atributos?.int ?? "d6"}`,
+      car: `1${this.system.atributos?.car ?? "d6"}`,
+      mis: `1${this.system.atributos?.mis ?? "d6"}`
     };
     for (const [k, v] of Object.entries(subs)) {
       formula = formula.replaceAll(`@${k}`, v);
@@ -1495,14 +1496,14 @@ export class SinfoniaItem extends Item {
     const formula = (sys.efeito || "").trim();
     const tipo    = sys.tipoEfeito || "none";
     if (formula && tipo !== "none") {
-      // Substitui @attr pelos valores numéricos
+      // Substitui @attr pelo DADO do atributo (ex: @pod → 1d8) — rola de verdade
       let resolved = formula;
       const subs = {
-        pod: actor.dadoValor?.("pod") ?? 6,
-        agi: actor.dadoValor?.("agi") ?? 6,
-        int: actor.dadoValor?.("int") ?? 6,
-        car: actor.dadoValor?.("car") ?? 6,
-        mis: actor.dadoValor?.("mis") ?? 6
+        pod: `1${actor.system?.atributos?.pod ?? "d6"}`,
+        agi: `1${actor.system?.atributos?.agi ?? "d6"}`,
+        int: `1${actor.system?.atributos?.int ?? "d6"}`,
+        car: `1${actor.system?.atributos?.car ?? "d6"}`,
+        mis: `1${actor.system?.atributos?.mis ?? "d6"}`
       };
       for (const [k, v] of Object.entries(subs)) {
         resolved = resolved.replaceAll(`@${k}`, v);

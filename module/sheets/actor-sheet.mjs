@@ -1090,10 +1090,15 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     // Já existe token deste ator na cena? Seleciona, centraliza e sincroniza o anel.
     const existente = canvas.tokens.placeables.find(t => t.actor?.id === actor.id);
     if (existente) {
-      // Sincroniza a cor do anel com a classe atual (caso tenha mudado)
-      if (existente.document.ring?.enabled) {
-        await existente.document.update({ "ring.colors.ring": actor.corClasse });
-      }
+      // Força o anel completo com a cor da classe (mesmo se estava desligado)
+      const texExistente = existente.document.texture?.src || actor.img;
+      await existente.document.update({
+        "ring.enabled":            true,
+        "ring.subject.texture":    texExistente,
+        "ring.colors.ring":        actor.corClasse,
+        "ring.colors.background":  "#1a1a1a",
+        "ring.effects":            1
+      });
       existente.control({ releaseOthers: true });
       canvas.animatePan({ x: existente.center.x, y: existente.center.y, duration: 400 });
       ui.notifications.info(`${actor.name} já está nesta cena — token selecionado.`);
@@ -1106,10 +1111,18 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
     const x = Math.round(px / grid) * grid;
     const y = Math.round(py / grid) * grid;
 
-    // getTokenDocument aplica o prototypeToken completo (imagem, anel, actorLink).
-    // Em seguida sobrescrevemos a cor do anel com a cor da CLASSE do personagem.
+    // getTokenDocument aplica o prototypeToken. Como o prototype pode NÃO ter
+    // o anel configurado (atores antigos), FORÇAMOS o anel completo aqui:
+    // enabled + subject.texture (mesma imagem, senão o retrato some) + cor da classe.
     const tokenDoc = await actor.getTokenDocument({ x, y });
-    tokenDoc.updateSource({ "ring.colors.ring": actor.corClasse });
+    const tex = tokenDoc.texture?.src || actor.img;
+    tokenDoc.updateSource({
+      "ring.enabled":            true,
+      "ring.subject.texture":    tex,
+      "ring.colors.ring":        actor.corClasse,
+      "ring.colors.background":  "#1a1a1a",
+      "ring.effects":            1
+    });
     await scene.createEmbeddedDocuments("Token", [tokenDoc.toObject()]);
 
     ui.notifications.info(`⛨ Token de ${actor.name} colocado na cena "${scene.name}".`);
