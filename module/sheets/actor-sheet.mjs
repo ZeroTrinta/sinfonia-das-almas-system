@@ -34,7 +34,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       rolarDanoArma:   SinfoniaActorSheet._onRolarDanoArma,
       alternarEquipado: SinfoniaActorSheet._onAlternarEquipado,
       toggleFavorito:  SinfoniaActorSheet._onToggleFavorito,
-      rolarTesteCrepusculo: SinfoniaActorSheet._onRolarTesteCrepusculo
+      rolarTesteCrepusculo: SinfoniaActorSheet._onRolarTesteCrepusculo,
+      colocarToken:    SinfoniaActorSheet._onColocarToken
     }
   };
 
@@ -1045,6 +1046,50 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         "system.alma.morto":       true
       });
     }
+  }
+
+  /**
+   * Coloca o token deste personagem na cena ativa, no centro da view atual
+   * (snapped ao grid). Se já existir um token deste ator na cena, apenas
+   * seleciona e centraliza a câmera nele — evita duplicatas acidentais.
+   * Usa o prototypeToken (imagem, anel dourado, actorLink) automaticamente.
+   */
+  static async _onColocarToken(event, target) {
+    event.preventDefault();
+    const actor = this.document;
+
+    const scene = canvas?.scene;
+    if (!scene || !canvas?.ready) {
+      ui.notifications.warn("Nenhuma cena ativa. Abra uma cena primeiro.");
+      return;
+    }
+
+    // Permissão: precisa poder criar tokens na cena (GM ou jogador com permissão)
+    if (!game.user.can("TOKEN_CREATE")) {
+      ui.notifications.warn("Você não tem permissão para criar tokens. Peça ao Mestre.");
+      return;
+    }
+
+    // Já existe token deste ator na cena? Seleciona e centraliza nele.
+    const existente = canvas.tokens.placeables.find(t => t.actor?.id === actor.id);
+    if (existente) {
+      existente.control({ releaseOthers: true });
+      canvas.animatePan({ x: existente.center.x, y: existente.center.y, duration: 400 });
+      ui.notifications.info(`${actor.name} já está nesta cena — token selecionado.`);
+      return;
+    }
+
+    // Centro da view atual, snapped ao grid
+    const grid = scene.grid.size;
+    const { x: px, y: py } = canvas.stage.pivot;
+    const x = Math.round(px / grid) * grid;
+    const y = Math.round(py / grid) * grid;
+
+    // getTokenDocument aplica o prototypeToken completo (imagem, anel, actorLink)
+    const tokenDoc = await actor.getTokenDocument({ x, y });
+    await scene.createEmbeddedDocuments("Token", [tokenDoc.toObject()]);
+
+    ui.notifications.info(`⛨ Token de ${actor.name} colocado na cena "${scene.name}".`);
   }
 
   /**
