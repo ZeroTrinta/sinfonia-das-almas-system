@@ -1,0 +1,222 @@
+{{!-- Sinfonia das Almas — Item Sheet v2 (template único, estilo D&D 5e) --}}
+<form class="{{cssClass}} sinfonia-item-v2" autocomplete="off">
+
+  {{!-- ═══ HEADER ═══ --}}
+  <header class="item-header">
+    <img class="item-img" src="{{item.img}}" data-edit="img" title="{{item.name}}" alt="{{item.name}}"/>
+    <div class="item-header-main">
+      <input class="item-nome" name="name" type="text" value="{{item.name}}" placeholder="Nome"/>
+      <div class="item-subtitulo">
+        <span class="item-tipo">{{tipoLabel}}</span>
+        {{#each headerTags}}
+          <span class="item-tag">{{this}}</span>
+        {{/each}}
+      </div>
+    </div>
+  </header>
+
+  {{!-- ═══ NAV TABS ═══ --}}
+  <nav class="item-tabs tabs" data-group="primary">
+    <a class="item" data-tab="descricao"><i class="fas fa-book-open"></i> Descrição</a>
+    <a class="item" data-tab="detalhes"><i class="fas fa-cogs"></i> Detalhes</a>
+  </nav>
+
+  {{!-- ═══ BODY ═══ --}}
+  <section class="item-body">
+
+    {{!-- ─── TAB: DESCRIÇÃO ─── --}}
+    <div class="tab descricao" data-group="primary" data-tab="descricao">
+      {{editor descricaoEnriquecida target="system.descricao" button=true editable=editable engine="prosemirror" collaborate=false}}
+    </div>
+
+    {{!-- ─── TAB: DETALHES ─── --}}
+    <div class="tab detalhes" data-group="primary" data-tab="detalhes">
+
+      {{#if isArma}}
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Categoria</label>
+          <select name="system.categoria">{{selectOptions categoriasArma selected=system.categoria}}</select>
+        </div>
+        <div class="campo">
+          <label>Dano <span class="hint">(@pod, @agi…)</span></label>
+          <input type="text" name="system.dano" value="{{system.dano}}" placeholder="@pod+@agi+13"/>
+        </div>
+        <div class="campo">
+          <label>Tipo de Dano</label>
+          <input type="text" name="system.tipoDano" value="{{system.tipoDano}}" placeholder="corte"/>
+        </div>
+        <div class="campo">
+          <label>Alcance (m)</label>
+          <input type="number" name="system.alcance" value="{{system.alcance}}" step="0.5" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Bônus de Acerto</label>
+          <input type="number" name="system.bonus" value="{{system.bonus}}"/>
+        </div>
+        <div class="campo">
+          <label>Peso</label>
+          <input type="number" name="system.peso" value="{{system.peso}}" step="0.1" min="0"/>
+        </div>
+        <div class="campo full">
+          <label>Propriedades <span class="hint">(Veloz, Brutal, Contundente…)</span></label>
+          <input type="text" name="system.propriedades" value="{{system.propriedades}}"/>
+        </div>
+        <label class="campo-check"><input type="checkbox" name="system.duasMaos" {{checked system.duasMaos}}/> Duas Mãos</label>
+        <label class="campo-check"><input type="checkbox" name="system.duplaEmpunhadura" {{checked system.duplaEmpunhadura}}/> Dupla Empunhadura</label>
+        <label class="campo-check"><input type="checkbox" name="system.equipado" {{checked system.equipado}}/> Equipado</label>
+      </div>
+      {{/if}}
+
+      {{#if isArmadura}}
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Categoria</label>
+          <select name="system.categoria">{{selectOptions categoriasArmadura selected=system.categoria}}</select>
+        </div>
+        <div class="campo">
+          <label>Defesa Fixa</label>
+          <input type="number" name="system.defesaFixa" value="{{system.defesaFixa}}"/>
+        </div>
+        <div class="campo">
+          <label>Bônus DEF <span class="hint">(escudo)</span></label>
+          <input type="number" name="system.bonusDefesa" value="{{system.bonusDefesa}}"/>
+        </div>
+        <div class="campo">
+          <label>Redução de Dano</label>
+          <input type="number" name="system.reducaoDano" value="{{system.reducaoDano}}" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Peso</label>
+          <input type="number" name="system.peso" value="{{system.peso}}" step="0.1" min="0"/>
+        </div>
+        <div class="campo full">
+          <label>Propriedades</label>
+          <input type="text" name="system.propriedades" value="{{system.propriedades}}"/>
+        </div>
+        <label class="campo-check"><input type="checkbox" name="system.equipada" {{checked system.equipada}}/> Equipada</label>
+      </div>
+      {{/if}}
+
+      {{#if isConduite}}
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Tipo</label>
+          <select name="system.tipo">{{selectOptions tiposConduite selected=system.tipo}}</select>
+        </div>
+        <div class="campo">
+          <label>Valor Fixo <span class="hint">(+dano/cura)</span></label>
+          <input type="number" name="system.valorFixo" value="{{system.valorFixo}}" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Peso</label>
+          <input type="number" name="system.peso" value="{{system.peso}}" step="0.1" min="0"/>
+        </div>
+        <div class="campo full">
+          <label>Propriedades <span class="hint">(Expansão: +1 ND Mística)</span></label>
+          <input type="text" name="system.propriedades" value="{{system.propriedades}}"/>
+        </div>
+        <label class="campo-check"><input type="checkbox" name="system.duasMaos" {{checked system.duasMaos}}/> Duas Mãos</label>
+        <label class="campo-check"><input type="checkbox" name="system.equipado" {{checked system.equipado}}/> Equipado</label>
+      </div>
+      {{/if}}
+
+      {{#if isInventario}}
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Categoria</label>
+          <select name="system.categoria">{{selectOptions categoriasInv selected=system.categoria}}</select>
+        </div>
+        <div class="campo">
+          <label>Quantidade</label>
+          <input type="number" name="system.quantidade" value="{{system.quantidade}}" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Custo PI <span class="hint">(só consumíveis)</span></label>
+          <input type="number" name="system.custoPI" value="{{system.custoPI}}" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Peso</label>
+          <input type="number" name="system.peso" value="{{system.peso}}" step="0.1" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Efeito <span class="hint">(3d8, @pod+2…)</span></label>
+          <input type="text" name="system.efeito" value="{{system.efeito}}"/>
+        </div>
+        <div class="campo">
+          <label>Tipo do Efeito</label>
+          <select name="system.tipoEfeito">{{selectOptions tiposEfeito selected=system.tipoEfeito}}</select>
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if isMagia}}
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Tipo</label>
+          <select name="system.tipo">{{selectOptions tiposMagia selected=system.tipo}}</select>
+        </div>
+        <div class="campo">
+          <label>Círculo</label>
+          <select name="system.circulo" data-dtype="Number">{{selectOptions circulos selected=system.circulo}}</select>
+        </div>
+        <div class="campo">
+          <label>Escola</label>
+          <select name="system.escola">{{selectOptions escolasConfig selected=system.escola}}</select>
+        </div>
+        <div class="campo">
+          <label>Custo PE</label>
+          <input type="number" name="system.custoPE" value="{{system.custoPE}}" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Custo Contínuo <span class="hint">(PE/turno)</span></label>
+          <input type="number" name="system.custoContinuo" value="{{system.custoContinuo}}" min="0"/>
+        </div>
+        <div class="campo">
+          <label>Tempo de Conjuração</label>
+          <input type="text" name="system.tempoCon" value="{{system.tempoCon}}"/>
+        </div>
+        <div class="campo">
+          <label>Alcance</label>
+          <input type="text" name="system.alcance" value="{{system.alcance}}"/>
+        </div>
+        <div class="campo">
+          <label>Duração</label>
+          <input type="text" name="system.duracao" value="{{system.duracao}}"/>
+        </div>
+        <div class="campo">
+          <label>Área de Efeito</label>
+          <input type="text" name="system.areaEfeito" value="{{system.areaEfeito}}" placeholder="Esfera 3m…"/>
+        </div>
+        <div class="campo">
+          <label>Resistência</label>
+          <input type="text" name="system.resistencia" value="{{system.resistencia}}" placeholder="Reflexos, Fortitude…"/>
+        </div>
+      </div>
+      <p class="detalhes-dica">💡 Dano/cura são detectados da <b>Descrição</b> (ex: "causa 3d8 de dano de fogo"). O Valor Fixo do conduíte equipado soma automaticamente.</p>
+      {{/if}}
+
+      {{#if isHabilidade}}
+      <div class="campo-grid">
+        <div class="campo">
+          <label>Classe</label>
+          <select name="system.classe">
+            <option value="">—</option>
+            {{selectOptions classesConfig selected=system.classe}}
+          </select>
+        </div>
+        <div class="campo">
+          <label>Custo PE</label>
+          <input type="number" name="system.custoPE" value="{{system.custoPE}}" min="0"/>
+        </div>
+        <div class="campo full">
+          <label>Requisito</label>
+          <input type="text" name="system.requisito" value="{{system.requisito}}"/>
+        </div>
+      </div>
+      <p class="detalhes-dica">💡 As habilidades de classe oficiais ficam na <b>Árvore de Habilidades</b> da ficha. Use este item só pra habilidades customizadas.</p>
+      {{/if}}
+
+    </div>
+  </section>
+</form>
