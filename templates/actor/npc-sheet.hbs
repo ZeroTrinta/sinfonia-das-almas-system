@@ -1,28 +1,173 @@
-<form class="sinfonia-sheet npc {{cssClass}}" autocomplete="off">
-  <header class="sheet-header">
-    <img class="actor-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}"/>
-    <div class="header-fields">
-      <input class="actor-name" type="text" name="name" value="{{actor.name}}"/>
-      <div class="npc-stats">
-        <div class="badge pv">
-          <span>♥ PV</span>
-          <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0" max="{{system.recursos.pv.max}}"/>
-          <span>/</span>
-          <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
-        </div>
-        <div class="combate-box"><label>Defesa</label><input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/></div>
-        <div class="combate-box"><label>Iniciativa</label><input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/></div>
-        <div class="field-group"><label>Tipo</label><input type="text" name="system.tipo" value="{{system.tipo}}" placeholder="Ex: Humanoide, Besta..."/></div>
-        <div class="field-group"><label>CR</label><input type="number" name="system.cr" value="{{system.cr}}" min="0" step="0.25"/></div>
+{{!-- Sinfonia das Almas — Ficha de Monstro (NPC) v0.8.2 --}}
+<form class="sinfonia-sheet npc npc-v2 {{cssClass}}" autocomplete="off">
+
+  {{!-- ═══ HEADER ═══ --}}
+  <header class="npc-banner">
+    <img class="npc-avatar" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="Avatar"/>
+    <div class="npc-banner-main">
+      <input class="npc-nome" type="text" name="name" value="{{actor.name}}" placeholder="Nome do Monstro"/>
+      <input class="npc-subtitulo" type="text" name="system.subtitulo" value="{{system.subtitulo}}" placeholder="Ex: Darkner Construto — guardião das estantes"/>
+      <div class="npc-badges">
+        <span class="npc-badge nivel">
+          <input type="number" name="system.cr" value="{{system.cr}}" min="0" step="0.25" title="Nível de Desafio"/>
+          <label>CR</label>
+        </span>
+        <input class="npc-badge tipo" type="text" name="system.classificacao" value="{{system.classificacao}}" placeholder="Elite / Lacaio / Chefe"/>
+        <input class="npc-badge acoes" type="text" name="system.economiaAcoes" value="{{system.economiaAcoes}}" placeholder="1 Ação + 1 Reação"/>
+        <span class="npc-badge rd">
+          <label>RD</label>
+          <input type="number" name="system.combate.reducaoDano" value="{{system.combate.reducaoDano}}" min="0"/>
+        </span>
       </div>
     </div>
   </header>
-  <div class="sheet-body">
-    <section class="panel">
-      <h3 class="panel-title">Descrição</h3>
-      <div class="editor-container">
-        {{editor descricaoEnriquecida name="system.descricao" button=true editable=isEditable}}
+
+  {{!-- ═══ BARRAS DE RECURSO ═══ --}}
+  <div class="npc-recursos">
+    <div class="npc-res pv">
+      <div class="npc-res-head"><span>Pontos de Vida</span>
+        <span class="npc-res-nums">
+          <input type="number" name="system.recursos.pv.value" value="{{system.recursos.pv.value}}" min="0"/> /
+          <input type="number" name="system.recursos.pv.max" value="{{system.recursos.pv.max}}" min="0"/>
+        </span>
       </div>
-    </section>
+      <div class="npc-res-bar"><div class="npc-res-fill pv" style="width: {{percent system.recursos.pv.value system.recursos.pv.max}}%"></div></div>
+    </div>
+    <div class="npc-res pe">
+      <div class="npc-res-head"><span>Pontos de Energia</span>
+        <span class="npc-res-nums">
+          <input type="number" name="system.pe.value" value="{{system.pe.value}}" min="0"/> /
+          <input type="number" name="system.pe.max" value="{{system.pe.max}}" min="0"/>
+        </span>
+      </div>
+      <div class="npc-res-bar"><div class="npc-res-fill pe" style="width: {{percent system.pe.value system.pe.max}}%"></div></div>
+    </div>
+    <div class="npc-res furia">
+      <div class="npc-res-head"><span>Pontos de Fúria</span>
+        <span class="npc-res-nums">
+          <input type="number" name="system.furia.value" value="{{system.furia.value}}" min="0"/> /
+          <input type="number" name="system.furia.max" value="{{system.furia.max}}" min="0"/>
+        </span>
+      </div>
+      <div class="npc-res-bar"><div class="npc-res-fill furia" style="width: {{percent system.furia.value system.furia.max}}%"></div></div>
+    </div>
   </div>
+
+  {{!-- ═══ ATRIBUTOS + COMBATE ═══ --}}
+  <div class="npc-stats-row">
+    {{#each atributosList}}
+    <div class="npc-stat atrib npc-atrib-roll" data-attr="{{this.key}}" title="Rolar {{this.abbr}}">
+      <span class="npc-stat-label">{{this.abbr}}</span>
+      <select name="system.atributos.{{this.key}}" class="npc-dado-select" data-dtype="String" onclick="event.stopPropagation()">
+        <option value="d6"  {{#eq this.dado "d6"}}selected{{/eq}}>d6</option>
+        <option value="d8"  {{#eq this.dado "d8"}}selected{{/eq}}>d8</option>
+        <option value="d10" {{#eq this.dado "d10"}}selected{{/eq}}>d10</option>
+        <option value="d12" {{#eq this.dado "d12"}}selected{{/eq}}>d12</option>
+      </select>
+      <span class="npc-stat-sub">rolar</span>
+    </div>
+    {{/each}}
+    <div class="npc-stat derived"><span class="npc-stat-label">DEFESA</span>
+      <input type="number" name="system.combate.defesa" value="{{system.combate.defesa}}"/></div>
+    <div class="npc-stat derived"><span class="npc-stat-label">ND MÍST.</span>
+      <input type="number" name="system.combate.ndMistica" value="{{system.combate.ndMistica}}"/></div>
+    <div class="npc-stat derived"><span class="npc-stat-label">INIC.</span>
+      <input type="number" name="system.combate.iniciativa" value="{{system.combate.iniciativa}}"/></div>
+    <div class="npc-stat derived"><span class="npc-stat-label">DESLOC.</span>
+      <input type="number" name="system.combate.deslocamento" value="{{system.combate.deslocamento}}"/></div>
+  </div>
+
+  {{!-- ═══ RESISTÊNCIAS ELEMENTAIS ═══ --}}
+  <div class="npc-resist-row">
+    {{#each resistList}}
+    <div class="npc-resist {{this.valor}}" data-el="{{this.key}}">
+      <span class="npc-resist-icon" style="color: {{this.cor}}">{{this.icon}}</span>
+      <span class="npc-resist-label">{{this.label}}</span>
+      <select name="system.resistencias.{{this.key}}" class="npc-resist-select">
+        <option value=""           {{#eq this.valor ""}}selected{{/eq}}>—</option>
+        <option value="resistente" {{#eq this.valor "resistente"}}selected{{/eq}}>Resiste</option>
+        <option value="vulneravel" {{#eq this.valor "vulneravel"}}selected{{/eq}}>Vulnerável</option>
+        <option value="imune"      {{#eq this.valor "imune"}}selected{{/eq}}>Imune</option>
+      </select>
+    </div>
+    {{/each}}
+  </div>
+
+  {{!-- ═══ CORPO: AÇÕES (esquerda) + LATERAL (direita) ═══ --}}
+  <div class="npc-body">
+
+    {{!-- AÇÕES --}}
+    <div class="npc-acoes-col">
+      <div class="npc-section-head">
+        <h3>Ações</h3>
+        <button type="button" class="btn-add-acao" title="Adicionar ação"><i class="fas fa-plus"></i></button>
+      </div>
+      {{#each acoes}}
+      <div class="npc-acao" data-idx="{{@index}}">
+        <div class="npc-acao-head">
+          <input class="npc-acao-nome" type="text" name="system.acoes.{{@index}}.nome" value="{{this.nome}}" placeholder="Nome da ação"/>
+          <select class="npc-acao-tipo" name="system.acoes.{{@index}}.tipo">
+            <option value="acao"     {{#eq this.tipo "acao"}}selected{{/eq}}>Ação</option>
+            <option value="parcial"  {{#eq this.tipo "parcial"}}selected{{/eq}}>Parcial</option>
+            <option value="reacao"   {{#eq this.tipo "reacao"}}selected{{/eq}}>Reação</option>
+            <option value="livre"    {{#eq this.tipo "livre"}}selected{{/eq}}>Livre</option>
+            <option value="especial" {{#eq this.tipo "especial"}}selected{{/eq}}>Especial</option>
+          </select>
+          <span class="npc-acao-pe">
+            <input type="number" name="system.acoes.{{@index}}.custoPE" value="{{this.custoPE}}" min="0" title="Custo PE"/> PE
+          </span>
+          <button type="button" class="btn-rolar-acao" data-idx="{{@index}}" title="Rolar"><i class="fas fa-dice-d20"></i></button>
+          <button type="button" class="btn-del-acao" data-idx="{{@index}}" title="Remover"><i class="fas fa-trash"></i></button>
+        </div>
+        <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formula" value="{{this.formula}}" placeholder="Fórmula de dano (ex: 2d10+4, @pod+5) — deixe vazio se não rola"/>
+        <textarea class="npc-acao-desc" name="system.acoes.{{@index}}.desc" rows="2" placeholder="Descrição do efeito">{{this.desc}}</textarea>
+      </div>
+      {{else}}
+      <p class="npc-vazio">Nenhuma ação. Clique em + para adicionar.</p>
+      {{/each}}
+    </div>
+
+    {{!-- LATERAL --}}
+    <aside class="npc-side-col">
+      {{!-- Imunidades de condição --}}
+      <div class="npc-side-block">
+        <h4>Imunidades de Condição</h4>
+        <input type="text" name="system.imunidadesCondicao" value="{{system.imunidadesCondicao}}" placeholder="Amedrontado, Provocado…"/>
+      </div>
+
+      {{!-- Traços --}}
+      <div class="npc-side-block">
+        <div class="npc-section-head sub">
+          <h4>Traços</h4>
+          <button type="button" class="btn-add-traco" title="Adicionar traço"><i class="fas fa-plus"></i></button>
+        </div>
+        {{#each tracos}}
+        <div class="npc-traco" data-idx="{{@index}}">
+          <div class="npc-traco-head">
+            <input type="text" name="system.tracos.{{@index}}.nome" value="{{this.nome}}" placeholder="Nome do traço"/>
+            <button type="button" class="btn-del-traco" data-idx="{{@index}}" title="Remover"><i class="fas fa-trash"></i></button>
+          </div>
+          <textarea name="system.tracos.{{@index}}.desc" rows="2" placeholder="Efeito passivo">{{this.desc}}</textarea>
+        </div>
+        {{else}}
+        <p class="npc-vazio sub">Sem traços.</p>
+        {{/each}}
+      </div>
+
+      {{!-- Recompensa --}}
+      <div class="npc-side-block">
+        <h4>Recompensa</h4>
+        <textarea name="system.recompensa" rows="2" placeholder="Tesouro, pistas, conhecimento…">{{system.recompensa}}</textarea>
+      </div>
+    </aside>
+  </div>
+
+  {{!-- ═══ DESCRIÇÃO ═══ --}}
+  <details class="npc-descricao-wrap">
+    <summary>Descrição & Lore</summary>
+    <div class="npc-descricao">
+      {{editor descricaoEnriquecida name="system.descricao" button=true editable=isEditable}}
+    </div>
+  </details>
+
 </form>

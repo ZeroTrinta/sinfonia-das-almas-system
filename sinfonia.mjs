@@ -591,7 +591,8 @@ Hooks.once("init", () => {
     "systems/sinfonia-das-almas/templates/item/magia-sheet.hbs",
     "systems/sinfonia-das-almas/templates/item/arma-sheet.hbs",
     "systems/sinfonia-das-almas/templates/item/armadura-sheet.hbs",
-    "systems/sinfonia-das-almas/templates/item/inventario-sheet.hbs"
+    "systems/sinfonia-das-almas/templates/item/inventario-sheet.hbs",
+    "systems/sinfonia-das-almas/templates/item/item-sheet.hbs"
   ]);
 
   console.log("Sinfonia das Almas | Sistema inicializado.");
@@ -602,7 +603,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.8.1");
+  console.log("Sinfonia das Almas | Pronto. v0.8.3");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
@@ -756,6 +757,7 @@ Hooks.once("ready", () => {
       // Propriedades da arma: Contundente ignora RD leve; Crítico afeta Crepúsculo
       const contundente = btn.dataset.contundente === "1";
       const critico     = btn.dataset.critico === "1";
+      const tipoDano    = btn.dataset.tipoDano || "";  // ex: corte, fogo, ácido...
       // Prioriza tokens targetados (jogador apontou com 'T'). Se vazio, cai
       // pros selecionados como fallback (útil quando o Mestre clica o próprio token).
       const targets = Array.from(game.user.targets ?? []);
@@ -766,7 +768,7 @@ Hooks.once("ready", () => {
         ui.notifications.warn("Aponte com 'T' um ou mais tokens (ou selecione) para aplicar o dano.");
         return;
       }
-      for (const t of tokens) await t.actor?.aplicarDano?.(dano, { contundente, critico });
+      for (const t of tokens) await t.actor?.aplicarDano?.(dano, { contundente, critico, tipoDano });
       return;
     }
 
@@ -810,6 +812,13 @@ Hooks.once("init", () => {
   Handlebars.registerHelper("pct", (value, max) => {
     if (!max) return 0;
     return Math.round((value / max) * 100);
+  });
+
+  // Percentual com clamp 0–100 (usado nas barras do NPC)
+  Handlebars.registerHelper("percent", (value, max) => {
+    const m = Number(max) || 0;
+    if (m <= 0) return 0;
+    return Math.max(0, Math.min(100, Math.round((Number(value) / m) * 100)));
   });
 
   // Comparação simples — funciona como FUNCTION helper {{eq a b}} (retorna true/false)

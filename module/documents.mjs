@@ -25,6 +25,47 @@ export class SinfoniaActor extends Actor {
     return globalThis.SINFONIA?.CLS_META?.[classe]?.color ?? "#c8972a";
   }
 
+  /**
+   * Normaliza um "tipo de dano" textual (corte, fogo, ácido, luz...) para uma
+   * das 7 chaves de resistência: fisico | fogo | gelo | trovao | acido | luz | sombra.
+   * Tudo que não for elemental cai em "fisico".
+   */
+  static elementoDeTipoDano(tipoDano) {
+    const t = (tipoDano || "").toLowerCase().trim();
+    if (!t) return "fisico";
+    // Mapeamentos diretos
+    if (/fogo|\bf[íi]gneo|chama|igneo|incandesc/i.test(t)) return "fogo";
+    if (/gelo|gel[ií]do|frio|congel/i.test(t))            return "gelo";
+    if (/trov[ãa]o|raio|el[ée]tric|rel[âa]mpago|choque/i.test(t)) return "trovao";
+    if (/[áa]cido|corros|venen|t[óo]xic|p[eé]\u00e7onha/i.test(t)) return "acido";
+    if (/luz|sagrad|radiante|divin|solar/i.test(t))       return "luz";
+    if (/sombra|trevas|necro|profan|umbral|escurid/i.test(t)) return "sombra";
+    // Físicos: corte, impacto, perfuração, contundente, etc.
+    return "fisico";
+  }
+
+  /**
+   * Aplica resistência/vulnerabilidade/imunidade a um valor de dano.
+   * Lê system.resistencias[elemento] (existe em personagem E npc).
+   * Retorna { dano, estado } onde estado é ""|"resistente"|"vulneravel"|"imune".
+   */
+  aplicarResistencia(dano, elemento) {
+    const estado = this.system?.resistencias?.[elemento] ?? "";
+    let novo = dano;
+    if (estado === "imune")           novo = 0;
+    else if (estado === "resistente") novo = Math.floor(dano / 2);
+    else if (estado === "vulneravel") novo = dano * 2;
+    return { dano: novo, estado };
+  }
+
+  /** Nome legível de um elemento de dano (pra mensagens de chat). */
+  _labelElemento(elemento) {
+    return {
+      fisico: "Físico", fogo: "Fogo", gelo: "Gelo", trovao: "Trovão",
+      acido: "Ácido", luz: "Luz", sombra: "Sombra"
+    }[elemento] ?? elemento;
+  }
+
   prepareDerivedData() {
     super.prepareDerivedData();
     if (this.type === "personagem") this._preparePersonagem();
@@ -564,7 +605,7 @@ export class SinfoniaActor extends Actor {
           <span class="dano-tipo">${tipoDano}</span>
         </div>
         <div class="dano-acoes">
-          <button type="button" class="btn-aplicar-dano" data-dano="${total}">
+          <button type="button" class="btn-aplicar-dano" data-dano="${total}"${tipoDano ? ` data-tipo-dano="${tipoDano}"` : ""}>
             <i class="fas fa-heart-broken"></i> Aplicar Dano
           </button>
           <button type="button" class="btn-aplicar-cura" data-cura="${total}">
@@ -659,7 +700,8 @@ export class SinfoniaActor extends Actor {
     // Propriedades extras passadas ao botão "Aplicar Dano" (Contundente ignora RD leve)
     const dataExtra = `data-dano="${total}"` +
       (isContundente ? ` data-contundente="1"` : "") +
-      (opts.critico ? ` data-critico="1"` : "");
+      (opts.critico ? ` data-critico="1"` : "") +
+      (tipoDano ? ` data-tipo-dano="${tipoDano}"` : "");
 
     const content = `
       <div class="sinfonia-dano-roll ${opts.critico ? 'critico' : ''}">
@@ -814,6 +856,25 @@ export class SinfoniaActor extends Actor {
     }
     dano = Math.max(1, Math.round(dano));
 
+    // ── Resistência / Vulnerabilidade / Imunidade elemental ──
+    // O elemento vem de opts.elemento (preferido) ou é derivado de opts.tipoDano.
+    // Aplica ANTES da RD: imunidade zera tudo; vulnerabilidade dobra; resistência metade.
+    const elemento = opts.elemento
+      ?? SinfoniaActor.elementoDeTipoDano(opts.tipoDano);
+    const resInfo = this.aplicarResistencia(dano, elemento);
+    const estadoRes = resInfo.estado;
+    dano = resInfo.dano;
+
+    // Imunidade: dano 0 — posta aviso e encerra (não mexe em PV nem Crepúsculo)
+    if (estadoRes === "imune" || dano <= 0) {
+      this.sheet?.render(false);
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor: this }),
+        content: `<div class="sinfonia-dano imune"><b>${this.name}</b> é <b>IMUNE</b> a dano de ${this._labelElemento(elemento)}. Nenhum dano sofrido.</div>`
+      });
+      return;
+    }
+
     // ── Redução de Dano da Armadura ──
     // RD física concedida pela armadura equipada (só funciona em personagem).
     // Contundente ignora RD se a armadura for "leve".
@@ -887,9 +948,15 @@ export class SinfoniaActor extends Actor {
     const rdMsg = rdAplicada > 0
       ? ` <span class="rd-aplicada">(−${rdAplicada} RD da armadura)</span>`
       : "";
+    // Aviso de resistência/vulnerabilidade (imunidade já foi tratada antes)
+    const resMsg = estadoRes === "resistente"
+      ? ` <span class="res-aplicada resistente">🛡 Resistente a ${this._labelElemento(elemento)} (dano pela metade)</span>`
+      : estadoRes === "vulneravel"
+      ? ` <span class="res-aplicada vulneravel">⚠ Vulnerável a ${this._labelElemento(elemento)} (dano dobrado)</span>`
+      : "";
     await ChatMessage.implementation.create({
       speaker: ChatMessage.getSpeaker({ actor: this }),
-      content: `<div class="sinfonia-dano"><b>${this.name}</b> sofreu <b>${dano}</b> de dano!${rdMsg} PV: ${novoValor}/${pvMaxAtual}</div>${mensagemExtra}`
+      content: `<div class="sinfonia-dano"><b>${this.name}</b> sofreu <b>${dano}</b> de dano!${rdMsg}${resMsg} PV: ${novoValor}/${pvMaxAtual}</div>${mensagemExtra}`
     });
   }
 

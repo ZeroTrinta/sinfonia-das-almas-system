@@ -66,6 +66,18 @@ export class PersonagemDataModel extends BaseActorModel {
         mis: dadoField("d6")
       }),
 
+      // Resistências elementais (mesma estrutura do NPC)
+      //   "" normal · "resistente" metade · "vulneravel" dobro · "imune" zero
+      resistencias: new SchemaField({
+        fisico: new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] }),
+        fogo:   new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] }),
+        gelo:   new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] }),
+        trovao: new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] }),
+        acido:  new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] }),
+        luz:    new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] }),
+        sombra: new StringField({ required: true, blank: true, initial: "", choices: ["", "resistente", "vulneravel", "imune"] })
+      }),
+
       // Combate ───────────────────────────────────────────────
       combate: new SchemaField({
         defesa:       new NumberField({ required: true, integer: true, min: 0, initial: 8 }),
@@ -171,16 +183,84 @@ export class PersonagemDataModel extends BaseActorModel {
 ============================================================ */
 export class NpcDataModel extends BaseActorModel {
   static defineSchema() {
+    const { HTMLField, NumberField, SchemaField, StringField, ArrayField, BooleanField } = foundry.data.fields;
+
+    // Resistência a um tipo de dano: "" normal, "resistente" (metade),
+    // "vulneravel" (dobro), "imune" (zero).
+    const resistField = () => new StringField({
+      required: true, blank: true, initial: "",
+      choices: ["", "resistente", "vulneravel", "imune"]
+    });
+
     return {
       ...super.defineSchema(),
-      combate: new SchemaField({
-        defesa:       new NumberField({ required: true, integer: true, min: 0, initial: 8 }),
-        iniciativa:   new NumberField({ required: true, integer: true, min: 0, initial: 4 }),
-        deslocamento: new NumberField({ required: true, integer: true, min: 0, initial: 9 })
+
+      // Atributos (mesma escala dos PCs: d6–d12)
+      atributos: new SchemaField({
+        pod: dadoField("d8"),
+        agi: dadoField("d8"),
+        int: dadoField("d8"),
+        car: dadoField("d6"),
+        mis: dadoField("d6")
       }),
-      cr:       new NumberField({ required: true, min: 0, initial: 1 }),
-      tipo:     new StringField({ required: true, blank: true, initial: "" }),
-      descricao: new HTMLField({ required: true, blank: true })
+
+      combate: new SchemaField({
+        defesa:       new NumberField({ required: true, integer: true, min: 0, initial: 12 }),
+        iniciativa:   new NumberField({ required: true, integer: true, min: 0, initial: 4 }),
+        ndMistica:    new NumberField({ required: true, integer: true, min: 0, initial: 10 }),
+        deslocamento: new NumberField({ required: true, integer: true, min: 0, initial: 9 }),
+        reducaoDano:  new NumberField({ required: true, integer: true, min: 0, initial: 0 })
+      }),
+
+      // Energia / Fúria (recursos extras do monstro)
+      pe: new SchemaField({
+        value: new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
+        max:   new NumberField({ required: true, integer: true, min: 0, initial: 0 })
+      }),
+      furia: new SchemaField({
+        value: new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
+        max:   new NumberField({ required: true, integer: true, min: 0, initial: 0 })
+      }),
+
+      // Resistências elementais (a barra colorida da imagem)
+      resistencias: new SchemaField({
+        fisico: resistField(),
+        fogo:   resistField(),
+        gelo:   resistField(),
+        trovao: resistField(),
+        acido:  resistField(),
+        luz:    resistField(),
+        sombra: resistField()
+      }),
+
+      // Imunidades de condição (texto livre: "Amedrontado, Provocado")
+      imunidadesCondicao: new StringField({ required: true, blank: true, initial: "" }),
+
+      // Ações do monstro (ataques, reações, habilidades especiais)
+      acoes: new ArrayField(new SchemaField({
+        nome:     new StringField({ required: true, blank: true, initial: "" }),
+        tipo:     new StringField({ required: true, blank: true, initial: "acao",
+                    choices: ["acao", "parcial", "reacao", "livre", "especial"] }),
+        custoPE:  new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
+        rolavel:  new BooleanField({ required: true, initial: false }),
+        formula:  new StringField({ required: true, blank: true, initial: "" }),
+        desc:     new StringField({ required: true, blank: true, initial: "" })
+      }), { required: false, initial: [] }),
+
+      // Traços passivos (Eco da Fonte, etc)
+      tracos: new ArrayField(new SchemaField({
+        nome: new StringField({ required: true, blank: true, initial: "" }),
+        desc: new StringField({ required: true, blank: true, initial: "" })
+      }), { required: false, initial: [] }),
+
+      // Metadados narrativos
+      cr:         new NumberField({ required: true, min: 0, initial: 1 }),
+      tipo:       new StringField({ required: true, blank: true, initial: "" }),
+      subtitulo:  new StringField({ required: true, blank: true, initial: "" }),
+      classificacao: new StringField({ required: true, blank: true, initial: "" }),
+      economiaAcoes: new StringField({ required: true, blank: true, initial: "" }),
+      recompensa: new StringField({ required: true, blank: true, initial: "" }),
+      descricao:  new HTMLField({ required: true, blank: true })
     };
   }
 }

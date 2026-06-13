@@ -59,6 +59,25 @@
     {{/if}}
   </section>
 
+  <section class="panel resist-panel">
+    <h3 class="panel-title">Resistências Elementais</h3>
+    <p class="origens-hint">Resiste = metade do dano · Vulnerável = dobro · Imune = zero. Aplicado automaticamente ao receber dano do tipo.</p>
+    <div class="player-resist-row">
+      {{#each resistList}}
+      <div class="player-resist {{this.valor}}">
+        <span class="player-resist-icon" style="color: {{this.cor}}">{{this.icon}}</span>
+        <span class="player-resist-label">{{this.label}}</span>
+        <select name="system.resistencias.{{this.key}}" class="player-resist-select">
+          <option value=""           {{#eq this.valor ""}}selected{{/eq}}>—</option>
+          <option value="resistente" {{#eq this.valor "resistente"}}selected{{/eq}}>Resiste</option>
+          <option value="vulneravel" {{#eq this.valor "vulneravel"}}selected{{/eq}}>Vulnerável</option>
+          <option value="imune"      {{#eq this.valor "imune"}}selected{{/eq}}>Imune</option>
+        </select>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+
   <section class="panel">
     <h3 class="panel-title">Pilar da Alma</h3>
     <input type="text" name="system.alma.pilar"

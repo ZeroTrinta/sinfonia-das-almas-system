@@ -162,6 +162,20 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         };
       });
 
+    // ── Resistências elementais (mesma RES_META do NPC) ──
+    const RES_META = {
+      fisico: { label: "Físico", icon: "⚔", cor: "#c0c0c0" },
+      fogo:   { label: "Fogo",   icon: "🔥", cor: "#ff6b35" },
+      gelo:   { label: "Gelo",   icon: "❄", cor: "#5bc8ff" },
+      trovao: { label: "Trovão", icon: "⚡", cor: "#ffd23f" },
+      acido:  { label: "Ácido",  icon: "⚗", cor: "#7fff5b" },
+      luz:    { label: "Luz",    icon: "✦", cor: "#fff4c0" },
+      sombra: { label: "Sombra", icon: "●", cor: "#9060e8" }
+    };
+    const resistList = Object.entries(RES_META).map(([key, meta]) => ({
+      key, ...meta, valor: sys.resistencias?.[key] ?? ""
+    }));
+
     const ptsTotal = sys.progressao?.nivel ?? 5;
     const ptsUsados = Object.values(arvoreNH).reduce((acc, v) => acc + (Number(v) || 0), 0);
     const habArvore = {
@@ -186,6 +200,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       periciasComMaestria,
       periciasTodas,
       habArvore,
+      resistList,
       habilidades:     doc.items.filter(i => i.type === "habilidade"),
       magias:          doc.items.filter(i => i.type === "magia").sort((a,b) => a.system.circulo - b.system.circulo),
       magiasArcanas:   doc.items.filter(i => i.type === "magia" && i.system.tipo === "arcana").sort((a,b) => a.system.circulo - b.system.circulo),
@@ -1485,20 +1500,132 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   }
 }
 
-/* ── NPC Sheet ── */
+/* ── NPC Sheet (v0.8.2 — ficha de monstro completa) ── */
 export class SinfoniaNpcSheet extends ActorSheet {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
-      classes: ["sinfonia-das-almas","sheet","actor","npc"],
+      classes: ["sinfonia-das-almas","sheet","actor","npc","npc-v2"],
       template: "systems/sinfonia-das-almas/templates/actor/npc-sheet.hbs",
-      width: 600, height: 600
+      width: 720, height: 760,
+      resizable: true
     });
   }
+
   async getData() {
     const ctx = await super.getData();
-    ctx.system = this.actor.system;
+    const sys = this.actor.system;
+    ctx.system = sys;
     const e = foundry.applications?.ux?.TextEditor?.implementation ?? TextEditor;
-    ctx.descricaoEnriquecida = await e.enrichHTML(this.actor.system.descricao ?? "", { async: true });
+    ctx.descricaoEnriquecida = await e.enrichHTML(sys.descricao ?? "", { async: true });
+
+    // Resistências como lista pro template (com cor e label)
+    const RES_META = {
+      fisico: { label: "Físico", icon: "⚔", cor: "#c0c0c0" },
+      fogo:   { label: "Fogo",   icon: "🔥", cor: "#ff6b35" },
+      gelo:   { label: "Gelo",   icon: "❄", cor: "#5bc8ff" },
+      trovao: { label: "Trovão", icon: "⚡", cor: "#ffd23f" },
+      acido:  { label: "Ácido",  icon: "⚗", cor: "#7fff5b" },
+      luz:    { label: "Luz",    icon: "✦", cor: "#fff4c0" },
+      sombra: { label: "Sombra", icon: "●", cor: "#9060e8" }
+    };
+    ctx.resistList = Object.entries(RES_META).map(([key, meta]) => ({
+      key, ...meta, valor: sys.resistencias?.[key] ?? ""
+    }));
+
+    ctx.acoes  = sys.acoes ?? [];
+    ctx.tracos = sys.tracos ?? [];
+    ctx.atributosList = Object.entries(SINFONIA.ATRIBUTOS).map(([k, m]) => ({
+      key: k, abbr: m.abbr, dado: sys.atributos?.[k] ?? "d6"
+    }));
     return ctx;
+  }
+
+  activateListeners(html) {
+    super.activateListeners(html);
+    const root = html[0] ?? html;
+
+    // Adicionar ação
+    root.querySelector(".btn-add-acao")?.addEventListener("click", async () => {
+      const acoes = foundry.utils.deepClone(this.actor.system.acoes ?? []);
+      acoes.push({ nome: "Nova Ação", tipo: "acao", custoPE: 0, rolavel: false, formula: "", desc: "" });
+      await this.actor.update({ "system.acoes": acoes });
+    });
+    // Remover ação
+    root.querySelectorAll(".btn-del-acao").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const idx = Number(btn.dataset.idx);
+        const acoes = foundry.utils.deepClone(this.actor.system.acoes ?? []);
+        acoes.splice(idx, 1);
+        await this.actor.update({ "system.acoes": acoes });
+      });
+    });
+    // Adicionar traço
+    root.querySelector(".btn-add-traco")?.addEventListener("click", async () => {
+      const tracos = foundry.utils.deepClone(this.actor.system.tracos ?? []);
+      tracos.push({ nome: "Novo Traço", desc: "" });
+      await this.actor.update({ "system.tracos": tracos });
+    });
+    // Remover traço
+    root.querySelectorAll(".btn-del-traco").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const idx = Number(btn.dataset.idx);
+        const tracos = foundry.utils.deepClone(this.actor.system.tracos ?? []);
+        tracos.splice(idx, 1);
+        await this.actor.update({ "system.tracos": tracos });
+      });
+    });
+    // Rolar ação (ataque ou dano)
+    root.querySelectorAll(".btn-rolar-acao").forEach(btn => {
+      btn.addEventListener("click", () => this._rolarAcao(Number(btn.dataset.idx)));
+    });
+    // Rolar atributo
+    root.querySelectorAll(".npc-atrib-roll").forEach(btn => {
+      btn.addEventListener("click", () => this._rolarAtributo(btn.dataset.attr));
+    });
+  }
+
+  async _rolarAtributo(attr) {
+    const dado = this.actor.system.atributos?.[attr] ?? "d6";
+    const roll = await new Roll(`1${dado}`).roll();
+    const abbr = SINFONIA.ATRIBUTOS[attr]?.abbr ?? attr.toUpperCase();
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: `${this.actor.name} — teste de ${abbr}`
+    });
+  }
+
+  async _rolarAcao(idx) {
+    const acao = this.actor.system.acoes?.[idx];
+    if (!acao) return;
+    // Substitui @attr pelos dados do monstro
+    let formula = (acao.formula || "").trim();
+    if (!formula) {
+      // Sem fórmula: só posta o card descritivo
+      await ChatMessage.implementation.create({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        content: `<div class="sinfonia-hab-card"><div class="hab-card-header"><span class="hab-card-nome">${acao.nome}</span></div><div class="hab-card-desc">${acao.desc || ""}</div></div>`
+      });
+      return;
+    }
+    const subs = {
+      pod: `1${this.actor.system.atributos?.pod ?? "d6"}`,
+      agi: `1${this.actor.system.atributos?.agi ?? "d6"}`,
+      int: `1${this.actor.system.atributos?.int ?? "d6"}`,
+      car: `1${this.actor.system.atributos?.car ?? "d6"}`,
+      mis: `1${this.actor.system.atributos?.mis ?? "d6"}`
+    };
+    for (const [k, v] of Object.entries(subs)) formula = formula.replaceAll(`@${k}`, v);
+
+    let roll;
+    try {
+      roll = await new Roll(formula).roll();
+    } catch (err) {
+      ui.notifications.warn(`Fórmula inválida em "${acao.nome}": ${acao.formula}`);
+      return;
+    }
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: `<b>${acao.nome}</b>${acao.desc ? ` — ${acao.desc}` : ""}`
+    });
   }
 }
