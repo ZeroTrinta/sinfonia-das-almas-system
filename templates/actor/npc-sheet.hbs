@@ -128,18 +128,20 @@
 
         {{!-- Pane: ACERTO --}}
         <div class="npc-acao-pane active" data-pane="acerto">
+          <label class="npc-acao-field-label">Fórmula de acerto</label>
           <div class="npc-acao-roll-row">
-            <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formulaAcerto" value="{{this.formulaAcerto}}" placeholder="Fórmula de acerto (ex: 1d20+5, @pod+3)"/>
-            <button type="button" class="btn-rolar-acerto npc-roll-btn acerto" data-idx="{{@index}}" title="Rolar acerto"><i class="fas fa-dice-d20"></i> Rolar</button>
+            <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formulaAcerto" value="{{this.formulaAcerto}}" placeholder="ex: 1d20+5, @pod+3"/>
+            <button type="button" class="btn-rolar-acerto npc-roll-btn acerto" data-idx="{{@index}}" title="Rolar acerto"><i class="fas fa-dice-d20"></i> Rolar Acerto</button>
           </div>
         </div>
 
         {{!-- Pane: DANO --}}
         <div class="npc-acao-pane" data-pane="dano">
+          <label class="npc-acao-field-label">Fórmula de dano + tipo</label>
           <div class="npc-acao-roll-row">
-            <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formulaDano" value="{{this.formulaDano}}" placeholder="Fórmula de dano (ex: 2d10+4, @pod+5)"/>
-            <input class="npc-acao-tipodano" type="text" name="system.acoes.{{@index}}.tipoDano" value="{{this.tipoDano}}" placeholder="tipo (fogo, corte…)"/>
-            <button type="button" class="btn-rolar-dano-acao npc-roll-btn dano" data-idx="{{@index}}" title="Rolar dano"><i class="fas fa-burst"></i> Rolar</button>
+            <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formulaDano" value="{{this.formulaDano}}" placeholder="ex: 2d10+4, @pod+5"/>
+            <input class="npc-acao-tipodano" type="text" name="system.acoes.{{@index}}.tipoDano" value="{{this.tipoDano}}" placeholder="fogo, corte…"/>
+            <button type="button" class="btn-rolar-dano-acao npc-roll-btn dano" data-idx="{{@index}}" title="Rolar dano"><i class="fas fa-burst"></i> Rolar Dano</button>
           </div>
         </div>
 
