@@ -243,7 +243,14 @@ export class NpcDataModel extends BaseActorModel {
                     choices: ["acao", "parcial", "reacao", "livre", "especial"] }),
         custoPE:  new NumberField({ required: true, integer: true, min: 0, initial: 0 }),
         rolavel:  new BooleanField({ required: true, initial: false }),
+        // Fórmula legada (mantida por compatibilidade — usada como dano se as novas estiverem vazias)
         formula:  new StringField({ required: true, blank: true, initial: "" }),
+        // Fórmula de ACERTO (ataque vs Defesa). Ex: 1d20+5, @pod+3
+        formulaAcerto: new StringField({ required: true, blank: true, initial: "" }),
+        // Fórmula de DANO. Ex: 2d10+4, @pod+5
+        formulaDano:   new StringField({ required: true, blank: true, initial: "" }),
+        // Tipo de dano (corte, fogo, ácido...) — usado pra resistências elementais
+        tipoDano:      new StringField({ required: true, blank: true, initial: "" }),
         desc:     new StringField({ required: true, blank: true, initial: "" })
       }), { required: false, initial: [] }),
 

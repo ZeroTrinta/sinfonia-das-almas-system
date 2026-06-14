@@ -116,10 +116,33 @@
           <span class="npc-acao-pe">
             <input type="number" name="system.acoes.{{@index}}.custoPE" value="{{this.custoPE}}" min="0" title="Custo PE"/> PE
           </span>
-          <button type="button" class="btn-rolar-acao" data-idx="{{@index}}" title="Rolar"><i class="fas fa-dice-d20"></i></button>
+          <button type="button" class="btn-postar-acao" data-idx="{{@index}}" title="Postar descrição no chat"><i class="fas fa-comment"></i></button>
           <button type="button" class="btn-del-acao" data-idx="{{@index}}" title="Remover"><i class="fas fa-trash"></i></button>
         </div>
-        <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formula" value="{{this.formula}}" placeholder="Fórmula de dano (ex: 2d10+4, @pod+5) — deixe vazio se não rola"/>
+
+        {{!-- Abas internas: Acerto / Dano --}}
+        <div class="npc-acao-subtabs">
+          <button type="button" class="npc-acao-subtab active" data-subtab="acerto"><i class="fas fa-crosshairs"></i> Acerto</button>
+          <button type="button" class="npc-acao-subtab" data-subtab="dano"><i class="fas fa-burst"></i> Dano</button>
+        </div>
+
+        {{!-- Pane: ACERTO --}}
+        <div class="npc-acao-pane active" data-pane="acerto">
+          <div class="npc-acao-roll-row">
+            <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formulaAcerto" value="{{this.formulaAcerto}}" placeholder="Fórmula de acerto (ex: 1d20+5, @pod+3)"/>
+            <button type="button" class="btn-rolar-acerto npc-roll-btn acerto" data-idx="{{@index}}" title="Rolar acerto"><i class="fas fa-dice-d20"></i> Rolar</button>
+          </div>
+        </div>
+
+        {{!-- Pane: DANO --}}
+        <div class="npc-acao-pane" data-pane="dano">
+          <div class="npc-acao-roll-row">
+            <input class="npc-acao-formula" type="text" name="system.acoes.{{@index}}.formulaDano" value="{{this.formulaDano}}" placeholder="Fórmula de dano (ex: 2d10+4, @pod+5)"/>
+            <input class="npc-acao-tipodano" type="text" name="system.acoes.{{@index}}.tipoDano" value="{{this.tipoDano}}" placeholder="tipo (fogo, corte…)"/>
+            <button type="button" class="btn-rolar-dano-acao npc-roll-btn dano" data-idx="{{@index}}" title="Rolar dano"><i class="fas fa-burst"></i> Rolar</button>
+          </div>
+        </div>
+
         <textarea class="npc-acao-desc" name="system.acoes.{{@index}}.desc" rows="2" placeholder="Descrição do efeito">{{this.desc}}</textarea>
       </div>
       {{else}}

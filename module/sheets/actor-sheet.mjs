@@ -1547,7 +1547,7 @@ export class SinfoniaNpcSheet extends ActorSheet {
     // Adicionar ação
     root.querySelector(".btn-add-acao")?.addEventListener("click", async () => {
       const acoes = foundry.utils.deepClone(this.actor.system.acoes ?? []);
-      acoes.push({ nome: "Nova Ação", tipo: "acao", custoPE: 0, rolavel: false, formula: "", desc: "" });
+      acoes.push({ nome: "Nova Ação", tipo: "acao", custoPE: 0, rolavel: false, formula: "", formulaAcerto: "", formulaDano: "", tipoDano: "", desc: "" });
       await this.actor.update({ "system.acoes": acoes });
     });
     // Remover ação
@@ -1574,9 +1574,27 @@ export class SinfoniaNpcSheet extends ActorSheet {
         await this.actor.update({ "system.tracos": tracos });
       });
     });
-    // Rolar ação (ataque ou dano)
-    root.querySelectorAll(".btn-rolar-acao").forEach(btn => {
-      btn.addEventListener("click", () => this._rolarAcao(Number(btn.dataset.idx)));
+    // Rolar ACERTO de uma ação
+    root.querySelectorAll(".btn-rolar-acerto").forEach(btn => {
+      btn.addEventListener("click", () => this._rolarAcerto(Number(btn.dataset.idx)));
+    });
+    // Rolar DANO de uma ação
+    root.querySelectorAll(".btn-rolar-dano-acao").forEach(btn => {
+      btn.addEventListener("click", () => this._rolarDanoAcao(Number(btn.dataset.idx)));
+    });
+    // Postar card descritivo da ação (sem rolagem)
+    root.querySelectorAll(".btn-postar-acao").forEach(btn => {
+      btn.addEventListener("click", () => this._postarAcao(Number(btn.dataset.idx)));
+    });
+    // Alternar abas internas de cada ação (Acerto / Dano)
+    root.querySelectorAll(".npc-acao-subtab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const card = tab.closest(".npc-acao");
+        const alvo = tab.dataset.subtab;
+        card.querySelectorAll(".npc-acao-subtab").forEach(t => t.classList.toggle("active", t === tab));
+        card.querySelectorAll(".npc-acao-pane").forEach(p =>
+          p.classList.toggle("active", p.dataset.pane === alvo));
+      });
     });
     // Rolar atributo
     root.querySelectorAll(".npc-atrib-roll").forEach(btn => {
@@ -1594,19 +1612,9 @@ export class SinfoniaNpcSheet extends ActorSheet {
     });
   }
 
-  async _rolarAcao(idx) {
-    const acao = this.actor.system.acoes?.[idx];
-    if (!acao) return;
-    // Substitui @attr pelos dados do monstro
-    let formula = (acao.formula || "").trim();
-    if (!formula) {
-      // Sem fórmula: só posta o card descritivo
-      await ChatMessage.implementation.create({
-        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-        content: `<div class="sinfonia-hab-card"><div class="hab-card-header"><span class="hab-card-nome">${acao.nome}</span></div><div class="hab-card-desc">${acao.desc || ""}</div></div>`
-      });
-      return;
-    }
+  /** Resolve @attr → dado do monstro numa fórmula. */
+  _resolverFormula(formula) {
+    let f = (formula || "").trim();
     const subs = {
       pod: `1${this.actor.system.atributos?.pod ?? "d6"}`,
       agi: `1${this.actor.system.atributos?.agi ?? "d6"}`,
@@ -1614,18 +1622,80 @@ export class SinfoniaNpcSheet extends ActorSheet {
       car: `1${this.actor.system.atributos?.car ?? "d6"}`,
       mis: `1${this.actor.system.atributos?.mis ?? "d6"}`
     };
-    for (const [k, v] of Object.entries(subs)) formula = formula.replaceAll(`@${k}`, v);
+    for (const [k, v] of Object.entries(subs)) f = f.replaceAll(`@${k}`, v);
+    return f;
+  }
 
-    let roll;
-    try {
-      roll = await new Roll(formula).roll();
-    } catch (err) {
-      ui.notifications.warn(`Fórmula inválida em "${acao.nome}": ${acao.formula}`);
+  /** Rola o ACERTO da ação (ataque vs Defesa do alvo). */
+  async _rolarAcerto(idx) {
+    const acao = this.actor.system.acoes?.[idx];
+    if (!acao) return;
+    const formula = this._resolverFormula(acao.formulaAcerto);
+    if (!formula) {
+      ui.notifications.warn(`"${acao.nome}" não tem fórmula de acerto.`);
       return;
     }
+    let roll;
+    try { roll = await new Roll(formula).roll(); }
+    catch { ui.notifications.warn(`Fórmula de acerto inválida: ${acao.formulaAcerto}`); return; }
     await roll.toMessage({
       speaker: ChatMessage.getSpeaker({ actor: this.actor }),
-      flavor: `<b>${acao.nome}</b>${acao.desc ? ` — ${acao.desc}` : ""}`
+      flavor: `⚔ <b>${acao.nome}</b> — Acerto`
+    });
+  }
+
+  /** Rola o DANO da ação e posta com botão "Aplicar Dano" (respeita resistências). */
+  async _rolarDanoAcao(idx) {
+    const acao = this.actor.system.acoes?.[idx];
+    if (!acao) return;
+    // Usa formulaDano; cai pra formula legada se a nova estiver vazia
+    const fonte = acao.formulaDano || acao.formula || "";
+    const formula = this._resolverFormula(fonte);
+    if (!formula) {
+      ui.notifications.warn(`"${acao.nome}" não tem fórmula de dano.`);
+      return;
+    }
+    let roll;
+    try { roll = await new Roll(formula).roll(); }
+    catch { ui.notifications.warn(`Fórmula de dano inválida: ${fonte}`); return; }
+
+    const total = roll.total;
+    const tipoDano = acao.tipoDano || "";
+    const content = `
+      <div class="sinfonia-dano-roll">
+        <div class="dano-header"><b>${acao.nome}</b> — Dano</div>
+        <div class="dano-resultado">
+          <span class="total">${total}</span>
+          ${tipoDano ? `<span class="dano-tipo">${tipoDano}</span>` : ""}
+        </div>
+        <div class="dano-acoes">
+          <button type="button" class="btn-aplicar-dano" data-dano="${total}"${tipoDano ? ` data-tipo-dano="${tipoDano}"` : ""}>
+            <i class="fas fa-heart-broken"></i> Aplicar Dano
+          </button>
+        </div>
+      </div>`;
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content,
+      flavor: ""
+    });
+  }
+
+  /** Posta o card descritivo da ação (sem rolagem). */
+  async _postarAcao(idx) {
+    const acao = this.actor.system.acoes?.[idx];
+    if (!acao) return;
+    const tipoLabels = { acao: "Ação", parcial: "Ação Parcial", reacao: "Reação", livre: "Ação Livre", especial: "Especial" };
+    const tags = [`<span class="hab-card-tag">${tipoLabels[acao.tipo] ?? acao.tipo}</span>`];
+    if (acao.custoPE > 0) tags.push(`<span class="hab-card-tag">⚡ ${acao.custoPE} PE</span>`);
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      content: `
+        <div class="sinfonia-hab-card">
+          <div class="hab-card-header"><span class="hab-card-nome">${acao.nome}</span></div>
+          <div class="hab-card-tags">${tags.join(" ")}</div>
+          <div class="hab-card-desc">${acao.desc || ""}</div>
+        </div>`
     });
   }
 }

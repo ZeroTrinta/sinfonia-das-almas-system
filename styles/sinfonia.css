@@ -4933,13 +4933,15 @@
   border-bottom: 1px solid #2a2440;
 }
 .npc-v2 .npc-stat {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
   padding: 8px 4px;
   background: #0d0a18;
+  text-align: center;
 }
 .npc-v2 .npc-stat-label {
   font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 1px;
   color: var(--silver-dim); text-transform: uppercase;
+  width: 100%; text-align: center;
 }
 .npc-v2 .npc-stat.atrib { cursor: pointer; transition: background 0.2s ease; }
 .npc-v2 .npc-stat.atrib:hover { background: color-mix(in srgb, var(--npc-accent) 18%, #0d0a18); }
@@ -4947,13 +4949,15 @@
   font-family: 'Cinzel', serif; font-size: 17px; font-weight: 600;
   color: var(--npc-accent-l); background: transparent; border: none;
   text-align: center; cursor: pointer; text-align-last: center;
+  width: 100%; padding: 0; margin: 0;
+  -webkit-appearance: none; -moz-appearance: none; appearance: none;
 }
 .npc-v2 .npc-stat.atrib:hover .npc-dado-select { text-shadow: 0 0 8px var(--npc-accent); }
-.npc-v2 .npc-stat-sub { font-size: 8px; color: var(--silver-dim); text-transform: uppercase; letter-spacing: 1px; }
+.npc-v2 .npc-stat-sub { font-size: 8px; color: var(--silver-dim); text-transform: uppercase; letter-spacing: 1px; width: 100%; text-align: center; }
 .npc-v2 .npc-stat.derived input {
   font-family: 'Cinzel', serif; font-size: 17px; font-weight: 600;
   color: var(--gold-light); background: transparent; border: none;
-  text-align: center; width: 100%;
+  text-align: center; width: 100%; padding: 0;
 }
 
 /* Resistências elementais */
@@ -5003,18 +5007,20 @@
   background: #0d0a18; border: 1px solid #2a2440; border-left: 2px solid var(--npc-accent);
   padding: 8px 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 5px;
 }
-.npc-v2 .npc-acao-head { display: flex; align-items: center; gap: 5px; }
+.npc-v2 .npc-acao-head { display: flex; align-items: center; gap: 6px; }
 .npc-v2 .npc-acao-nome {
-  flex: 1; font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600;
+  flex: 1; min-width: 0; font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600;
   color: var(--npc-accent-l); background: transparent; border: none; border-bottom: 1px solid transparent;
+  height: 26px; line-height: 26px;
 }
 .npc-v2 .npc-acao-nome:hover { border-bottom-color: #2a2440; }
-.npc-v2 .npc-acao-tipo { font-size: 10px; width: 70px; padding: 2px; }
-.npc-v2 .npc-acao-pe { font-size: 10px; color: var(--silver-dim); display: inline-flex; align-items: center; gap: 2px; }
-.npc-v2 .npc-acao-pe input { width: 34px; text-align: center; padding: 1px; }
-.npc-v2 .btn-rolar-acao, .npc-v2 .btn-del-acao, .npc-v2 .btn-del-traco {
+.npc-v2 .npc-acao-tipo { font-size: 10px; width: 72px; height: 26px; padding: 0 4px; flex: 0 0 auto; }
+.npc-v2 .npc-acao-pe { font-size: 10px; color: var(--silver-dim); display: inline-flex; align-items: center; gap: 3px; height: 26px; flex: 0 0 auto; white-space: nowrap; }
+.npc-v2 .npc-acao-pe input { width: 38px; height: 26px; text-align: center; padding: 0 2px; }
+.npc-v2 .btn-rolar-acao, .npc-v2 .btn-del-acao, .npc-v2 .btn-del-traco, .npc-v2 .btn-postar-acao {
   background: transparent; border: 1px solid #2a2440; color: var(--silver-dim);
-  width: 24px; height: 24px; cursor: pointer; transition: all 0.15s ease;
+  width: 26px; height: 26px; flex: 0 0 auto; cursor: pointer; transition: all 0.15s ease;
+  display: inline-flex; align-items: center; justify-content: center; padding: 0;
 }
 .npc-v2 .btn-rolar-acao:hover { border-color: var(--gold); color: var(--gold-light); text-shadow: 0 0 6px var(--gold); }
 .npc-v2 .btn-del-acao:hover, .npc-v2 .btn-del-traco:hover { border-color: #c84040; color: #ff8a8a; }
@@ -5110,7 +5116,99 @@
 }
 .sinfonia-dano.imune b { color: #5bc8ff; }
 
+/* ================================================================
+   v0.8.5 — Ações do NPC com abas internas (Acerto / Dano)
+================================================================ */
+.npc-v2 .npc-acao-subtabs {
+  display: flex;
+  gap: 0;
+  margin-top: 2px;
+  border-bottom: 1px solid #2a2440;
+}
+.npc-v2 .npc-acao-subtab {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--silver-dim);
+  cursor: pointer;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.npc-v2 .npc-acao-subtab:hover { color: var(--npc-accent-l); }
+.npc-v2 .npc-acao-subtab.active {
+  color: var(--npc-accent-l);
+  border-bottom-color: var(--npc-accent);
+}
+.npc-v2 .npc-acao-subtab[data-subtab="dano"].active {
+  color: #ff8a7a;
+  border-bottom-color: #c84040;
+}
 
-
-
-
+.npc-v2 .npc-acao-pane { display: none; padding: 6px 0; }
+.npc-v2 .npc-acao-pane.active { display: block; }
+.npc-v2 .npc-acao-roll-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.npc-v2 .npc-acao-roll-row .npc-acao-formula {
+  flex: 1;
+  font-size: 11px;
+  font-family: monospace;
+  padding: 4px 7px;
+}
+.npc-v2 .npc-acao-tipodano {
+  width: 110px;
+  font-size: 11px;
+  padding: 4px 7px;
+}
+.npc-v2 .npc-roll-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.18s ease;
+}
+.npc-v2 .npc-roll-btn.acerto {
+  background: color-mix(in srgb, var(--npc-accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--npc-accent) 40%, transparent);
+  color: var(--npc-accent-l);
+}
+.npc-v2 .npc-roll-btn.acerto:hover {
+  background: color-mix(in srgb, var(--npc-accent) 28%, transparent);
+  text-shadow: 0 0 6px var(--npc-accent);
+}
+.npc-v2 .npc-roll-btn.dano {
+  background: rgba(200,64,64,0.14);
+  border: 1px solid rgba(200,64,64,0.45);
+  color: #ff8a7a;
+}
+.npc-v2 .npc-roll-btn.dano:hover {
+  background: rgba(200,64,64,0.28);
+  text-shadow: 0 0 6px #c84040;
+}
+.npc-v2 .btn-postar-acao {
+  background: transparent;
+  border: 1px solid #2a2440;
+  color: var(--silver-dim);
+  width: 24px; height: 24px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.npc-v2 .btn-postar-acao:hover {
+  border-color: var(--npc-accent);
+  color: var(--npc-accent-l);
+}
