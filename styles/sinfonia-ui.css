@@ -396,3 +396,31 @@
 .window-app ::-webkit-scrollbar-thumb:hover {
   background: var(--sn-gold);
 }
+
+/* ================================================================
+   SELECTS / DROPDOWNS — fundo escuro nas opções (corrige dropdown branco)
+   O <option> herda o fundo branco do SO por padrão. Forçamos escuro
+   em todos os selects do sistema.
+================================================================ */
+.sinfonia-das-almas select,
+.sinfonia-sheet select,
+.npc-v2 select,
+.sinfonia-item-v2 select {
+  background-color: var(--sn-bg-panel, #0b0f18);
+  color: var(--sn-text, #ddd0b8);
+}
+.sinfonia-das-almas select option,
+.sinfonia-sheet select option,
+.npc-v2 select option,
+.sinfonia-item-v2 select option,
+.sinfonia-das-almas optgroup,
+.sinfonia-sheet optgroup {
+  background-color: #0b0f18 !important;
+  color: #ddd0b8 !important;
+}
+/* Dialogs do sistema (DialogV2) também */
+.dialog .sinfonia-dialog-rolagem select option,
+.application select option {
+  background-color: #0b0f18 !important;
+  color: #ddd0b8 !important;
+}

@@ -1,14 +1,4835 @@
+/* ================================================================
+   SINFONIA DAS ALMAS — Foundry VTT System Stylesheet
+   v2 — Correções de UI: dropdown, barras brancas, layout header
+================================================================ */
+
+/* ── Reset geral da janela do Foundry ── */
+.app.sheet.actor.sinfonia-das-almas,
+.app.sheet.item.sinfonia-das-almas {
+  background: #06080d !important;
+  box-shadow: 0 0 40px rgba(0,0,0,0.8) !important;
+}
+
+/* Remove bordas/fundos brancos que o Foundry injeta */
+.app.sheet.actor.sinfonia-das-almas .window-content,
+.app.sheet.item.sinfonia-das-almas .window-content {
+  background: #06080d !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  border: none !important;
+}
+
+/* Barra de título da janela */
+.app.sheet.actor.sinfonia-das-almas .window-header,
+.app.sheet.item.sinfonia-das-almas .window-header {
+  background: #0d1020 !important;
+  border-bottom: 1px solid rgba(200,151,42,0.4) !important;
+  color: #f0c060 !important;
+}
+
+.app.sheet.actor.sinfonia-das-almas .window-header .window-title,
+.app.sheet.item.sinfonia-das-almas .window-header .window-title {
+  color: #f0c060 !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 13px !important;
+  letter-spacing: 2px !important;
+}
+
+.app.sheet.actor.sinfonia-das-almas .window-header a,
+.app.sheet.item.sinfonia-das-almas .window-header a {
+  color: #7888a0 !important;
+}
+.app.sheet.actor.sinfonia-das-almas .window-header a:hover,
+.app.sheet.item.sinfonia-das-almas .window-header a:hover {
+  color: #f0c060 !important;
+}
+
+/* Scrollbar da sheet */
+.sinfonia-sheet ::-webkit-scrollbar { width: 4px; height: 4px; }
+.sinfonia-sheet ::-webkit-scrollbar-track { background: transparent; }
+.sinfonia-sheet ::-webkit-scrollbar-thumb { background: #6b4e12; border-radius: 2px; }
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+/* ── Tokens / Variáveis ── */
+.sinfonia-sheet,
+.sinfonia-roll,
+.sinfonia-magia,
+.sinfonia-dano,
+.sinfonia-cura {
+  --gold:        #c8972a;
+  --gold-light:  #f0c060;
+  --gold-dim:    #6b4e12;
+  --bg:          #06080d;
+  --bg-panel:    #0b0f18;
+  --border:      rgba(200,151,42,0.35);
+  --text:        #ddd0b8;
+  --silver:      #c8d0e0;
+  --silver-dim:  #7888a0;
+  --heart:       #d43060;
+  --pv-color:    #4caf50;
+  --pe-color:    #4a9eff;
+  --pi-color:    #f0c060;
+  --det-color:   #c8972a;
+  --cor-color:   #c84040;
+}
+
+/* ================================================================
+   v0.7.5 — TEMAS POR CLASSE
+   Quando uma classe é escolhida no banner, a div raiz ganha a classe
+   `cls-<classe>` e estas variáveis sobrescrevem o dourado padrão.
+   Como TODA a ficha usa --gold/--gold-light/--gold-dim/--border,
+   a mudança é global: bordas, títulos, botões, tabs, glows.
+================================================================ */
+
+/* 🗡 GUERREIRO — vermelho carmesim, sangue e aço */
+.sinfonia-sheet.cls-guerreiro {
+  --gold:        #c84040;
+  --gold-light:  #ff8a7a;
+  --gold-dim:    #5e1f1a;
+  --border:      rgba(200, 64, 64, 0.35);
+  --pi-color:    #ff8a7a;
+}
+
+/* 🌑 GATUNO — ciano das sombras, lâmina na névoa */
+.sinfonia-sheet.cls-gatuno {
+  --gold:        #2fa8ba;
+  --gold-light:  #7fe4f4;
+  --gold-dim:    #14444d;
+  --border:      rgba(64, 184, 200, 0.35);
+  --pi-color:    #7fe4f4;
+}
+
+/* 🏹 ARQUEIRO — verde da mata, olhar de águia */
+.sinfonia-sheet.cls-arqueiro {
+  --gold:        #4aa84a;
+  --gold-light:  #8af08a;
+  --gold-dim:    #1d4a1d;
+  --border:      rgba(88, 200, 88, 0.35);
+  --pi-color:    #8af08a;
+}
+
+/* ✦ MAGO — roxo arcano, tecelagem mística */
+.sinfonia-sheet.cls-mago {
+  --gold:        #8a5ce0;
+  --gold-light:  #c39aff;
+  --gold-dim:    #392560;
+  --border:      rgba(144, 96, 232, 0.35);
+  --pi-color:    #c39aff;
+}
+
+/* ☀ SACERDOTE — dourado luminoso, luz divina */
+.sinfonia-sheet.cls-sacerdote {
+  --gold:        #e0b34a;
+  --gold-light:  #ffe9a8;
+  --gold-dim:    #6e5824;
+  --border:      rgba(240, 192, 96, 0.45);
+  --pi-color:    #ffe9a8;
+}
+
+/* Transição suave quando o tema muda (afeta os elementos que usam as vars) */
+.sinfonia-sheet .sheet-banner,
+.sinfonia-sheet .rail-stat,
+.sinfonia-sheet .atrib-card,
+.sinfonia-sheet .right-tabs .vtab,
+.sinfonia-sheet .res-card,
+.sinfonia-sheet .panel,
+.sinfonia-sheet .rail-btn-arvore,
+.sinfonia-sheet .rail-btn-secondary,
+.sinfonia-sheet .banner-classe {
+  transition: border-color 0.5s ease, color 0.5s ease, background 0.5s ease, box-shadow 0.5s ease;
+}
+
+/* ── Realces temáticos extras por classe ── */
+
+/* Glow sutil no banner com a cor da classe */
+.sinfonia-sheet.cls-guerreiro .sheet-banner,
+.sinfonia-sheet.cls-gatuno   .sheet-banner,
+.sinfonia-sheet.cls-arqueiro .sheet-banner,
+.sinfonia-sheet.cls-mago     .sheet-banner,
+.sinfonia-sheet.cls-sacerdote .sheet-banner {
+  box-shadow: inset 0 -14px 30px -22px var(--gold);
+  border-bottom: 1px solid var(--border);
+}
+
+/* Select de classe ganha destaque com a cor do tema */
+.sinfonia-sheet.cls-guerreiro .banner-classe,
+.sinfonia-sheet.cls-gatuno   .banner-classe,
+.sinfonia-sheet.cls-arqueiro .banner-classe,
+.sinfonia-sheet.cls-mago     .banner-classe,
+.sinfonia-sheet.cls-sacerdote .banner-classe {
+  border-color: var(--gold) !important;
+  color: var(--gold-light) !important;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+
+/* Avatar do banner com anel da cor da classe */
+.sinfonia-sheet.cls-guerreiro .banner-avatar,
+.sinfonia-sheet.cls-gatuno   .banner-avatar,
+.sinfonia-sheet.cls-arqueiro .banner-avatar,
+.sinfonia-sheet.cls-mago     .banner-avatar,
+.sinfonia-sheet.cls-sacerdote .banner-avatar {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--gold) 45%, transparent);
+}
+
+/* Retrato da rail com borda temática */
+.sinfonia-sheet.cls-guerreiro .rail-portrait img,
+.sinfonia-sheet.cls-gatuno   .rail-portrait img,
+.sinfonia-sheet.cls-arqueiro .rail-portrait img,
+.sinfonia-sheet.cls-mago     .rail-portrait img,
+.sinfonia-sheet.cls-sacerdote .rail-portrait img {
+  border-color: var(--gold-dim);
+  box-shadow: 0 4px 18px color-mix(in srgb, var(--gold) 25%, transparent);
+}
+
+/* ── Símbolo da classe ao lado do select ── */
+.banner-meta { position: relative; }
+.sinfonia-sheet .banner-classe { padding-left: 26px !important; }
+.sinfonia-sheet.cls-guerreiro .banner-meta::before,
+.sinfonia-sheet.cls-gatuno    .banner-meta::before,
+.sinfonia-sheet.cls-arqueiro  .banner-meta::before,
+.sinfonia-sheet.cls-mago      .banner-meta::before,
+.sinfonia-sheet.cls-sacerdote .banner-meta::before {
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--gold-light);
+  text-shadow: 0 0 8px var(--gold);
+  pointer-events: none;
+  z-index: 2;
+  line-height: 1;
+}
+.sinfonia-sheet.cls-guerreiro .banner-meta::before { content: "⚔"; }
+.sinfonia-sheet.cls-gatuno    .banner-meta::before { content: "☾"; }
+.sinfonia-sheet.cls-arqueiro  .banner-meta::before { content: "➶"; }
+.sinfonia-sheet.cls-mago      .banner-meta::before { content: "✦"; }
+.sinfonia-sheet.cls-sacerdote .banner-meta::before { content: "☀"; }
+
+/* ================================================================
+   v0.7.5 — POLISH GERAL
+================================================================ */
+
+/* Cards de atributo: elevação no hover + select com cor temática */
+.sinfonia-sheet .atrib-card {
+  position: relative;
+  transition: transform 0.18s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.sinfonia-sheet .atrib-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--gold) !important;
+  box-shadow: 0 6px 16px -8px var(--gold);
+}
+.sinfonia-sheet .atrib-card .atrib-dado {
+  font-weight: 600;
+  transition: color 0.25s ease, text-shadow 0.25s ease;
+}
+.sinfonia-sheet .atrib-card:hover .atrib-dado {
+  color: var(--gold-light);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 60%, transparent);
+}
+
+/* Tab vertical ativa: barra lateral pulsante na cor do tema */
+.sinfonia-sheet .right-tabs .vtab {
+  position: relative;
+  overflow: hidden;
+}
+.sinfonia-sheet .right-tabs .vtab::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 15%;
+  bottom: 15%;
+  width: 2px;
+  background: var(--gold);
+  opacity: 0;
+  transition: opacity 0.25s ease, top 0.25s ease, bottom 0.25s ease;
+}
+.sinfonia-sheet .right-tabs .vtab.active::before {
+  opacity: 1;
+  top: 6%;
+  bottom: 6%;
+  box-shadow: 0 0 8px var(--gold);
+}
+.sinfonia-sheet .right-tabs .vtab:hover .vtab-icon {
+  text-shadow: 0 0 10px var(--gold);
+  transform: scale(1.12);
+}
+.sinfonia-sheet .right-tabs .vtab .vtab-icon {
+  transition: text-shadow 0.2s ease, transform 0.2s ease;
+  display: inline-block;
+}
+
+/* Nome do personagem: sublinhado animado no foco */
+.sinfonia-sheet .banner-name {
+  background-image: linear-gradient(var(--gold), var(--gold));
+  background-size: 0% 1.5px;
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  transition: background-size 0.35s ease;
+}
+.sinfonia-sheet .banner-name:focus {
+  background-size: 100% 1.5px;
+  outline: none;
+}
+
+/* Cards de recurso (PV/PE/PI): brilho sutil no hover */
+.sinfonia-sheet .res-card {
+  transition: box-shadow 0.25s ease, transform 0.18s ease;
+}
+.sinfonia-sheet .res-card:hover {
+  transform: translateY(-1px);
+}
+.sinfonia-sheet .res-card.pv:hover { box-shadow: 0 4px 14px -6px var(--pv-color); }
+.sinfonia-sheet .res-card.pe:hover { box-shadow: 0 4px 14px -6px var(--pe-color); }
+.sinfonia-sheet .res-card.pi:hover { box-shadow: 0 4px 14px -6px var(--pi-color); }
+
+/* Botões da rail: animação de brilho */
+.sinfonia-sheet .rail-btn-arvore:hover .rail-btn-icon,
+.sinfonia-sheet .rail-btn-secondary:hover .rail-btn-icon {
+  text-shadow: 0 0 12px var(--gold);
+}
+
+/* Inputs numéricos: glow no foco com a cor do tema */
+.sinfonia-sheet input[type="number"]:focus,
+.sinfonia-sheet input[type="text"]:focus,
+.sinfonia-sheet select:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--gold) 40%, transparent);
+  outline: none;
+}
+
+/* Scrollbar temática */
+.sinfonia-sheet ::-webkit-scrollbar-thumb {
+  background: var(--gold-dim);
+}
+.sinfonia-sheet ::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
+/* ── Barra de título da janela tematizada por classe (via :has) ── */
+.app.sheet.actor.sinfonia-das-almas:has(.cls-guerreiro) .window-header {
+  border-bottom-color: rgba(200, 64, 64, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-guerreiro) .window-header .window-title { color: #ff8a7a !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-gatuno) .window-header {
+  border-bottom-color: rgba(64, 184, 200, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-gatuno) .window-header .window-title { color: #7fe4f4 !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-arqueiro) .window-header {
+  border-bottom-color: rgba(88, 200, 88, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-arqueiro) .window-header .window-title { color: #8af08a !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-mago) .window-header {
+  border-bottom-color: rgba(144, 96, 232, 0.5) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-mago) .window-header .window-title { color: #c39aff !important; }
+
+.app.sheet.actor.sinfonia-das-almas:has(.cls-sacerdote) .window-header {
+  border-bottom-color: rgba(240, 192, 96, 0.6) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-sacerdote) .window-header .window-title { color: #ffe9a8 !important; }
+
+/* ── Base da ficha ── */
+.sinfonia-sheet {
+  font-family: 'EB Garamond', 'Times New Roman', serif;
+  font-size: 15px;
+  color: var(--text);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* V2: window-content precisa de overflow oculto */
+.app.sinfonia-das-almas.sheet .window-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+  background: var(--bg) !important;
+}
+
+/* ── Sheet body scrollável ──
+   Sem isso a ficha fica fixa no tamanho da janela e em monitores menores
+   não dá pra ver o conteúdo inferior. */
+.sinfonia-sheet .sheet-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+.sinfonia-sheet .sheet-body > .tab {
+  padding: 10px 14px;
+}
+
+/* Body da aba precisa rolar internamente (duplicata removida pra unificar com bloco acima) */
+.sinfonia-sheet .sheet-body .tab {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* ── Sheet Header layout ── */
+.sinfonia-sheet .sheet-header {
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  background: linear-gradient(to bottom, #0d1020, #08090f);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  align-items: flex-start;
+}
+
+.header-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.header-top {
+  display: flex;
+  flex-direction: column;
+}
+
+.sinfonia-sheet .actor-avatar {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.sinfonia-sheet .actor-name {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--gold-light);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+  padding: 2px 0 4px;
+  text-shadow: 0 0 12px rgba(200,151,42,0.3);
+  margin-bottom: 6px;
+}
+
+.sinfonia-sheet .actor-name:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+}
+
+/* ── Badges PV/PE/PI ── */
+/* ── Header bottom row ── */
+.header-bottom {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 6px;
+  align-items: end;
+  margin-top: 6px;
+}
+
+.header-bottom .field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header-bottom .field-group label {
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+
+.header-bottom .field-group input,
+.header-bottom .field-group select {
+  width: 100% !important;
+  font-size: 13px !important;
+  padding: 3px 6px !important;
+  height: 28px !important;
+  line-height: 1.2 !important;
+  vertical-align: middle !important;
+  box-sizing: border-box !important;
+}
+
+/* ── Badges PV/PE/PI ── */
+.header-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid;
+  padding: 4px 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+}
+
+.badge.pv   { border-color: var(--pv-color); }
+.badge.pe   { border-color: var(--pe-color); }
+.badge.pi   { border-color: var(--pi-color); }
+
+.badge-label { font-size: 9px; letter-spacing: 1px; }
+.badge.pv .badge-label { color: var(--pv-color); }
+.badge.pe .badge-label { color: var(--pe-color); }
+.badge.pi .badge-label { color: var(--pi-color); }
+
+.badge input {
+  width: 40px;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  font-size: 16px;
+  text-align: center;
+}
+.badge-sep { color: var(--silver-dim); }
+
+/* ── Atributos ── */
+.atributos-section {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.atributo-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #0d1020;
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--gold-dim);
+  padding: 10px 4px 8px;
+  gap: 4px;
+  transition: border-color 0.2s;
+}
+
+.atributo-box:hover {
+  border-color: var(--gold);
+  border-top-color: var(--gold);
+}
+
+.atrib-code {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gold-light);
+  letter-spacing: 2px;
+}
+
+.atrib-label {
+  font-size: 9px;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.dado-select {
+  background: #0d1020 !important;
+  border: 1px solid var(--gold-dim) !important;
+  color: var(--gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 11px !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  width: 100% !important;
+  height: 26px !important;
+  padding: 2px 2px !important;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 1.2 !important;
+}
+
+.dado-select option {
+  background: #0d1020 !important;
+  color: var(--gold-light) !important;
+}
+
+.dado-select:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(200,151,42,0.3) !important;
+  outline: none !important;
+}
+
+/* ── Combate ── */
+.combate-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.combate-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 4px;
+  background: rgba(0,0,0,0.3);
+}
+
+.combate-box label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  margin-bottom: 3px;
+}
+
+.combate-box input {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  color: var(--gold-light);
+  background: transparent;
+  border: none;
+  text-align: center;
+  width: 100%;
+}
+
+/* ── Tabs ── */
+.sinfonia-sheet .sheet-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 14px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.sinfonia-sheet .sheet-tabs .item {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  padding: 8px 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.sinfonia-sheet .sheet-tabs .item:hover { color: var(--silver); }
+.sinfonia-sheet .sheet-tabs .item.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+}
+
+/* ── Sheet Body ── */
+.sinfonia-sheet .sheet-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.sinfonia-sheet .sheet-body::-webkit-scrollbar { width: 4px; }
+.sinfonia-sheet .sheet-body::-webkit-scrollbar-thumb { background: var(--gold-dim); }
+
+/* ── Panels ── */
+.panel {
+  background: #090c14;
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.panel::before,
+.panel::after {
+  content: '';
+  position: absolute;
+  width: 8px; height: 8px;
+  border-color: var(--gold-dim);
+  border-style: solid;
+}
+.panel::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+.panel::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+.panel-title {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(200,151,42,0.2);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ── Inputs globais na ficha — força override no Foundry ── */
+.sinfonia-sheet input[type="text"],
+.sinfonia-sheet input[type="number"],
+.sinfonia-sheet textarea {
+  background: rgba(0,0,0,0.4) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 15px !important;
+  padding: 4px 8px !important;
+}
+
+.sinfonia-sheet select {
+  background: #0d1020 !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 15px !important;
+  padding: 4px 8px !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.sinfonia-sheet select option {
+  background: #0d1020 !important;
+  color: var(--text) !important;
+}
+
+.sinfonia-sheet select optgroup {
+  background: #0d1020 !important;
+  color: var(--silver-dim) !important;
+}
+
+.sinfonia-sheet input:focus,
+.sinfonia-sheet textarea:focus,
+.sinfonia-sheet select:focus {
+  outline: none !important;
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 8px rgba(200,151,42,0.2) !important;
+}
+
+/* ── Items List ── */
+.items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.items-list .item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  background: rgba(0,0,0,0.2);
+  transition: border-color 0.15s;
+}
+
+.items-list .item:hover { border-color: var(--border); }
+
+.item-img { width: 28px; height: 28px; object-fit: cover; flex-shrink: 0; }
+.item-info { flex: 1; }
+.item-nome { display: block; font-size: 15px; color: var(--silver); }
+.item-sub, .item-custo {
+  display: block;
+  font-size: 12px;
+  color: var(--silver-dim);
+  font-style: italic;
+}
+
+.item-controls {
+  display: flex;
+  gap: 6px;
+}
+.item-controls a {
+  color: var(--silver-dim);
+  cursor: pointer;
+  transition: color 0.15s;
+  font-size: 13px;
+}
+.item-controls a:hover { color: var(--gold-light); }
+.item-controls .item-delete:hover { color: #c84040; }
+
+.items-vazio {
+  padding: 8px;
+  color: var(--silver-dim);
+  font-style: italic;
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ── Magias por círculo ── */
+.magia-item .magia-circulo {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.circulo-1 .magia-circulo { border-color: #888; color: #888; }
+.circulo-2 .magia-circulo { border-color: #6060c8; color: #9090e8; }
+.circulo-3 .magia-circulo { border-color: #c8972a; color: var(--gold-light); }
+
+/* ── Perícias ── */
+.pericias-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+}
+
+.pericia-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: 6px;
+  align-items: center;
+  padding: 5px 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: rgba(0,0,0,0.2);
+  transition: border-color 0.15s;
+}
+.pericia-row:hover { border-color: var(--border); }
+
+.pericia-nome { font-size: 15px; color: var(--silver); }
+.pericia-comb { font-family: 'Cinzel', serif; font-size: 8px; color: var(--silver-dim); }
+.pericia-bonus { font-family: 'Cinzel', serif; font-size: 9px; color: var(--silver-dim); min-width: 22px; text-align: right; }
+
+.maestria-sel {
+  background: #0d1020 !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: var(--silver-dim) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 8px !important;
+  padding: 3px 6px !important;
+  cursor: pointer !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+.maestria-sel option {
+  background: #0d1020 !important;
+  color: var(--text) !important;
+}
+
+.maestria-sel.treinado   { border-color: #40a0b0 !important; color: #40a0b0 !important; }
+.maestria-sel.experiente { border-color: #40a060 !important; color: #40a060 !important; }
+
+.pericia-roll {
+  color: var(--silver-dim);
+  cursor: pointer;
+  transition: color 0.15s;
+  font-size: 13px;
+}
+.pericia-roll:hover { color: var(--gold-light); }
+
+/* ── Alma / Soul ── */
+.cabo-de-guerra {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 16px;
+  align-items: center;
+}
+
+.alma-label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.det-label { color: var(--det-color); }
+.cor-label { color: var(--cor-color); }
+
+.alma-bar-track {
+  height: 12px;
+  border: 1px solid;
+  background: rgba(0,0,0,0.5);
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.det-track { border-color: var(--det-color); }
+.cor-track { border-color: var(--cor-color); }
+
+.alma-bar-fill {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+.det-fill { background: linear-gradient(90deg, var(--det-color), #f0c060); }
+.cor-fill { background: linear-gradient(90deg, #801010, var(--cor-color)); }
+
+.alma-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.det-btn, .cor-btn {
+  width: 24px; height: 24px;
+  border: 1px solid;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.det-btn { border-color: var(--det-color); color: var(--det-color); }
+.cor-btn { border-color: var(--cor-color); color: var(--cor-color); }
+.det-btn:hover { background: rgba(200,151,42,0.1); }
+
+.alma-num {
+  width: 40px;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  color: var(--gold-light);
+}
+
+.alma-divider {
+  font-size: 20px;
+  color: var(--silver-dim);
+  text-align: center;
+}
+
+.qual-def-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ── Chat Messages ── */
+.sinfonia-roll {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: #090c14;
+  font-family: 'EB Garamond', serif;
+}
+
+.sinfonia-roll.sucesso { border-left: 3px solid #50c060; }
+.sinfonia-roll.falha   { border-left: 3px solid #c05050; }
+
+.roll-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.actor-name {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--gold);
+  letter-spacing: 1px;
+}
+
+.pericia-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--silver-dim);
+}
+
+.roll-formula {
+  font-size: 13px;
+  color: var(--silver-dim);
+  margin-bottom: 8px;
+}
+
+.maestria { color: var(--gold); }
+.sem-maestria { color: #555; }
+
+.roll-resultado {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(200,151,42,0.15);
+}
+
+.total {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  color: var(--gold-light);
+  text-shadow: 0 0 10px rgba(200,151,42,0.4);
+}
+
+.nd {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  color: var(--silver-dim);
+}
+
+.resultado-label {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  margin-left: auto;
+}
+
+.sinfonia-roll.sucesso .resultado-label { color: #60d870; }
+.sinfonia-roll.falha   .resultado-label { color: #d06060; }
+
+.sinfonia-magia, .sinfonia-dano, .sinfonia-cura, .sinfonia-habilidade {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #090c14;
+  font-family: 'EB Garamond', serif;
+  font-size: 15px;
+}
+
+.magia-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+.magia-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--gold-light);
+}
+.magia-info {
+  font-size: 11px;
+  color: var(--silver-dim);
+  font-style: italic;
+}
+.magia-detalhes {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--silver-dim);
+  margin-bottom: 6px;
+}
+
+.sinfonia-dano b  { color: #e06060; }
+.sinfonia-cura b  { color: #60c860; }
+
+/* ================================================================
+   BIOGRAFIA
+================================================================ */
+.bio-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.bio-layout .panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.bio-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 120px;
+  background: rgba(0,0,0,0.38) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 16px !important;
+  line-height: 1.7 !important;
+  padding: 10px 12px !important;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bio-textarea:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 12px rgba(200,151,42,0.15) !important;
+}
+
+.bio-textarea::placeholder {
+  color: var(--silver-dim);
+  font-style: italic;
+}
+
+/* ================================================================
+   ÁRVORE DE HABILIDADES
+================================================================ */
+
+/* Row que segura as tabs + botão árvore */
+.sheet-tabs-row {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(200,151,42,0.35);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
+.sheet-tabs-row .sheet-tabs {
+  flex: 1;
+  border-bottom: none;
+  padding: 0 14px;
+}
+
+/* Botão Árvore */
+.btn-arvore {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 0 14px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid rgba(200,151,42,0.2);
+  color: rgba(200,151,42,0.6);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-arvore:hover {
+  color: #f0c060;
+  background: rgba(200,151,42,0.07);
+  border-left-color: rgba(200,151,42,0.5);
+}
+
+/* ── Janela da Árvore (ApplicationV2) ── */
+.arvore-window,
+.app.sinfonia-das-almas.arvore-window .window-content {
+  background: #06080d !important;
+  padding: 0 !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+.arvore-window .window-header,
+.app.sinfonia-das-almas.arvore-window .window-header {
+  background: #0d1020 !important;
+  border-bottom: 1px solid rgba(200,151,42,0.4) !important;
+}
+
+.arvore-window .window-title,
+.app.sinfonia-das-almas.arvore-window .window-title {
+  font-family: 'Cinzel', serif !important;
+  color: #f0c060 !important;
+  letter-spacing: 2px !important;
+}
+
+.arvore-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.arvore-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: #06080d;
+}
+
+.arvore-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: linear-gradient(to bottom, #0d1020, #08090f);
+  border-bottom: 1px solid rgba(200,151,42,0.25);
+  flex-shrink: 0;
+}
+
+.arvore-tabs { display: flex; gap: 3px; }
+
+.arvore-tab {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.08);
+  color: #7888a0;
+  cursor: pointer;
+  transition: all 0.15s;
+  clip-path: polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+}
+.arvore-tab:hover { color: #ccc; border-color: rgba(255,255,255,0.2); }
+.arvore-tab.active { color: #f0c060; border-color: rgba(200,151,42,0.5); background: rgba(200,151,42,0.06); }
+
+.arvore-actor-name {
+  flex: 1;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: rgba(200,151,42,0.5);
+  letter-spacing: 2px;
+}
+
+.arvore-reset-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  background: transparent;
+  border: 1px solid #441111;
+  color: #804030;
+  cursor: pointer;
+  transition: all 0.15s;
+  clip-path: polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+}
+.arvore-reset-btn:hover { border-color: #c84040; color: #ff6050; background: rgba(200,64,48,0.08); }
+
+.arvore-canvas-container {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+#arvore-canvas {
+  display: block;
+  cursor: crosshair;
+  width: 100%;
+  height: 100%;
+}
+
+.arvore-bottombar {
+  padding: 5px 14px;
+  background: linear-gradient(to top, #0d1020, transparent);
+  border-top: 1px solid rgba(200,151,42,0.12);
+  flex-shrink: 0;
+}
+
+.arvore-hint {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  color: #2a3040;
+  letter-spacing: 1px;
+}
+
+/* Tooltip da árvore */
+#arvore-tooltip {
+  pointer-events: none;
+  position: fixed;
+  z-index: 9999;
+  width: 260px;
+  background: linear-gradient(135deg, #0d111c, #080b14);
+  border: 1px solid rgba(200,151,42,0.4);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.8);
+}
+
+#arvore-tooltip .tt-top {
+  height: 2px;
+  background: linear-gradient(to right, transparent, #c8972a, transparent);
+}
+
+#arvore-tooltip .tt-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+#arvore-tooltip .tt-cls  { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 2px; text-transform: uppercase; }
+#arvore-tooltip .tt-name { font-family: 'Cinzel', serif; font-size: 13px; font-weight: 600; color: #f0c060; line-height: 1.2; }
+#arvore-tooltip .tt-type { font-family: 'EB Garamond', serif; font-size: 12px; color: #7888a0; font-style: italic; padding-bottom: 5px; border-bottom: 1px solid rgba(200,151,42,0.15); }
+#arvore-tooltip .tt-desc { font-family: 'EB Garamond', serif; font-size: 14px; color: #a0aabb; line-height: 1.5; }
+#arvore-tooltip .tt-cost { font-family: 'Cinzel', serif; font-size: 9px; color: #c8972a; letter-spacing: 1px; }
+#arvore-tooltip .tt-status { font-family: 'Cinzel', serif; font-size: 9px; padding-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; }
+#arvore-tooltip .tt-status.locked    { color: #664433; }
+#arvore-tooltip .tt-status.available { color: #c8972a; }
+#arvore-tooltip .tt-status.active    { color: #60c860; }
+
+/* ================================================================
+   FASE 1: A ALMA EM JOGO
+   Estilhacos, Origens, Corromper/Descansar e dialog rico de rolagem
+================================================================ */
+
+/* ── Botões de ação na aba Alma ── */
+.alma-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(200,151,42,0.15);
+}
+
+.alma-acoes button {
+  flex: 1;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  background: transparent;
+  border: 1px solid;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-corromper {
+  border-color: rgba(200,64,64,0.5);
+  color: #c87070;
+}
+.btn-corromper:hover {
+  background: rgba(200,64,64,0.1);
+  border-color: #c84040;
+  color: #ff7060;
+  text-shadow: 0 0 6px rgba(255,80,80,0.4);
+}
+
+.btn-descansar {
+  border-color: rgba(120,140,180,0.5);
+  color: #a0b0d0;
+}
+.btn-descansar:hover {
+  background: rgba(120,140,180,0.08);
+  border-color: #8090b0;
+  color: #d0e0ff;
+}
+
+/* ── Painel de Estilhaços ── */
+.estilhacos-panel {
+  border-left: 3px solid var(--cor-color);
+}
+
+.estilhacos-display {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.estilhacos-valor {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  color: var(--cor-color);
+  text-shadow: 0 0 10px rgba(200,64,64,0.4);
+}
+
+.estilhacos-label {
+  font-family: 'EB Garamond', serif;
+  font-style: italic;
+  color: var(--silver-dim);
+  font-size: 13px;
+}
+
+.estilhacos-aviso {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #aa8080;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.btn-reset-estilhacos {
+  margin-top: 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid #441111;
+  color: #804040;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-reset-estilhacos:hover {
+  border-color: #c84040;
+  color: #ff6060;
+  background: rgba(200,64,64,0.08);
+}
+
+/* ── Painel de Origens ── */
+.origens-panel {
+  border-left: 3px solid var(--gold);
+}
+
+.origens-hint {
+  font-size: 11px;
+  color: var(--silver-dim);
+  font-style: italic;
+  margin-bottom: 10px;
+}
+
+.origem-bloco {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,151,42,0.2);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  transition: opacity 0.2s, border-color 0.2s;
+}
+
+.origem-bloco.usado {
+  opacity: 0.55;
+  border-color: rgba(120,120,120,0.2);
+}
+
+.origem-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.origem-tipo {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+
+.origem-check {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  cursor: pointer;
+}
+
+.origem-check input[type="checkbox"] {
+  cursor: pointer;
+  accent-color: var(--gold);
+}
+
+/* ── Dialog rico de rolagem de perícia ── */
+.sinfonia-dialog-rolagem {
+  font-family: 'EB Garamond', serif;
+  color: var(--text, #ddd0b8);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 2px;
+}
+
+.sinfonia-dialog-rolagem .linha {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  align-items: center;
+  gap: 10px;
+}
+
+.sinfonia-dialog-rolagem .linha label {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #c8972a;
+}
+
+.sinfonia-dialog-rolagem .linha input {
+  width: 100%;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  padding: 4px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(200,151,42,0.35);
+  color: #f0c060;
+}
+
+.sinfonia-dialog-rolagem .alma-bloco {
+  border: 1px solid rgba(200,151,42,0.25);
+  padding: 8px 10px 6px;
+  margin: 0;
+  background: rgba(0,0,0,0.25);
+}
+
+.sinfonia-dialog-rolagem .alma-bloco legend {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #f0c060;
+  padding: 0 6px;
+}
+
+.sinfonia-dialog-rolagem label.check,
+.sinfonia-dialog-rolagem label.radio {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 3px 0;
+  font-size: 13px;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.sinfonia-dialog-rolagem label.check input,
+.sinfonia-dialog-rolagem label.radio input {
+  margin-top: 3px;
+  cursor: pointer;
+  accent-color: #c8972a;
+}
+
+.sinfonia-dialog-rolagem label.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.sinfonia-dialog-rolagem .used {
+  color: #c84040;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+.sinfonia-dialog-rolagem .aviso {
+  font-size: 11px;
+  font-style: italic;
+  color: #8090a0;
+  margin: 4px 0 0;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255,255,255,0.05);
+}
+
+/* ── Tags na mensagem de chat (Empenho/Origem/Corrupção) ── */
+.roll-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 4px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(200,151,42,0.1);
+}
+
+.roll-tags .tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+  border-radius: 0;
+}
+
+.tag-det     { border-color: var(--det-color); color: var(--det-color); }
+.tag-origem  { border-color: #80a0c0;        color: #80a0c0; }
+.tag-cor     { border-color: var(--cor-color); color: var(--cor-color); }
+
+/* ── Mensagens novas de chat (Estilhaço, Descanso) ── */
+.sinfonia-estilhaco {
+  padding: 12px;
+  border: 1px solid var(--cor-color);
+  background: linear-gradient(135deg, #1a0808, #0a0506);
+  font-family: 'EB Garamond', serif;
+  color: #ddd0b8;
+}
+
+.sinfonia-estilhaco h3 {
+  margin: 0 0 8px;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  color: var(--cor-color);
+  text-align: center;
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px rgba(200,64,64,0.5);
+}
+
+.sinfonia-estilhaco p {
+  margin: 4px 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.sinfonia-estilhaco em {
+  color: #aa8080;
+  font-size: 12px;
+}
+
+.sinfonia-descanso {
+  padding: 8px 12px;
+  border: 1px solid #8090b0;
+  background: rgba(80,100,140,0.05);
+  font-family: 'EB Garamond', serif;
+  color: #b0c0d8;
+  font-size: 14px;
+}
+
+/* ================================================================
+   v0.3.1 — Header reestruturado, perícias na principal, dados caídos
+================================================================ */
+
+/* ── Linhas do header ── */
+.header-row-1 {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.header-row-1 .actor-name { flex: 1; margin-bottom: 0; }
+
+.header-row-3 {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 8px;
+  align-items: end;
+  margin-top: 6px;
+}
+.header-row-3 .field-group { display: flex; flex-direction: column; gap: 2px; }
+.header-row-3 .field-group label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+.header-row-3 .field-group select,
+.header-row-3 .field-group input {
+  width: 100% !important;
+  height: 28px !important;
+  padding: 3px 6px !important;
+  font-size: 13px !important;
+  box-sizing: border-box !important;
+}
+
+/* ── Bloco de Nível e Pts Hab. (canto direito do header) ── */
+.nivel-bloco {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+  padding: 4px 10px;
+  border: 1px solid var(--gold);
+  background: rgba(200,151,42,0.06);
+  min-width: 80px;
+}
+.nivel-display, .ptshab-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.nivel-label {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+.nivel-input {
+  width: 60px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--gold-light) !important;
+  font-family: 'Cinzel', serif !important;
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  text-align: center !important;
+  padding: 0 !important;
+  text-shadow: 0 0 12px rgba(240,192,96,0.4);
+  -moz-appearance: textfield;
+}
+.nivel-input::-webkit-outer-spin-button,
+.nivel-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.ptshab-label {
+  font-family: 'Cinzel', serif;
+  font-size: 7px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+.ptshab-input {
+  width: 60px !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--silver) !important;
+  font-family: 'EB Garamond', serif !important;
+  font-size: 14px !important;
+  text-align: center !important;
+  padding: 0 !important;
+}
+
+/* ── Deslocamento compacto (input + sufixo "m") ── */
+.desl-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.desl-wrap input {
+  padding-right: 18px !important;
+  text-align: center;
+}
+.desl-sufixo {
+  position: absolute;
+  right: 6px;
+  pointer-events: none;
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  color: var(--silver-dim);
+}
+
+/* ── Perícias — resumo na aba Principal ── */
+.pericias-resumo-panel .panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.pericias-resumo-panel .panel-header a {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold);
+  cursor: pointer;
+}
+.pericias-resumo-panel .panel-header a:hover { color: var(--gold-light); }
+
+.pericias-resumo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+}
+.pericia-resumo-item .pericia-rolar {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid rgba(200,151,42,0.18);
+  border-left-width: 3px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s;
+}
+.pericia-resumo-item .pericia-rolar:hover {
+  background: rgba(200,151,42,0.08);
+  border-color: var(--gold);
+}
+.pericia-resumo-item.maestria-iniciante  .pericia-rolar { border-left-color: #80a8c0; }
+.pericia-resumo-item.maestria-treinado   .pericia-rolar { border-left-color: var(--gold); }
+.pericia-resumo-item.maestria-experiente .pericia-rolar { border-left-color: #d8a040; }
+.pericia-resumo-item .pericia-nome {
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  color: var(--text);
+}
+.pericia-resumo-item .pericia-atribs {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+}
+.pericia-resumo-item .pericia-maestria-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+.pericia-resumo-item.maestria-iniciante  .pericia-maestria-tag { color: #80a8c0; border-color: #80a8c0; }
+.pericia-resumo-item.maestria-treinado   .pericia-maestria-tag { color: var(--gold); border-color: var(--gold); }
+.pericia-resumo-item.maestria-experiente .pericia-maestria-tag { color: #d8a040; border-color: #d8a040; }
+
+/* ── Dialog "Todas as Perícias" ── */
+.sinfonia-todas-pericias table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'EB Garamond', serif;
+}
+.sinfonia-todas-pericias th {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.sinfonia-todas-pericias td {
+  padding: 4px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.sinfonia-todas-pericias .col-atrib { color: var(--silver-dim); font-size: 11px; }
+.sinfonia-todas-pericias .col-acao { text-align: center; width: 36px; }
+.sinfonia-todas-pericias .btn-rolar-pericia {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  width: 28px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 0;
+  line-height: 1;
+}
+.sinfonia-todas-pericias .btn-rolar-pericia:hover {
+  background: rgba(200,151,42,0.15);
+}
+.sinfonia-todas-pericias .tag-m {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+.sinfonia-todas-pericias .tag-m.maestria-iniciante  { color: #80a8c0; border-color: #80a8c0; }
+.sinfonia-todas-pericias .tag-m.maestria-treinado   { color: var(--gold); border-color: var(--gold); }
+.sinfonia-todas-pericias .tag-m.maestria-experiente { color: #d8a040; border-color: #d8a040; }
+.sinfonia-todas-pericias .tag-m.sem-maestria       { color: #555; border-color: #333; }
+
+.sinfonia-todas-pericias .sel-maestria {
+  width: 100%;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  padding: 3px 4px;
+  height: 24px;
+}
+
+/* ── Dados caídos no chat (pílulas com cada resultado) ── */
+.roll-dados {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  margin: 4px 0 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(200,151,42,0.08);
+}
+.dado-grupo {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.dado-tipo {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+  margin-right: 2px;
+}
+.dado-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid;
+  background: rgba(0,0,0,0.3);
+}
+.dado-pill.ativo {
+  border-color: var(--gold);
+  color: var(--gold-light);
+}
+.dado-pill.descartado {
+  border-color: #555;
+  color: #555;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.dado-mod {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  color: var(--silver-dim);
+  margin-left: 2px;
+}
+.dado-mod.cor { color: var(--cor-color); }
+
+/* ================================================================
+   v0.3.2 — Aba Habilidades (da árvore) + select de maestria no dialog
+================================================================ */
+
+/* ── Select de maestria dentro do dialog "Todas as Perícias" ── */
+.sinfonia-todas-pericias .sel-maestria {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  padding: 2px 4px;
+  width: 100%;
+  cursor: pointer;
+}
+.sinfonia-todas-pericias .sel-maestria:hover {
+  border-color: var(--gold);
+}
+.sinfonia-todas-pericias .sel-maestria option { background: #0d1020; color: var(--text); }
+
+.sinfonia-todas-pericias .pericia-row.maestria-iniciante  .col-nome { border-left: 3px solid #80a8c0;    padding-left: 6px; }
+.sinfonia-todas-pericias .pericia-row.maestria-treinado   .col-nome { border-left: 3px solid var(--gold); padding-left: 6px; }
+.sinfonia-todas-pericias .pericia-row.maestria-experiente .col-nome { border-left: 3px solid #d8a040;    padding-left: 6px; }
+
+/* ── Aba Habilidades ── */
+.habilidades-arvore-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.habilidades-arvore-layout .arvore-summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: rgba(200,151,42,0.04);
+}
+.habilidades-arvore-layout .arvore-summary .panel-title {
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--gold-light);
+}
+.habilidades-arvore-layout .arvore-pts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: var(--silver-dim);
+}
+.habilidades-arvore-layout .arvore-pts b { color: var(--gold-light); font-weight: 600; }
+
+.btn-link {
+  background: transparent;
+  border: none;
+  color: var(--gold);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+.btn-link:hover { color: var(--gold-light); text-decoration: underline; }
+
+.habilidade-classe-panel {
+  padding: 10px 12px;
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(200,151,42,0.15);
+}
+.habilidade-classe-panel .classe-titulo {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid;
+}
+
+.hab-arvore-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.hab-arvore-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 6px 8px;
+  background: rgba(0,0,0,0.35);
+  border: 1px solid rgba(255,255,255,0.04);
+  border-left: 3px solid transparent;
+}
+.hab-arvore-item.tipo-keystone { border-left-color: var(--gold); }
+.hab-arvore-item.tipo-major    { border-left-color: var(--gold-dim); }
+.hab-arvore-item.tipo-minor    { border-left-color: #444; }
+.hab-arvore-item.tipo-start    { border-left-color: var(--gold-light); background: rgba(200,151,42,0.06); }
+
+.hab-bolha {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 4px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.hab-info { flex: 1; min-width: 0; }
+.hab-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--gold-light);
+  margin-bottom: 2px;
+}
+.hab-cost {
+  font-family: 'EB Garamond', serif;
+  font-size: 10px;
+  color: var(--silver-dim);
+  margin-left: 4px;
+  font-style: italic;
+}
+.hab-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+/* ================================================================
+   FASE 2 — COMBATE
+================================================================ */
+
+/* Ícones de ação na lista de armas */
+.arma-item .icon-atacar { color: #d06060; }
+.arma-item .icon-atacar:hover { color: #ff7060; text-shadow: 0 0 6px rgba(255,80,80,0.5); }
+.arma-item .icon-dano   { color: #c8972a; }
+.arma-item .icon-dano:hover { color: var(--gold-light); text-shadow: 0 0 6px rgba(200,151,42,0.5); }
+
+/* Item Sheet de Arma */
+.item.arma .item-type-badge {
+  background: rgba(200,64,64,0.15);
+  border: 1px solid rgba(200,64,64,0.4);
+  color: #d08080;
+  padding: 2px 6px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.arma-form {
+  display: flex; flex-direction: column; gap: 12px; padding: 8px 4px;
+}
+.arma-form .form-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+}
+.arma-form .form-row:has(.form-group:nth-child(2):last-child) {
+  grid-template-columns: 1fr 1fr;
+}
+.arma-form .form-group { display: flex; flex-direction: column; gap: 4px; }
+.arma-form .form-group label {
+  font-family: 'Cinzel', serif; font-size: 9px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--gold-light);
+}
+.arma-form .form-hint {
+  font-family: 'EB Garamond', serif; font-size: 11px;
+  font-style: italic; color: var(--silver-dim); line-height: 1.4;
+}
+.arma-form .form-hint code {
+  background: rgba(200,151,42,0.1);
+  border: 1px solid rgba(200,151,42,0.3);
+  padding: 1px 4px;
+  font-family: 'Courier New', monospace; font-size: 10px;
+  color: var(--gold-light);
+}
+.arma-form .check-row {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  color: var(--gold-light); cursor: pointer; padding: 4px 0;
+}
+.arma-form .check-row input[type="checkbox"] { cursor: pointer; accent-color: var(--gold); }
+
+/* Dialog de ataque — info da arma e do alvo */
+.sinfonia-dialog-rolagem .arma-info {
+  padding: 6px 10px;
+  background: rgba(200,151,42,0.08);
+  border-left: 3px solid var(--gold);
+  font-family: 'EB Garamond', serif; font-size: 13px;
+  color: var(--text);
+}
+.sinfonia-dialog-rolagem .alvo-info {
+  padding: 6px 10px;
+  background: rgba(200,64,64,0.08);
+  border-left: 3px solid #c84040;
+  font-family: 'EB Garamond', serif; font-size: 13px;
+  color: #e0c0c0;
+}
+.sinfonia-dialog-rolagem .alvo-info.sem-alvo {
+  background: rgba(120,140,180,0.06);
+  border-left-color: #8090b0;
+  color: #a0b0c8; font-style: italic;
+}
+
+/* Mensagem de chat: cabeçalho de ataque */
+.sinfonia-ataque-header {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: #090c14;
+  font-family: 'EB Garamond', serif; font-size: 14px;
+  color: var(--text);
+  display: flex; align-items: center; gap: 8px;
+}
+.sinfonia-ataque-header.acerto { border-left: 3px solid #50c060; }
+.sinfonia-ataque-header.erro   { border-left: 3px solid #c05050; opacity: 0.85; }
+.sinfonia-ataque-header i { color: var(--gold); font-size: 16px; }
+
+.sinfonia-ataque-acoes {
+  padding: 6px 12px 8px;
+  border: 1px solid var(--border); border-top: none;
+  background: #090c14;
+}
+
+.btn-rolar-dano,
+.btn-aplicar-dano,
+.btn-aplicar-cura {
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-rolar-dano { border-color: rgba(200,151,42,0.5); color: var(--gold-light); }
+.btn-rolar-dano:hover {
+  background: rgba(200,151,42,0.12);
+  border-color: var(--gold);
+  text-shadow: 0 0 6px rgba(240,192,96,0.4);
+}
+.btn-aplicar-dano { border-color: rgba(200,64,64,0.5); color: #d07070; }
+.btn-aplicar-dano:hover {
+  background: rgba(200,64,64,0.12);
+  border-color: #c84040; color: #ff7060;
+  text-shadow: 0 0 6px rgba(255,80,80,0.4);
+}
+.btn-aplicar-cura { border-color: rgba(80,200,96,0.5); color: #80d090; }
+.btn-aplicar-cura:hover {
+  background: rgba(80,200,96,0.12);
+  border-color: #50c060; color: #a0e8a0;
+  text-shadow: 0 0 6px rgba(80,200,96,0.4);
+}
+
+/* Mensagem de chat: rolagem de dano */
+.sinfonia-dano-roll {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  background: #090c14;
+  font-family: 'EB Garamond', serif; color: var(--text);
+}
+.sinfonia-dano-roll.critico {
+  border-color: var(--gold);
+  background: linear-gradient(135deg, #1a1408, #0a0806);
+  box-shadow: inset 0 0 20px rgba(200,151,42,0.15);
+}
+.sinfonia-dano-roll .dano-header {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 6px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(200,151,42,0.15);
+}
+.sinfonia-dano-roll .actor-name {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--gold); letter-spacing: 1px;
+}
+.sinfonia-dano-roll .dano-arma {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--gold-light);
+}
+.sinfonia-dano-roll.critico .dano-arma {
+  color: #ffeba0;
+  text-shadow: 0 0 8px rgba(255,235,160,0.5);
+  letter-spacing: 1.5px;
+}
+.sinfonia-dano-roll .dano-formula {
+  font-family: 'Courier New', monospace; font-size: 11px;
+  color: var(--silver-dim); margin-bottom: 6px;
+}
+.sinfonia-dano-roll .dano-total {
+  display: flex; align-items: baseline; gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(200,151,42,0.15);
+  margin-top: 6px;
+}
+.sinfonia-dano-roll .total {
+  font-family: 'Cinzel', serif; font-size: 28px;
+  color: var(--gold-light);
+  text-shadow: 0 0 10px rgba(200,151,42,0.4);
+}
+.sinfonia-dano-roll.critico .total {
+  color: #ffeba0;
+  text-shadow: 0 0 14px rgba(255,235,160,0.6);
+}
+.sinfonia-dano-roll .dano-tipo {
+  font-family: 'Cinzel', serif; font-size: 11px;
+  color: var(--silver-dim);
+  letter-spacing: 1.5px; text-transform: uppercase;
+}
+.sinfonia-dano-roll .dano-acoes {
+  display: flex; gap: 6px;
+  margin-top: 10px; padding-top: 8px;
+  border-top: 1px solid rgba(200,151,42,0.1);
+}
+.sinfonia-dano-roll .dano-acoes button {
+  flex: 1; justify-content: center;
+}
+
+/* ================================================================
+   FASE 3 (v0.5.0) — PERÍCIAS-GRID + LAYOUT REORGANIZADO
+================================================================ */
+
+/* Grid de perícias — 3 colunas, tudo visível inline */
+.pericias-grid-panel {
+  margin-bottom: 14px;
+}
+.pericias-grid-panel .panel-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.pericias-grid-panel .panel-hint {
+  font-family: 'EB Garamond', serif;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--silver-dim);
+}
+
+.pericias-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px 12px;
+}
+
+.pericias-grid .pericia-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 6px;
+  background: rgba(255,255,255,0.02);
+  border-left: 2px solid transparent;
+  font-family: 'EB Garamond', serif;
+  transition: background 0.15s, border-color 0.15s;
+}
+.pericias-grid .pericia-row:hover {
+  background: rgba(200,151,42,0.06);
+}
+
+/* Estados de maestria — borda esquerda colorida */
+.pericias-grid .pericia-row.sem-maestria { border-left-color: rgba(120,136,160,0.3); }
+.pericias-grid .pericia-row.maestria-iniciante  { border-left-color: #80a040; }
+.pericias-grid .pericia-row.maestria-treinado   { border-left-color: #4a9eff; }
+.pericias-grid .pericia-row.maestria-experiente { border-left-color: var(--gold); }
+
+.pericias-grid .pericia-rolar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-decoration: none;
+  cursor: pointer;
+  min-width: 0;
+}
+.pericias-grid .pericia-rolar:hover .pericia-nome {
+  color: var(--gold-light);
+  text-shadow: 0 0 4px rgba(240,192,96,0.3);
+}
+
+.pericias-grid .pericia-nome {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+.pericias-grid .pericia-atribs {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+}
+.pericias-grid .pericia-row.sem-maestria .pericia-nome { color: var(--silver-dim); }
+.pericias-grid .pericia-row.maestria-experiente .pericia-nome { color: var(--gold-light); }
+
+.pericias-grid .sel-maestria {
+  background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(200,151,42,0.2);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  padding: 2px 4px;
+  width: 60px;
+  cursor: pointer;
+}
+.pericias-grid .sel-maestria:hover {
+  border-color: var(--gold);
+}
+
+/* Items-row: 3 colunas pra Habilidades, Magias, Armas */
+.items-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+@media (max-width: 1024px) {
+  .items-row {
+    grid-template-columns: 1fr;
+  }
+  .pericias-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Itens-panel mais compacto na nova grid */
+.items-row .itens-panel .items-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+.items-row .itens-panel .item {
+  padding: 4px 6px;
+  font-size: 12px;
+}
+.items-row .itens-panel .item-nome {
+  font-size: 13px;
+}
+.items-row .itens-panel .item-sub,
+.items-row .itens-panel .item-custo {
+  font-size: 10px;
+}
+
+/* ================================================================
+   v0.7.6 — VISUAL OVERHAUL
+   Texturas, atmosfera por classe, ornamentos, animações de estado.
+   Tudo neste bloco é aditivo — camadas visuais sobre o layout existente.
+================================================================ */
+
+/* ────────────────────────────────────────────
+   A. ATMOSFERA DE FUNDO — grain analógico + luz ambiente temática
+   O grain é um SVG feTurbulence inline (sem requests externos).
+   As luzes radiais usam var(--gold), então mudam com o tema da classe.
+──────────────────────────────────────────── */
+.sinfonia-sheet.personagem {
+  background:
+    /* luz ambiente superior-direita na cor do tema */
+    radial-gradient(ellipse 70% 45% at 85% -5%,
+      color-mix(in srgb, var(--gold) 7%, transparent), transparent 65%),
+    /* luz ambiente inferior-esquerda mais fraca */
+    radial-gradient(ellipse 55% 40% at 5% 105%,
+      color-mix(in srgb, var(--gold) 4%, transparent), transparent 60%),
+    /* grain sutil */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E"),
+    var(--bg) !important;
+}
+
+/* ────────────────────────────────────────────
+   B. BANNER — gradiente temático, linha de luz inferior, relevo
+──────────────────────────────────────────── */
+.sinfonia-sheet .sheet-banner {
+  position: relative;
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--gold) 9%, #0c1018) 0%,
+      color-mix(in srgb, var(--gold) 3%, #080b12) 55%,
+      #06080d 100%) !important;
+}
+/* Linha de luz que corre o rodapé do banner (foco no centro) */
+.sinfonia-sheet .sheet-banner::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold) 25%,
+    var(--gold-light) 50%,
+    var(--gold) 75%,
+    transparent 100%);
+  opacity: 0.75;
+  pointer-events: none;
+}
+/* Brilho de relevo no topo do banner */
+.sinfonia-sheet .sheet-banner::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.10), transparent);
+  pointer-events: none;
+}
+
+/* ────────────────────────────────────────────
+   C. AVATAR — anel duplo na cor da classe (outline externo + glow)
+──────────────────────────────────────────── */
+.sinfonia-sheet .banner-avatar {
+  outline: 1px solid color-mix(in srgb, var(--gold) 45%, transparent);
+  outline-offset: 3px;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--gold) 70%, transparent),
+    0 0 18px color-mix(in srgb, var(--gold) 35%, transparent),
+    inset 0 0 8px rgba(0,0,0,0.6);
+  transition: outline-offset 0.25s ease, box-shadow 0.3s ease;
+}
+.sinfonia-sheet .banner-avatar:hover {
+  outline-offset: 5px;
+  box-shadow:
+    0 0 0 1px var(--gold),
+    0 0 28px color-mix(in srgb, var(--gold) 55%, transparent),
+    inset 0 0 8px rgba(0,0,0,0.6);
+}
+
+/* ────────────────────────────────────────────
+   D. RAIL ESQUERDA — moldura do retrato + divisor ornamental
+──────────────────────────────────────────── */
+.sinfonia-sheet .rail-portrait {
+  position: relative;
+}
+.sinfonia-sheet .rail-portrait img {
+  transition: box-shadow 0.3s ease, filter 0.3s ease;
+}
+.sinfonia-sheet .rail-portrait:hover img {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 26px color-mix(in srgb, var(--gold) 40%, transparent);
+}
+/* Glifo ornamental entre o retrato e os stats */
+.sinfonia-sheet .rail-portrait::after {
+  content: "◆";
+  display: block;
+  text-align: center;
+  color: var(--gold-dim);
+  font-size: 8px;
+  line-height: 1;
+  margin-top: 8px;
+  text-shadow: 0 0 6px color-mix(in srgb, var(--gold) 40%, transparent);
+}
+.sinfonia-sheet .rail-stats {
+  border-top: 1px solid;
+  border-image: linear-gradient(90deg, transparent, var(--gold-dim) 50%, transparent) 1;
+  padding-top: 10px;
+  margin-top: 6px;
+}
+
+/* ────────────────────────────────────────────
+   E. ATRIBUTOS — relevo de gema + tipografia refinada
+──────────────────────────────────────────── */
+.sinfonia-sheet .atrib-card {
+  background:
+    linear-gradient(180deg,
+      color-mix(in srgb, var(--gold) 7%, #0c1018) 0%,
+      #080b12 100%) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    inset 0 -8px 14px -10px color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.sinfonia-sheet .atrib-card .atrib-abbr {
+  letter-spacing: 3px;
+  text-shadow: 0 0 8px color-mix(in srgb, var(--gold) 30%, transparent);
+}
+.sinfonia-sheet .atrib-card .atrib-label {
+  font-variant: small-caps;
+  letter-spacing: 1.5px;
+  opacity: 0.85;
+}
+
+/* ────────────────────────────────────────────
+   F. PAINÉIS — cantos ornamentais + títulos com glifo
+──────────────────────────────────────────── */
+.sinfonia-sheet .panel {
+  position: relative;
+}
+.sinfonia-sheet .panel::before,
+.sinfonia-sheet .panel::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-style: solid;
+  border-color: color-mix(in srgb, var(--gold) 55%, transparent);
+  pointer-events: none;
+  transition: border-color 0.3s ease, width 0.25s ease, height 0.25s ease;
+}
+.sinfonia-sheet .panel::before {
+  top: -1px; left: -1px;
+  border-width: 1px 0 0 1px;
+}
+.sinfonia-sheet .panel::after {
+  bottom: -1px; right: -1px;
+  border-width: 0 1px 1px 0;
+}
+.sinfonia-sheet .panel:hover::before,
+.sinfonia-sheet .panel:hover::after {
+  border-color: var(--gold);
+  width: 18px;
+  height: 18px;
+}
+.sinfonia-sheet .panel-title {
+  font-variant: small-caps;
+  letter-spacing: 2.5px;
+}
+.sinfonia-sheet .panel-title::before {
+  content: "◆ ";
+  color: var(--gold);
+  font-size: 8px;
+  vertical-align: 2px;
+  text-shadow: 0 0 6px var(--gold);
+}
+
+/* ────────────────────────────────────────────
+   G. TABS VERTICAIS — fundo gradiente quando ativa + small-caps
+──────────────────────────────────────────── */
+.sinfonia-sheet .right-tabs .vtab.active {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--gold) 14%, transparent),
+    transparent 80%) !important;
+}
+.sinfonia-sheet .right-tabs .vtab .vtab-label {
+  font-variant: small-caps;
+  letter-spacing: 1.5px;
+}
+.sinfonia-sheet .right-tabs .vtab.active .vtab-icon {
+  text-shadow: 0 0 10px var(--gold);
+}
+
+/* ────────────────────────────────────────────
+   H. BARRAS DA ALMA — shimmer de luz percorrendo as barras
+──────────────────────────────────────────── */
+.sinfonia-sheet .det-fill,
+.sinfonia-sheet .cor-fill {
+  position: relative;
+  overflow: hidden;
+}
+.sinfonia-sheet .det-fill::after,
+.sinfonia-sheet .cor-fill::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -60%;
+  width: 50%;
+  background: linear-gradient(105deg,
+    transparent 0%,
+    rgba(255,255,255,0.22) 50%,
+    transparent 100%);
+  animation: alma-shimmer 4.5s ease-in-out infinite;
+  pointer-events: none;
+}
+.sinfonia-sheet .cor-fill::after {
+  animation-delay: 2.2s;
+}
+@keyframes alma-shimmer {
+  0%   { left: -60%; }
+  45%  { left: 110%; }
+  100% { left: 110%; }
+}
+
+/* ────────────────────────────────────────────
+   I. CREPÚSCULO / MORTE — a ficha inteira reage ao estado da alma
+   Vinheta vermelha sutil em Crepúsculo; dessaturação + vinheta forte
+   quando morto. (via :has — Chromium do Foundry v12 suporta)
+──────────────────────────────────────────── */
+.sinfonia-sheet:has(.banner-crepusculo:not(.morte)) {
+  box-shadow: inset 0 0 90px -30px rgba(255, 48, 48, 0.30);
+  animation: crep-vinheta 3s ease-in-out infinite;
+}
+@keyframes crep-vinheta {
+  0%, 100% { box-shadow: inset 0 0 90px -30px rgba(255, 48, 48, 0.22); }
+  50%      { box-shadow: inset 0 0 110px -25px rgba(255, 48, 48, 0.38); }
+}
+.sinfonia-sheet:has(.banner-crepusculo.morte) {
+  filter: saturate(0.55) brightness(0.92);
+  box-shadow: inset 0 0 140px -20px rgba(255, 32, 32, 0.40);
+}
+
+/* ────────────────────────────────────────────
+   J. BARRA DE TÍTULO — gradiente temático completo por classe
+──────────────────────────────────────────── */
+.app.sheet.actor.sinfonia-das-almas:has(.cls-guerreiro) .window-header {
+  background: linear-gradient(90deg, #1c0d0d 0%, #0d1020 60%) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-gatuno) .window-header {
+  background: linear-gradient(90deg, #0a1a1e 0%, #0d1020 60%) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-arqueiro) .window-header {
+  background: linear-gradient(90deg, #0c1a0c 0%, #0d1020 60%) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-mago) .window-header {
+  background: linear-gradient(90deg, #160d26 0%, #0d1020 60%) !important;
+}
+.app.sheet.actor.sinfonia-das-almas:has(.cls-sacerdote) .window-header {
+  background: linear-gradient(90deg, #201808 0%, #0d1020 60%) !important;
+}
+
+/* ────────────────────────────────────────────
+   K. RECURSOS (PV/PE/PI) — ícones com respiração sutil + relevo
+──────────────────────────────────────────── */
+.sinfonia-sheet .res-card {
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.sinfonia-sheet .res-card.pv .res-icon {
+  animation: pv-pulse 3.2s ease-in-out infinite;
+}
+@keyframes pv-pulse {
+  0%, 100% { text-shadow: 0 0 4px rgba(76, 175, 80, 0.4); }
+  50%      { text-shadow: 0 0 12px rgba(76, 175, 80, 0.85); transform: scale(1.06); }
+}
+.sinfonia-sheet .res-card.pe .res-icon {
+  animation: pe-pulse 4.5s ease-in-out infinite;
+}
+@keyframes pe-pulse {
+  0%, 100% { text-shadow: 0 0 4px rgba(74, 158, 255, 0.4); }
+  50%      { text-shadow: 0 0 12px rgba(74, 158, 255, 0.85); }
+}
+
+/* ────────────────────────────────────────────
+   L. BOTÕES DA RAIL — borda gradiente animada no hover
+──────────────────────────────────────────── */
+.sinfonia-sheet .rail-btn-arvore,
+.sinfonia-sheet .rail-btn-secondary {
+  position: relative;
+  overflow: hidden;
+}
+.sinfonia-sheet .rail-btn-arvore::after,
+.sinfonia-sheet .rail-btn-secondary::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  left: -80%;
+  width: 60%;
+  background: linear-gradient(105deg,
+    transparent,
+    color-mix(in srgb, var(--gold) 18%, transparent),
+    transparent);
+  transition: left 0.45s ease;
+  pointer-events: none;
+}
+.sinfonia-sheet .rail-btn-arvore:hover::after,
+.sinfonia-sheet .rail-btn-secondary:hover::after {
+  left: 120%;
+}
+
+/* ────────────────────────────────────────────
+   M. ÁRVORE DE HABILIDADES — herda o tema da classe do personagem
+   (a janela da árvore é separada; usamos o header inline color que
+   já existe + refinamos os slots e botões)
+──────────────────────────────────────────── */
+.arvore-habilidades {
+  background:
+    radial-gradient(ellipse 60% 35% at 90% 0%,
+      rgba(200, 151, 42, 0.05), transparent 60%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"),
+    #060709 !important;
+}
+.arvore-item {
+  transition: transform 0.18s ease, border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+.arvore-item:hover {
+  transform: translateX(3px);
+  box-shadow: -3px 0 12px -6px var(--gold, #c8972a);
+}
+.arvore-slot.preenchido {
+  animation: slot-pop 0.35s ease;
+}
+@keyframes slot-pop {
+  0%   { transform: scale(0.4); }
+  60%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* ────────────────────────────────────────────
+   M2. ÁRVORE — variáveis de tema na janela separada da árvore
+   (a janela da árvore não é filha da .sinfonia-sheet, então as vars
+   precisam ser declaradas aqui; cls-X é aplicada via _onRender)
+──────────────────────────────────────────── */
+.arvore-window {
+  --gold:        #c8972a;
+  --gold-light:  #f0c060;
+  --gold-dim:    #6b4e12;
+  --border:      rgba(200,151,42,0.35);
+  --text:        #ddd0b8;
+  --silver:      #c8d0e0;
+  --silver-dim:  #7888a0;
+  --cor-color:   #c84040;
+}
+.arvore-window.cls-guerreiro {
+  --gold:        #c84040;
+  --gold-light:  #ff8a7a;
+  --gold-dim:    #5e1f1a;
+  --border:      rgba(200, 64, 64, 0.35);
+}
+.arvore-window.cls-gatuno {
+  --gold:        #2fa8ba;
+  --gold-light:  #7fe4f4;
+  --gold-dim:    #14444d;
+  --border:      rgba(64, 184, 200, 0.35);
+}
+.arvore-window.cls-arqueiro {
+  --gold:        #4aa84a;
+  --gold-light:  #8af08a;
+  --gold-dim:    #1d4a1d;
+  --border:      rgba(88, 200, 88, 0.35);
+}
+.arvore-window.cls-mago {
+  --gold:        #8a5ce0;
+  --gold-light:  #c39aff;
+  --gold-dim:    #392560;
+  --border:      rgba(144, 96, 232, 0.35);
+}
+.arvore-window.cls-sacerdote {
+  --gold:        #e0b34a;
+  --gold-light:  #ffe9a8;
+  --gold-dim:    #6e5824;
+  --border:      rgba(240, 192, 96, 0.45);
+}
+
+/* Botões/slots da árvore acompanham o tema */
+.arvore-window .btn-nh {
+  border-color: var(--gold-dim);
+  color: var(--gold-light);
+}
+.arvore-window .btn-nh:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+.arvore-window .arvore-slot.preenchido {
+  background: var(--gold);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 4px color-mix(in srgb, var(--gold-light) 60%, transparent);
+}
+.arvore-window .arvore-item.ativa {
+  border-left-color: var(--gold);
+}
+.arvore-window .arvore-item-nome {
+  color: var(--gold-light);
+}
+.arvore-window .arvore-item-efeito {
+  color: var(--gold-light);
+  background: color-mix(in srgb, var(--gold) 8%, transparent);
+  border-left-color: var(--gold);
+}
+.arvore-window .arvore-item-efeito i {
+  color: var(--gold);
+}
+.arvore-window .arvore-header {
+  border-bottom-color: var(--gold-dim);
+}
+.arvore-window .pontos-valor.gastos { color: var(--gold-light); }
+
+/* ────────────────────────────────────────────
+   N. CARDS DO CHAT — entrada suave + relevo
+   (cards de rolagem/dano/magia são criados uma vez, animação ok)
+──────────────────────────────────────────── */
+.sinfonia-roll,
+.sinfonia-dano-roll,
+.sinfonia-magia,
+.sinfonia-hab-card,
+.sinfonia-ataque-header {
+  animation: card-in 0.3s ease-out both;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04), 0 2px 10px rgba(0,0,0,0.4);
+}
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Total da rolagem com respiro dourado em sucesso */
+.sinfonia-roll.sucesso .roll-resultado .total {
+  text-shadow: 0 0 12px rgba(128, 232, 144, 0.5);
+}
+.sinfonia-roll.falha .roll-resultado .total {
+  text-shadow: 0 0 12px rgba(255, 96, 96, 0.45);
+}
+
+/* ────────────────────────────────────────────
+   O. ESTILHAÇOS — quando há estilhaços, o contador pulsa em vermelho
+──────────────────────────────────────────── */
+.sinfonia-sheet .rail-stat.estilhacos input:not([value="0"]) {
+  color: #ff8a7a;
+  text-shadow: 0 0 8px rgba(255, 96, 96, 0.5);
+}
+
+/* ================================================================
+   v0.8.1 — ITEM SHEET V2 (estilo D&D 5e: header + abas)
+================================================================ */
+.sinfonia-item-v2 {
+  --gold:        #c8972a;
+  --gold-light:  #f0c060;
+  --gold-dim:    #6b4e12;
+  --text:        #ddd0b8;
+  --silver-dim:  #7888a0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background:
+    radial-gradient(ellipse 65% 40% at 90% -5%, rgba(200,151,42,0.06), transparent 60%),
+    #07090e;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+}
+
+/* ── Header ── */
+.sinfonia-item-v2 .item-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, rgba(200,151,42,0.10), transparent);
+  border-bottom: 1px solid var(--gold-dim);
+  flex: 0 0 auto;
+}
+.sinfonia-item-v2 .item-img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 1px solid var(--gold-dim);
+  box-shadow: 0 0 12px rgba(200,151,42,0.25);
+  cursor: pointer;
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.sinfonia-item-v2 .item-img:hover {
+  border-color: var(--gold);
+  box-shadow: 0 0 18px rgba(240,192,96,0.45);
+}
+.sinfonia-item-v2 .item-header-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sinfonia-item-v2 .item-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  color: var(--gold-light);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 2px 0;
+  width: 100%;
+  transition: border-color 0.25s ease;
+}
+.sinfonia-item-v2 .item-nome:hover { border-bottom-color: var(--gold-dim); }
+.sinfonia-item-v2 .item-nome:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+  box-shadow: none;
+}
+.sinfonia-item-v2 .item-subtitulo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+.sinfonia-item-v2 .item-tipo {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-right: 6px;
+  border-right: 1px solid var(--gold-dim);
+}
+.sinfonia-item-v2 .item-tag {
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  padding: 1px 8px;
+  background: rgba(106, 160, 255, 0.10);
+  border: 1px solid rgba(106, 160, 255, 0.30);
+  color: #8ab8ff;
+}
+
+/* ── Nav tabs ── */
+.sinfonia-item-v2 .item-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--gold-dim);
+  padding: 0 12px;
+  flex: 0 0 auto;
+}
+.sinfonia-item-v2 .item-tabs .item {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 9px 16px;
+  color: var(--silver-dim);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.2s ease, border-color 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sinfonia-item-v2 .item-tabs .item:hover {
+  color: var(--gold-light);
+  text-shadow: 0 0 6px rgba(240,192,96,0.35);
+}
+.sinfonia-item-v2 .item-tabs .item.active {
+  color: var(--gold-light);
+  border-bottom-color: var(--gold);
+  text-shadow: 0 0 8px rgba(240,192,96,0.4);
+}
+
+/* ── Body / tabs ── */
+.sinfonia-item-v2 .item-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+.sinfonia-item-v2 .item-body .tab { display: none; }
+.sinfonia-item-v2 .item-body .tab.active { display: block; }
+
+/* ── Grid de campos (Detalhes) ── */
+.sinfonia-item-v2 .campo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+.sinfonia-item-v2 .campo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sinfonia-item-v2 .campo.full { grid-column: 1 / -1; }
+.sinfonia-item-v2 .campo label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.sinfonia-item-v2 .campo label .hint {
+  color: var(--silver-dim);
+  text-transform: none;
+  letter-spacing: 0.3px;
+  font-family: 'EB Garamond', serif;
+  font-size: 10px;
+}
+.sinfonia-item-v2 .campo input,
+.sinfonia-item-v2 .campo select {
+  background: #0c1018;
+  border: 1px solid #1e2430;
+  color: var(--text);
+  padding: 5px 8px;
+  font-family: 'EB Garamond', serif;
+  font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.sinfonia-item-v2 .campo input:focus,
+.sinfonia-item-v2 .campo select:focus {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(200,151,42,0.35);
+}
+.sinfonia-item-v2 .campo-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px 0;
+}
+.sinfonia-item-v2 .detalhes-dica {
+  margin-top: 12px;
+  font-size: 11px;
+  color: var(--silver-dim);
+  background: rgba(106,160,255,0.06);
+  border-left: 2px solid #6aa0ff;
+  padding: 6px 10px;
+  line-height: 1.5;
+}
+.sinfonia-item-v2 .detalhes-dica b { color: #8ab8ff; }
+
+/* ── Editor de descrição ── */
+.sinfonia-item-v2 .tab.descricao .editor {
+  min-height: 280px;
+  background: #0c1018;
+  border: 1px solid #1e2430;
+}
+.sinfonia-item-v2 .tab.descricao .editor-content {
+  padding: 10px 12px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  min-height: 260px;
+}
+.sinfonia-item-v2 .tab.descricao .editor-edit {
+  background: var(--gold-dim);
+  color: var(--gold-light);
+}
+
+.items-row .itens-panel .item-img {
+  width: 28px;
+  height: 28px;
+}
+.items-row .itens-panel .magia-circulo {
+  font-size: 11px;
+  min-width: 22px;
+}
+
+/* Mensagem quando vazio */
+.items-row .itens-panel .items-vazio {
+  font-style: italic;
+  color: var(--silver-dim);
+  font-size: 11px;
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px dashed rgba(200,151,42,0.2);
+  border-radius: 2px;
+}
+
+/* ================================================================
+   v0.5.0 REDESIGN — LAYOUT D&D BEYOND STYLE (v2-layout)
+   Banner superior + 3 colunas (rail esq / center / tabs vert dir)
+================================================================ */
+
+.sinfonia-sheet.v2-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   BANNER SUPERIOR (faixa fina com avatar + nome + recursos)
+   ──────────────────────────────────────────────────────────────────────── */
+.v2-layout .sheet-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 16px;
+  background: linear-gradient(180deg, #1a1408 0%, #0d0f18 100%);
+  border-bottom: 1px solid rgba(200, 151, 42, 0.4);
+  flex-shrink: 0;
+}
+
+.v2-layout .banner-avatar {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border: 2px solid var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(200, 151, 42, 0.4);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.v2-layout .banner-identity {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.v2-layout .banner-name {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  padding: 2px 4px;
+  width: 100%;
+  text-shadow: 0 0 8px rgba(240, 192, 96, 0.3);
+}
+.v2-layout .banner-name:focus {
+  outline: none;
+  border-bottom-color: var(--gold);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.v2-layout .banner-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.v2-layout .banner-classe {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.v2-layout .banner-classe:hover { border-color: var(--gold); }
+
+.v2-layout .banner-nivel,
+.v2-layout .banner-pts {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(200, 151, 42, 0.08);
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+}
+.v2-layout .banner-mini-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-light);
+}
+.v2-layout .banner-nivel input,
+.v2-layout .banner-pts input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  width: 36px;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Recursos: cards horizontais com ícone + label + valores */
+.v2-layout .banner-resources {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.v2-layout .res-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  padding: 6px 12px;
+  min-width: 110px;
+}
+.v2-layout .res-card.pv { border-left-color: var(--pv-color); }
+.v2-layout .res-card.pe { border-left-color: var(--pe-color); }
+.v2-layout .res-card.pi { border-left-color: var(--pi-color); }
+
+.v2-layout .res-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.v2-layout .res-card.pv .res-icon { color: var(--pv-color); }
+.v2-layout .res-card.pe .res-icon { color: var(--pe-color); }
+.v2-layout .res-card.pi .res-icon { color: var(--pi-color); }
+
+.v2-layout .res-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.v2-layout .res-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: var(--silver-dim);
+  text-transform: uppercase;
+}
+.v2-layout .res-values {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+.v2-layout .res-values input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  font-weight: 600;
+  width: 38px;
+  text-align: center;
+  padding: 0;
+}
+.v2-layout .res-values input:focus {
+  outline: 1px solid var(--gold);
+  background: rgba(0,0,0,0.4);
+}
+.v2-layout .res-sep {
+  color: var(--silver-dim);
+  font-size: 13px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   CORPO PRINCIPAL EM 3 COLUNAS
+   ──────────────────────────────────────────────────────────────────────── */
+.v2-layout .sheet-main {
+  display: grid;
+  grid-template-columns: 200px 1fr 140px;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ─── RAIL ESQUERDA ─── */
+.v2-layout .left-rail {
+  background: #0a0d16;
+  border-right: 1px solid var(--border);
+  padding: 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.v2-layout .rail-portrait {
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid var(--gold-dim);
+  background: #050810;
+  overflow: hidden;
+  position: relative;
+}
+.v2-layout .rail-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+.v2-layout .rail-portrait:hover img {
+  transform: scale(1.05);
+}
+
+.v2-layout .rail-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.v2-layout .rail-stat {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  background: rgba(200, 151, 42, 0.06);
+  border-left: 2px solid var(--gold-dim);
+  transition: background 0.15s, border-color 0.15s;
+}
+.v2-layout .rail-stat:hover {
+  background: rgba(200, 151, 42, 0.12);
+  border-left-color: var(--gold);
+}
+.v2-layout .rail-stat.estilhacos {
+  border-left-color: var(--cor-color);
+  background: rgba(200, 64, 64, 0.06);
+}
+
+.v2-layout .rail-stat-icon {
+  color: var(--gold);
+  font-size: 14px;
+  text-align: center;
+}
+.v2-layout .rail-stat.estilhacos .rail-stat-icon {
+  color: var(--cor-color);
+}
+.v2-layout .rail-stat-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+  text-transform: uppercase;
+}
+.v2-layout .rail-stat input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  width: 40px;
+  text-align: center;
+  padding: 0;
+}
+.v2-layout .rail-stat input:focus {
+  outline: 1px solid var(--gold);
+  background: rgba(0, 0, 0, 0.3);
+}
+.v2-layout .rail-stat-suffix {
+  font-size: 9px;
+  color: var(--silver-dim);
+  margin-left: -2px;
+}
+
+.v2-layout .rail-btn-arvore,
+.v2-layout .rail-btn-secondary {
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  width: 100%;
+}
+.v2-layout .rail-btn-arvore:hover {
+  background: rgba(200, 151, 42, 0.15);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.5);
+  box-shadow: 0 0 10px rgba(200, 151, 42, 0.2);
+}
+.v2-layout .rail-btn-secondary {
+  border-color: rgba(200, 151, 42, 0.4);
+  color: var(--silver);
+  font-size: 9px;
+}
+.v2-layout .rail-btn-secondary:hover {
+  background: rgba(200, 151, 42, 0.08);
+  color: var(--gold-light);
+  border-color: var(--gold);
+}
+
+/* ─── CENTER CONTENT ─── */
+.v2-layout .center-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Atributos como 5 cards no topo do center */
+.v2-layout .atributos-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  padding: 12px 16px 8px;
+  background: rgba(13, 16, 32, 0.5);
+  border-bottom: 1px solid rgba(200, 151, 42, 0.15);
+  flex-shrink: 0;
+}
+
+.v2-layout .atrib-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 4px;
+  background: linear-gradient(180deg, rgba(200, 151, 42, 0.05) 0%, transparent 100%);
+  border: 1px solid var(--border);
+  position: relative;
+  transition: all 0.2s;
+}
+.v2-layout .atrib-card:hover {
+  background: rgba(200, 151, 42, 0.1);
+  border-color: var(--gold);
+  transform: translateY(-1px);
+}
+.v2-layout .atrib-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at top, rgba(200,151,42,0.1) 0%, transparent 60%);
+}
+
+.v2-layout .atrib-card .atrib-abbr {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--gold);
+  text-shadow: 0 0 4px rgba(200, 151, 42, 0.3);
+}
+.v2-layout .atrib-card .atrib-dado {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid var(--border);
+  color: var(--gold-light);
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 700;
+  padding: 3px 6px;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  min-width: 0;
+}
+.v2-layout .atrib-card .atrib-dado:hover {
+  border-color: var(--gold);
+  background: rgba(200, 151, 42, 0.1);
+}
+.v2-layout .atrib-card .atrib-label {
+  font-family: 'EB Garamond', serif;
+  font-size: 10px;
+  color: var(--silver-dim);
+  text-transform: lowercase;
+  font-variant: small-caps;
+}
+
+/* Sheet body — scroll do conteúdo da tab */
+.v2-layout .sheet-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 14px 16px;
+}
+.v2-layout .sheet-body .tab {
+  display: none;
+}
+.v2-layout .sheet-body .tab.active {
+  display: block;
+}
+
+/* ─── TABS VERTICAIS DIREITA ─── */
+.v2-layout .right-tabs {
+  background: #0a0d16;
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 12px 0;
+  gap: 2px;
+}
+
+.v2-layout .vtab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border-left: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+.v2-layout .vtab:hover {
+  background: rgba(200, 151, 42, 0.08);
+}
+.v2-layout .vtab.active {
+  background: rgba(200, 151, 42, 0.15);
+  border-left-color: var(--gold);
+  box-shadow: inset 0 0 20px rgba(200, 151, 42, 0.1);
+}
+
+.v2-layout .vtab-icon {
+  font-size: 22px;
+  color: var(--silver-dim);
+  transition: color 0.2s, text-shadow 0.2s;
+}
+.v2-layout .vtab:hover .vtab-icon,
+.v2-layout .vtab.active .vtab-icon {
+  color: var(--gold);
+  text-shadow: 0 0 10px rgba(200, 151, 42, 0.5);
+}
+
+.v2-layout .vtab-label {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  text-align: center;
+  line-height: 1.2;
+  transition: color 0.2s;
+}
+.v2-layout .vtab:hover .vtab-label,
+.v2-layout .vtab.active .vtab-label {
+  color: var(--gold-light);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   AJUSTES NO PRINCIPAL.HBS — layout v2 é mais estreito
+   ──────────────────────────────────────────────────────────────────────── */
+.v2-layout .principal-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.v2-layout .pericias-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
+@media (max-width: 1200px) {
+  .v2-layout .pericias-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.v2-layout .items-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 1100px) {
+  .v2-layout .items-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Esconde elementos antigos que não existem mais no v2 layout */
+.v2-layout .sheet-header,
+.v2-layout .header-fields,
+.v2-layout .atributos-section,
+.v2-layout .combate-section,
+.v2-layout .sheet-tabs-row {
+  display: none !important;
+}
+
+/* ================================================================
+   v0.5.1 — AJUSTES DE LAYOUT (rail, fav, magias-tab)
+================================================================ */
+
+/* ─── Rail: input + sufixo "m" inline (DESL) ─── */
+.v2-layout .rail-stat-input-with-suffix {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+}
+.v2-layout .rail-stat-input-with-suffix input {
+  width: 42px;
+  text-align: right;
+  padding-right: 2px;
+}
+.v2-layout .rail-stat .rail-stat-suffix {
+  font-size: 10px;
+  color: var(--silver-dim);
+  margin: 0;
+  line-height: 1;
+}
+
+/* ─── Rail: stats derivados (não-editáveis) ─── */
+.v2-layout .rail-stat.derived {
+  cursor: default;
+}
+.v2-layout .rail-stat.derived:hover {
+  border-left-color: var(--gold-dim);
+  background: rgba(200, 151, 42, 0.06);
+}
+.v2-layout .rail-stat-value {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gold-light);
+  width: 40px;
+  text-align: center;
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.2);
+}
+
+/* ─── Rail: botões com layout próprio pra não quebrar texto ─── */
+.v2-layout .rail-btn-arvore,
+.v2-layout .rail-btn-secondary {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+.v2-layout .rail-btn-icon {
+  font-size: 14px;
+  line-height: 1;
+}
+.v2-layout .rail-btn-text {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ─── Estrelas de favorito ─── */
+.v2-layout .fav-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  cursor: pointer;
+  color: rgba(120, 136, 160, 0.35);
+  font-size: 12px;
+  transition: color 0.2s, text-shadow 0.2s, transform 0.15s;
+}
+.v2-layout .fav-toggle:hover {
+  color: var(--gold-light);
+  transform: scale(1.2);
+}
+.v2-layout .fav-toggle.is-fav {
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.5);
+}
+.v2-layout .fav-toggle.is-fav:hover {
+  color: var(--gold-light);
+}
+
+/* Items com estrela à esquerda: ajustar padding */
+.v2-layout .items-list .item {
+  position: relative;
+  padding-left: 4px;
+}
+
+/* ─── Aba FAVORITOS (Principal) ─── */
+.v2-layout .favoritos-panel {
+  margin-top: 4px;
+}
+.v2-layout .favoritos-list .favorito-item {
+  border-left: 3px solid var(--gold);
+  background: rgba(200, 151, 42, 0.05);
+}
+.v2-layout .favoritos-list .favorito-item:hover {
+  background: rgba(200, 151, 42, 0.1);
+}
+.v2-layout .favoritos-list .favorito-item.tipo-magia { border-left-color: #8a5fff; }
+.v2-layout .favoritos-list .favorito-item.tipo-arma  { border-left-color: #d04040; }
+.v2-layout .favoritos-list .favorito-item.tipo-armadura { border-left-color: #4a9eff; }
+.v2-layout .favoritos-list .favorito-item.tipo-inventario { border-left-color: #50c060; }
+.v2-layout .favoritos-list .favorito-item.tipo-habilidade { border-left-color: var(--gold); }
+
+/* ─── Aba MAGIAS (nova) ─── */
+.v2-layout .magias-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 1100px) {
+  .v2-layout .magias-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.v2-layout .magias-tipo-panel .panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.v2-layout .magias-tipo-panel.arcanas .panel-title i { color: #8a5fff; }
+.v2-layout .magias-tipo-panel.sagradas .panel-title i { color: #f0c060; }
+
+.v2-layout .magias-tipo-panel.arcanas {
+  border-top: 2px solid rgba(138, 95, 255, 0.4);
+}
+.v2-layout .magias-tipo-panel.sagradas {
+  border-top: 2px solid rgba(240, 192, 96, 0.4);
+}
+
+.v2-layout .magia-item.sagrada .magia-circulo {
+  background: linear-gradient(135deg, rgba(240,192,96,0.2), rgba(240,192,96,0.05));
+  color: var(--gold-light);
+  border: 1px solid rgba(240, 192, 96, 0.4);
+}
+
+/* ─── Aba INVENTÁRIO: 3 colunas (Armas/Armaduras/Utilizáveis) ─── */
+.v2-layout .inventario-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 1100px) {
+  .v2-layout .inventario-layout {
+    grid-template-columns: 1fr;
+  }
+}
+.v2-layout .inventario-layout .panel-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.v2-layout .inventario-layout .panel-title i {
+  font-size: 12px;
+  color: var(--gold);
+}
+
+/* ─── Aba MAGIAS — ajuste de items list ─── */
+.v2-layout .magias-list {
+  max-height: none;
+}
+
+/* ─── Spacing geral ─── */
+.v2-layout .sheet-body {
+  padding: 16px 18px 18px;
+}
+.v2-layout .principal-layout {
+  gap: 18px;
+}
+.v2-layout .panel {
+  padding: 12px 14px;
+}
+.v2-layout .panel-header {
+  margin-bottom: 10px;
+}
+.v2-layout .panel-title {
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+/* Ajustes pra o item-info ficar mais respirável */
+.v2-layout .items-list .item {
+  gap: 10px;
+  padding: 6px 8px;
+}
+.v2-layout .items-list .item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  flex: 1;
+}
+.v2-layout .items-list .item-nome {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.v2-layout .items-list .item-sub {
+  font-size: 10px;
+  color: var(--silver-dim);
+}
+.v2-layout .items-list .item-controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.v2-layout .items-list .item-controls a {
+  color: var(--silver-dim);
+  cursor: pointer;
+  padding: 3px 4px;
+  transition: color 0.15s;
+  font-size: 11px;
+}
+.v2-layout .items-list .item-controls a:hover {
+  color: var(--gold-light);
+}
+.v2-layout .items-list .item-controls .icon-atacar:hover { color: #d04040; }
+.v2-layout .items-list .item-controls .icon-dano:hover   { color: var(--gold); }
+
+/* ================================================================
+   v0.5.3 — AUTOMAÇÃO DE MAGIAS (cards de conjuração no chat)
+================================================================ */
+
+/* Tag de modo (ataque/resistência/utilitária) no card da magia */
+.magia-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid;
+}
+.magia-tag.ataque {
+  color: #ff8060; border-color: rgba(255,128,96,0.5);
+  background: rgba(255,128,96,0.1);
+}
+.magia-tag.resist {
+  color: #6aa0ff; border-color: rgba(106,160,255,0.5);
+  background: rgba(106,160,255,0.1);
+}
+.magia-tag.util {
+  color: #b090ff; border-color: rgba(176,144,255,0.5);
+  background: rgba(176,144,255,0.1);
+}
+
+/* Card de resistência no chat */
+.sinfonia-magia-resist {
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-left: 3px solid #6aa0ff;
+  background: #090c14;
+  font-family: 'EB Garamond', serif;
+  color: var(--text);
+}
+.sinfonia-magia-resist .magia-resist-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; margin-bottom: 6px;
+}
+.sinfonia-magia-resist .magia-resist-header i { color: #6aa0ff; }
+.sinfonia-magia-resist .magia-resist-info {
+  font-size: 13px; margin-bottom: 8px;
+  padding: 4px 8px;
+  background: rgba(106,160,255,0.08);
+  border-radius: 2px;
+}
+.sinfonia-magia-resist .magia-resist-acoes {
+  display: flex; gap: 6px; flex-wrap: wrap;
+}
+.sinfonia-magia-resist .magia-resist-dica {
+  font-size: 10px; font-style: italic;
+  color: var(--silver-dim); margin: 8px 0 0;
+}
+
+/* Botões de magia no chat */
+.btn-rolar-resistencia,
+.btn-magia-dano {
+  font-family: 'Cinzel', serif; font-size: 10px;
+  letter-spacing: 1px; text-transform: uppercase;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-rolar-resistencia {
+  border-color: rgba(106,160,255,0.5); color: #8ab8ff;
+}
+.btn-rolar-resistencia:hover {
+  background: rgba(106,160,255,0.12);
+  border-color: #6aa0ff;
+  text-shadow: 0 0 6px rgba(106,160,255,0.4);
+}
+.btn-magia-dano {
+  border-color: rgba(200,151,42,0.5); color: var(--gold-light);
+}
+.btn-magia-dano:hover {
+  background: rgba(200,151,42,0.12);
+  border-color: var(--gold);
+  text-shadow: 0 0 6px rgba(240,192,96,0.4);
+}
+
+/* ================================================================
+   v0.6.7 — Equipamento equipado (destaque visual)
+================================================================ */
+
+.v2-layout .items-list .item.equipado {
+  border-left: 2px solid var(--gold);
+  background: linear-gradient(
+    90deg,
+    rgba(200, 151, 42, 0.10) 0%,
+    rgba(200, 151, 42, 0.02) 60%,
+    transparent 100%
+  );
+}
+
+.v2-layout .item-controls .icon-equipar {
+  color: var(--silver-dim);
+  transition: all 0.2s;
+}
+.v2-layout .item-controls .icon-equipar:hover {
+  color: var(--gold-light);
+}
+.v2-layout .item-controls .icon-equipar.ativo {
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.5);
+}
+
+/* Conduíte tipo arcano/sagrado: cor distinta no border */
+.v2-layout .item.conduite-item.tipo-arcano.equipado {
+  border-left-color: #9060e8;
+  background: linear-gradient(
+    90deg,
+    rgba(144, 96, 232, 0.10) 0%,
+    transparent 100%
+  );
+}
+.v2-layout .item.conduite-item.tipo-sagrado.equipado {
+  border-left-color: #f0c060;
+  background: linear-gradient(
+    90deg,
+    rgba(240, 192, 96, 0.12) 0%,
+    transparent 100%
+  );
+}
+
+/* RD aplicada na mensagem de dano */
+.sinfonia-dano .rd-aplicada {
+  color: var(--silver-dim);
+  font-size: 0.9em;
+  font-style: italic;
+}
+
+/* ================================================================
+   v0.6.7 — Crepúsculo (cont)
+================================================================ */
+
+.crep-aviso {
+  margin-top: 6px;
+  padding: 6px 10px;
+  font-family: 'EB Garamond', serif;
+  font-size: 12px;
+  background: rgba(200, 64, 64, 0.08);
+  border-left: 3px solid var(--cor-color);
+  color: #e0c0c0;
+  line-height: 1.4;
+}
+
+.crep-aviso b { color: #ff8a8a; }
+
+.crep-aviso.entrou {
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #1a0808, #0a0506);
+  border: 1px solid var(--cor-color);
+  text-align: center;
+}
+.crep-aviso.entrou p:first-child {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: var(--cor-color);
+  text-shadow: 0 0 8px rgba(200,64,64,0.5);
+  margin-bottom: 6px;
+}
+.crep-aviso.entrou p { margin: 3px 0; }
+
+.crep-aviso.saiu {
+  background: rgba(96, 200, 96, 0.08);
+  border-left-color: #60c860;
+  color: #c0e0c0;
+}
+.crep-aviso.saiu b { color: #80e890; }
+
+.crep-aviso.morte {
+  padding: 12px;
+  background: linear-gradient(135deg, #0a0508, #050203);
+  border: 1px solid #444;
+  border-left: 4px solid #888;
+  text-align: center;
+  color: #888;
+}
+.crep-aviso.morte h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 16px;
+  letter-spacing: 3px;
+  color: #aaaaaa;
+  margin: 0 0 8px;
+  text-shadow: 0 0 12px rgba(180,180,180,0.4);
+}
+.crep-aviso.morte p { margin: 0; font-style: italic; }
+
+.crep-aviso.teste {
+  background: rgba(240, 192, 96, 0.08);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 10px 12px;
+}
+.crep-aviso.teste p:first-child {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  letter-spacing: 1px;
+  margin: 0 0 6px;
+}
+.crep-aviso.teste button {
+  margin-top: 6px;
+}
+
+.crep-aviso.turno {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* ================================================================
+   v0.7.1 — Pts Hab. como fração livres/total no banner
+================================================================ */
+.banner-pts-fracao {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 18px;
+  padding: 4px 12px;
+  background: #0d1018;
+  border: 1px solid var(--gold-dim);
+  min-width: 60px;
+  justify-content: center;
+}
+.banner-pts-fracao .pts-livres {
+  color: #80e890;
+  text-shadow: 0 0 4px rgba(128,232,144,0.4);
+}
+.banner-pts-fracao .pts-sep {
+  color: var(--silver-dim);
+  margin: 0 2px;
+}
+.banner-pts-fracao .pts-total {
+  color: var(--gold-light);
+}
+
+/* ================================================================
+   v0.7.4 — Input de bônus manual em stats derivados (DEF/INIT/ND M.)
+================================================================ */
+.rail-stat.derived.editable {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 6px;
+}
+.rail-stat.derived.editable .rail-stat-value {
+  text-align: right;
+  padding-right: 4px;
+}
+.rail-stat-bonus {
+  width: 38px;
+  padding: 2px 4px;
+  font-size: 11px;
+  text-align: center;
+  background: rgba(20, 20, 28, 0.6);
+  border: 1px solid var(--gold-dim);
+  color: var(--silver-dim);
+  font-family: 'Cinzel', serif;
+  border-radius: 2px;
+}
+.rail-stat-bonus:focus {
+  outline: none;
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: rgba(40, 30, 10, 0.7);
+}
+
+/* ================================================================
+   v0.7.4 — Botões de uso de habilidade + Card no chat
+================================================================ */
+
+/* Botão "Usar" nos chips de sub-item (Manobra, Truque, etc) */
+.arvore-sub-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.btn-usar-sub {
+  width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(128, 232, 144, 0.10);
+  border: 1px solid rgba(128, 232, 144, 0.35);
+  border-left: 2px solid #80e890;
+  color: #80e890;
+  cursor: pointer;
+  font-size: 9px;
+  transition: all 0.15s;
+}
+.btn-usar-sub:hover {
+  background: rgba(128, 232, 144, 0.25);
+  color: #b0ffc0;
+  text-shadow: 0 0 6px rgba(128, 232, 144, 0.6);
+}
+
+/* Botão "Usar" pra habilidades sem sublista (Provocar, Lâmina, etc) */
+.arvore-item-usar {
+  margin-top: 6px;
+}
+.btn-usar-hab {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  background: rgba(128, 232, 144, 0.12);
+  border: 1px solid rgba(128, 232, 144, 0.40);
+  color: #80e890;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-usar-hab:hover {
+  background: rgba(128, 232, 144, 0.25);
+  color: #b0ffc0;
+  text-shadow: 0 0 8px rgba(128, 232, 144, 0.6);
+  border-color: #b0ffc0;
+}
+
+/* Card de habilidade postado no chat */
+.sinfonia-hab-card {
+  background: linear-gradient(180deg, #0a0d14, #060709);
+  border: 1px solid var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 12px 14px;
+  font-family: 'EB Garamond', serif;
+}
+.sinfonia-hab-card .hab-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--gold-dim);
+  padding-bottom: 6px;
+}
+.sinfonia-hab-card .hab-card-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 1.5px;
+  color: var(--gold-light);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.3);
+}
+.sinfonia-hab-card .hab-card-origem {
+  font-size: 10px;
+  font-style: italic;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+}
+.sinfonia-hab-card .hab-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+.hab-card-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 8px;
+  background: rgba(106, 160, 255, 0.10);
+  border: 1px solid rgba(106, 160, 255, 0.30);
+  color: #8ab8ff;
+}
+.sinfonia-hab-card .hab-card-desc {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.sinfonia-hab-card .hab-card-efeito {
+  font-size: 12px;
+  color: var(--gold-light);
+  padding: 4px 8px;
+  background: rgba(200, 151, 42, 0.08);
+  border-left: 2px solid var(--gold);
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sinfonia-hab-card .hab-card-aprimorado {
+  font-size: 11px;
+  color: #c0d8ff;
+  background: rgba(106, 160, 255, 0.06);
+  padding: 4px 8px;
+  border-left: 2px solid #6aa0ff;
+  margin-bottom: 6px;
+}
+.sinfonia-hab-card .hab-card-aprimorado b {
+  color: #8ab8ff;
+}
+.sinfonia-hab-card .hab-card-custo {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--cor-color);
+  text-align: right;
+  border-top: 1px solid var(--gold-dim);
+  padding-top: 6px;
+  margin-top: 6px;
+}
+
+
+
+/* ================================================================
+   v0.7.1 — Crepúsculo da Morte no banner (indicador + botão)
+================================================================ */
+.banner-crepusculo {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  background: linear-gradient(90deg, rgba(200, 64, 64, 0.18), rgba(200, 64, 64, 0.04));
+  border: 1px solid var(--cor-color);
+  border-left: 3px solid #ff6060;
+}
+.banner-crepusculo .crep-banner-icon {
+  font-family: 'Cinzel', serif;
+  font-size: 28px;
+  color: #ff6060;
+  text-shadow: 0 0 10px rgba(255, 96, 96, 0.6);
+  line-height: 1;
+}
+.banner-crepusculo .crep-banner-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.banner-crepusculo .crep-banner-title {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #ff8080;
+  text-shadow: 0 0 6px rgba(255, 96, 96, 0.4);
+}
+.banner-crepusculo .crep-banner-sub {
+  font-size: 11px;
+  color: #e0c0c0;
+  letter-spacing: 0.5px;
+}
+.banner-crepusculo .crep-banner-sub b {
+  color: #ffaaaa;
+  font-weight: 700;
+}
+.banner-crepusculo .btn-crep-rolar {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  background: rgba(255, 96, 96, 0.12);
+  border: 1px solid var(--cor-color);
+  color: #ffb0b0;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.banner-crepusculo .btn-crep-rolar:hover {
+  background: rgba(255, 96, 96, 0.25);
+  color: #ffffff;
+  text-shadow: 0 0 8px rgba(255, 96, 96, 0.6);
+  border-color: #ff8080;
+}
+
+/* Banner de MORTO (estado final, não tem botão) */
+.banner-crepusculo.morte {
+  background: linear-gradient(90deg, rgba(20, 20, 20, 0.85), rgba(100, 30, 30, 0.4));
+  border-color: #ff4040;
+  border-left-color: #ff2020;
+  animation: morte-pulse 2.5s ease-in-out infinite;
+}
+.banner-crepusculo.morte .crep-banner-icon {
+  color: #ff3030;
+  text-shadow: 0 0 16px rgba(255, 48, 48, 0.9), 0 0 8px rgba(255, 48, 48, 0.6);
+}
+.banner-crepusculo.morte .crep-banner-title {
+  color: #ff6060;
+  font-size: 16px;
+  letter-spacing: 5px;
+  text-shadow: 0 0 12px rgba(255, 96, 96, 0.7);
+}
+.banner-crepusculo.morte .crep-banner-sub {
+  color: #c08080;
+  font-style: italic;
+}
+@keyframes morte-pulse {
+  0%, 100% { box-shadow: inset 0 0 20px rgba(255, 48, 48, 0.15); }
+  50%      { box-shadow: inset 0 0 30px rgba(255, 48, 48, 0.30); }
+}
+
+/* Mensagem de MORTE no chat (dramática) */
+.crep-aviso.morte {
+  background: linear-gradient(180deg, #1a0606, #2a0a0a);
+  border: 2px solid #ff2020;
+  border-radius: 4px;
+  padding: 16px 20px;
+  text-align: center;
+  box-shadow: 0 0 24px rgba(255, 32, 32, 0.4), inset 0 0 16px rgba(255, 32, 32, 0.15);
+}
+.crep-aviso.morte h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  letter-spacing: 8px;
+  color: #ff4040;
+  text-shadow: 0 0 16px rgba(255, 64, 64, 0.8), 0 0 6px rgba(255, 64, 64, 0.6);
+  margin: 0 0 10px;
+  border: none;
+}
+.crep-aviso.morte p {
+  color: #d0a0a0;
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 4px 0;
+}
+.crep-aviso.morte p em {
+  color: #a08080;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* Botão REVIVER (no banner de morto) */
+.banner-crepusculo.morte .btn-crep-rolar.reviver {
+  background: rgba(128, 232, 144, 0.10);
+  border-color: rgba(128, 232, 144, 0.45);
+  color: #90e8a0;
+}
+.banner-crepusculo.morte .btn-crep-rolar.reviver:hover {
+  background: rgba(128, 232, 144, 0.22);
+  color: #c8ffd4;
+  text-shadow: 0 0 10px rgba(128, 232, 144, 0.7);
+  border-color: #90e8a0;
+}
+
+/* Card de "retorna à vida" no chat */
+.crep-aviso.saiu.reviveu {
+  background: linear-gradient(180deg, #0a160c, #0d2212);
+  border: 2px solid #58c858;
+  border-radius: 4px;
+  padding: 14px 18px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(88, 200, 88, 0.35), inset 0 0 14px rgba(88, 200, 88, 0.12);
+}
+.crep-aviso.saiu.reviveu h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 17px;
+  letter-spacing: 4px;
+  color: #90f890;
+  text-shadow: 0 0 12px rgba(128, 232, 144, 0.7);
+  margin: 0 0 8px;
+  border: none;
+}
+.crep-aviso.saiu.reviveu p {
+  color: #b8e0c0;
+  font-size: 12px;
+  margin: 3px 0;
+}
+.crep-aviso.saiu.reviveu p em {
+  color: #88b890;
+  font-size: 11px;
+}
+
+
+/* ================================================================
+   v0.7.0 — ÁRVORE DE HABILIDADES (reformulada)
+================================================================ */
+
+.arvore-habilidades {
+  padding: 0;
+  background: #060709;
+  color: var(--text);
+  font-family: 'EB Garamond', serif;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.arvore-habilidades .arvore-sem-classe {
+  padding: 60px 40px;
+  text-align: center;
+  color: var(--silver-dim);
+}
+.arvore-habilidades .arvore-sem-classe i {
+  font-size: 48px;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: block;
+}
+.arvore-habilidades .arvore-sem-classe h3 {
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  margin-bottom: 8px;
+  letter-spacing: 2px;
+}
+
+/* ─── Header ─── */
+.arvore-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: linear-gradient(180deg, #0d1018, #060709);
+  border-bottom: 2px solid var(--gold-dim);
+}
+.arvore-header-info h2 {
+  font-family: 'Cinzel', serif;
+  margin: 0;
+  font-size: 22px;
+  letter-spacing: 3px;
+}
+.arvore-header-info .arvore-subtitle {
+  font-size: 11px;
+  color: var(--silver-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.arvore-pontos {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.pontos-bloco {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 60px;
+}
+.pontos-label {
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+}
+.pontos-valor {
+  font-family: 'Cinzel', serif;
+  font-size: 22px;
+  font-weight: 600;
+}
+.pontos-valor.disponivel { color: #80e890; text-shadow: 0 0 8px rgba(128,232,144,0.4); }
+.pontos-valor.gastos     { color: var(--gold-light); }
+.pontos-valor.total      { color: var(--silver-dim); }
+.btn-resetar {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--cor-color);
+  color: #e0a0a0;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-resetar:hover {
+  background: rgba(200, 64, 64, 0.12);
+  color: #ff8a8a;
+}
+
+/* ─── Lista de habilidades ─── */
+.arvore-lista {
+  list-style: none;
+  padding: 12px;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+.arvore-item {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #0a0d14;
+  border: 1px solid #1a1d28;
+  border-left: 3px solid #1a1d28;
+  transition: all 0.2s;
+}
+.arvore-item.ativa {
+  border-left-color: var(--gold);
+  background: linear-gradient(
+    90deg,
+    rgba(200, 151, 42, 0.06) 0%,
+    rgba(200, 151, 42, 0.01) 50%,
+    transparent 100%
+  );
+}
+.arvore-item.passiva.ativa {
+  border-left-color: #6aa0ff;
+  background: linear-gradient(
+    90deg,
+    rgba(106, 160, 255, 0.06) 0%,
+    transparent 100%
+  );
+}
+.arvore-item:hover {
+  border-color: var(--gold-dim);
+}
+
+.arvore-item-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.arvore-item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.arvore-item-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: var(--gold-light);
+  margin: 0;
+}
+.arvore-item-maxnh {
+  font-size: 10px;
+  color: var(--silver-dim);
+  font-weight: normal;
+  margin-left: 4px;
+}
+.arvore-item-tags {
+  display: flex;
+  gap: 4px;
+}
+.arvore-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  background: rgba(106, 160, 255, 0.1);
+  border: 1px solid rgba(106, 160, 255, 0.3);
+  color: #8ab8ff;
+}
+.arvore-item-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  margin: 0;
+}
+.arvore-item-efeito {
+  font-size: 12px;
+  color: var(--gold-light);
+  margin: 2px 0 0;
+  padding: 4px 8px;
+  background: rgba(200, 151, 42, 0.08);
+  border-left: 2px solid var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.arvore-item-efeito i {
+  color: var(--gold);
+}
+
+/* ─── Controle (botões +/− e slots) ─── */
+.arvore-item-controle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 100px;
+}
+.arvore-botoes {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-nh {
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-light);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-nh:hover:not(:disabled) {
+  background: rgba(200, 151, 42, 0.15);
+  border-color: var(--gold);
+  color: var(--gold);
+  text-shadow: 0 0 6px rgba(240, 192, 96, 0.5);
+}
+.btn-nh:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+.btn-nh.dec:hover:not(:disabled) {
+  border-color: var(--cor-color);
+  color: #ff8a8a;
+}
+.arvore-nh-valor {
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--gold-light);
+  min-width: 40px;
+  text-align: center;
+}
+
+.arvore-slots {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 100px;
+}
+.arvore-slot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #1a1d28;
+  border: 1px solid #2a2d38;
+  transition: all 0.2s;
+}
+.arvore-slot.preenchido {
+  background: var(--gold);
+  border-color: var(--gold-light);
+  box-shadow: 0 0 4px rgba(240, 192, 96, 0.6);
+}
+
+/* ─── Aba Habilidades (resumo) ─── */
+.habilidades-arvore-layout .hab-nh {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--silver-dim);
+  margin-left: 8px;
+  text-transform: uppercase;
+}
+.habilidades-arvore-layout .hab-arvore-item.passiva .hab-bolha {
+  background: #6aa0ff !important;
+  box-shadow: 0 0 6px #6aa0ff !important;
+}
+.habilidades-arvore-layout .arvore-pts {
+  font-size: 12px;
+  color: var(--silver-dim);
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.habilidades-arvore-layout .arvore-pts b {
+  color: var(--gold-light);
+}
+
+/* ================================================================
+   v0.7.2 — SUBLISTAS (Manobras, Truques, Venenos, Disparos)
+================================================================ */
+
+/* Lista de itens da sublista já escolhidos, abaixo do efeito atual */
+.arvore-sublista {
+  list-style: none;
+  padding: 0;
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.arvore-sub-item {
+  display: inline-flex;
+}
+.arvore-sub-item a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  background: rgba(106, 160, 255, 0.08);
+  border: 1px solid rgba(106, 160, 255, 0.3);
+  border-left: 2px solid #6aa0ff;
+  font-size: 11px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.arvore-sub-item a:hover {
+  background: rgba(106, 160, 255, 0.18);
+  border-color: #8ab8ff;
+  color: #c0e0ff;
+}
+.arvore-sub-item .sub-item-label {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+}
+.arvore-sub-item .sub-item-cost {
+  font-size: 9px;
+  color: var(--silver-dim);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  padding: 0 4px;
+  border-left: 1px solid var(--silver-dim);
+  margin-left: 2px;
+}
+.arvore-sub-item i {
+  color: #6aa0ff;
+  font-size: 10px;
+}
+
+/* Dialog de escolha (Aprender) e remoção (Esquecer) */
+.sinfonia-dialog-sublista {
+  font-family: 'EB Garamond', serif;
+}
+.sinfonia-dialog-sublista .sub-intro {
+  margin: 0 0 12px;
+  color: var(--silver-dim);
+  font-size: 13px;
+}
+.sinfonia-dialog-sublista .sub-intro b {
+  color: var(--gold-light);
+}
+.sinfonia-dialog-sublista .sub-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 480px;
+  overflow-y: auto;
+}
+.sinfonia-dialog-sublista.compact .sub-lista {
+  max-height: 240px;
+}
+.sub-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #0a0d14;
+  border: 1px solid #1a1d28;
+  border-left: 3px solid #1a1d28;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.sub-opcao:hover:not(.disabled) {
+  border-color: var(--gold-dim);
+  background: #0d1018;
+}
+.sub-opcao input[type="radio"] {
+  margin-top: 2px;
+  cursor: pointer;
+}
+.sub-opcao.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.sub-opcao.disabled input { cursor: not-allowed; }
+.sub-opcao-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.sub-opcao-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.sub-opcao-nome {
+  font-family: 'Cinzel', serif;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: var(--gold-light);
+}
+.sub-opcao-tags {
+  display: flex;
+  gap: 3px;
+}
+.sub-tag {
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  background: rgba(106, 160, 255, 0.1);
+  border: 1px solid rgba(106, 160, 255, 0.3);
+  color: #8ab8ff;
+}
+.sub-conhecida {
+  font-size: 10px;
+  font-style: italic;
+  color: var(--cor-color);
+  margin-left: 6px;
+}
+.sub-opcao-desc {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.5;
+  margin: 0;
+}
+.sub-aprimorado {
+  font-size: 11px;
+  color: #c0d8ff;
+  background: rgba(106, 160, 255, 0.06);
+  padding: 4px 8px;
+  border-left: 2px solid #6aa0ff;
+  margin-top: 4px;
+}
+.sub-aprimorado b { color: #8ab8ff; }
+
+/* Dialog de detalhe de subitem (clique em item já aprendido) */
+.sinfonia-subitem-detalhe {
+  font-family: 'EB Garamond', serif;
+  padding: 4px;
+}
+.sinfonia-subitem-detalhe .sub-tags {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+.sinfonia-subitem-detalhe .sub-desc {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+/* ================================================================
+   v0.7.2 — Custo Contínuo de magias
+================================================================ */
+.magia-continua-acoes {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-toggle-continua {
+  font-family: 'Cinzel', serif;
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  background: rgba(106, 160, 255, 0.10);
+  border: 1px solid rgba(106, 160, 255, 0.40);
+  color: #8ab8ff;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-toggle-continua:hover {
+  background: rgba(106, 160, 255, 0.20);
+  color: #c0e0ff;
+  text-shadow: 0 0 6px rgba(106, 160, 255, 0.5);
+}
+.btn-toggle-continua.ativa {
+  background: rgba(200, 64, 64, 0.12);
+  border-color: var(--cor-color);
+  color: #ff9090;
+}
+.btn-toggle-continua.ativa:hover {
+  background: rgba(200, 64, 64, 0.22);
+  color: #ffbbbb;
+}
+.magia-continuo {
+  color: #8ab8ff !important;
+  font-style: italic;
+}
+.sinfonia-magia-continua {
+  padding: 6px 10px;
+  font-size: 12px;
+  border-left: 2px solid var(--gold);
+  background: rgba(200, 151, 42, 0.08);
+  color: var(--text);
+}
+.sinfonia-magia-continua.ativou {
+  border-left-color: #6aa0ff;
+  background: rgba(106, 160, 255, 0.10);
+  color: #c0d8ff;
+}
+.sinfonia-magia-continua.dispersou {
+  border-left-color: var(--cor-color);
+  background: rgba(200, 64, 64, 0.10);
+  color: #ffb0b0;
+}
+.sinfonia-magia-continua.mantida {
+  border-left-color: var(--gold-dim);
+  font-size: 11px;
+  color: var(--silver-dim);
+}
+.continua-cost {
+  margin-left: 8px;
+  font-family: 'Cinzel', serif;
+  color: var(--gold-light);
+  font-size: 10px;
+}
 
 /* ================================================================
    v0.8.2 — FICHA DE MONSTRO (NPC v2)
-   Inspirada na "Sentinela do Acervo": header, recursos, atributos,
-   resistências elementais, ações, traços e recompensa.
 ================================================================ */
 .npc-v2 {
   --gold:        #c8972a;
   --gold-light:  #f0c060;
   --gold-dim:    #6b4e12;
-  --npc-accent:  #9060e8;          /* roxo Darkner por padrão */
+  --npc-accent:  #9060e8;
   --npc-accent-l:#c39aff;
   --text:        #ddd0b8;
   --silver-dim:  #7888a0;
@@ -36,8 +4857,9 @@
   border-color: var(--npc-accent);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--npc-accent) 40%, transparent);
 }
+.npc-v2 select option { background: #120e1f; color: var(--text); }
 
-/* ─── Header ─── */
+/* Header */
 .npc-v2 .npc-banner {
   display: flex;
   gap: 14px;
@@ -85,7 +4907,7 @@
 .npc-v2 .npc-badge.nivel input, .npc-v2 .npc-badge.rd input { width: 34px; text-align: center; }
 .npc-v2 .npc-badge.rd { background: rgba(200,151,42,0.14); border-color: var(--gold-dim); color: var(--gold-light); }
 
-/* ─── Recursos (PV/PE/Fúria) ─── */
+/* Recursos */
 .npc-v2 .npc-recursos { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px; }
 .npc-v2 .npc-res-head {
   display: flex; justify-content: space-between; align-items: baseline;
@@ -101,7 +4923,7 @@
 .npc-v2 .npc-res-fill.pe    { background: linear-gradient(90deg, #1f4a7a, #4a9eff); }
 .npc-v2 .npc-res-fill.furia { background: linear-gradient(90deg, #7a4a1f, #ffa23f); }
 
-/* ─── Atributos + combate ─── */
+/* Atributos + combate */
 .npc-v2 .npc-stats-row {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
@@ -134,7 +4956,7 @@
   text-align: center; width: 100%;
 }
 
-/* ─── Resistências elementais ─── */
+/* Resistências elementais */
 .npc-v2 .npc-resist-row {
   display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px;
   background: #2a2440; border-bottom: 1px solid #2a2440;
@@ -152,7 +4974,6 @@
   font-size: 10px; text-align: center; text-align-last: center;
   width: 100%; padding: 2px 1px; border: 1px solid #2a2440;
 }
-/* cores de estado */
 .npc-v2 .npc-resist.resistente .npc-resist-select { color: #5bff8a; border-color: rgba(91,255,138,0.4); }
 .npc-v2 .npc-resist.vulneravel .npc-resist-select { color: #ff6b6b; border-color: rgba(255,107,107,0.5); }
 .npc-v2 .npc-resist.imune .npc-resist-select      { color: #5bc8ff; border-color: rgba(91,200,255,0.5); }
@@ -160,11 +4981,10 @@
 .npc-v2 .npc-resist.vulneravel { box-shadow: inset 0 -2px 0 #ff6b6b; }
 .npc-v2 .npc-resist.imune      { box-shadow: inset 0 -2px 0 #5bc8ff; }
 
-/* ─── Corpo: ações + lateral ─── */
+/* Corpo: ações + lateral */
 .npc-v2 .npc-body { display: grid; grid-template-columns: 1.6fr 1fr; gap: 0; }
 .npc-v2 .npc-acoes-col { padding: 12px 14px; border-right: 1px solid #2a2440; }
 .npc-v2 .npc-side-col { padding: 12px 14px; display: flex; flex-direction: column; gap: 14px; }
-
 .npc-v2 .npc-section-head {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 8px; border-bottom: 1px solid var(--gold-dim); padding-bottom: 4px;
@@ -179,8 +4999,6 @@
   width: 22px; height: 22px; cursor: pointer; transition: all 0.2s ease;
 }
 .npc-v2 .btn-add-acao:hover, .npc-v2 .btn-add-traco:hover { background: rgba(200,151,42,0.15); border-color: var(--gold); }
-
-/* Ação */
 .npc-v2 .npc-acao {
   background: #0d0a18; border: 1px solid #2a2440; border-left: 2px solid var(--npc-accent);
   padding: 8px 10px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 5px;
@@ -202,8 +5020,6 @@
 .npc-v2 .btn-del-acao:hover, .npc-v2 .btn-del-traco:hover { border-color: #c84040; color: #ff8a8a; }
 .npc-v2 .npc-acao-formula { font-size: 11px; font-family: monospace; padding: 3px 6px; }
 .npc-v2 .npc-acao-desc { font-size: 12px; line-height: 1.4; resize: vertical; min-height: 36px; padding: 4px 6px; }
-
-/* Lateral */
 .npc-v2 .npc-side-block h4 {
   font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 1.5px;
   color: var(--npc-accent-l); margin: 0 0 5px; text-transform: uppercase;
@@ -221,8 +5037,6 @@
 }
 .npc-v2 .npc-traco textarea { width: 100%; font-size: 11px; padding: 3px 5px; resize: vertical; min-height: 32px; }
 .npc-v2 .npc-vazio { font-size: 11px; color: var(--silver-dim); font-style: italic; padding: 8px; text-align: center; }
-
-/* Descrição */
 .npc-v2 .npc-descricao-wrap { margin: 0 16px 16px; }
 .npc-v2 .npc-descricao-wrap summary {
   font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 2px;
@@ -272,15 +5086,12 @@
   outline: none;
   border-color: var(--gold);
 }
-/* Estados coloridos */
 .player-resist.resistente { box-shadow: inset 0 -2px 0 #5bff8a; }
 .player-resist.resistente .player-resist-select { color: #5bff8a; border-color: rgba(91,255,138,0.4); }
 .player-resist.vulneravel { box-shadow: inset 0 -2px 0 #ff6b6b; }
 .player-resist.vulneravel .player-resist-select { color: #ff6b6b; border-color: rgba(255,107,107,0.5); }
 .player-resist.imune { box-shadow: inset 0 -2px 0 #5bc8ff; }
 .player-resist.imune .player-resist-select { color: #5bc8ff; border-color: rgba(91,200,255,0.5); }
-
-/* Avisos de resistência/imunidade nas mensagens de dano */
 .res-aplicada {
   display: inline-block;
   font-size: 11px;
@@ -298,3 +5109,8 @@
   color: #bce8ff;
 }
 .sinfonia-dano.imune b { color: #5bc8ff; }
+
+
+
+
+
