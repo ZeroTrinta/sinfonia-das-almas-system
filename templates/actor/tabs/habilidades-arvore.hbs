@@ -35,6 +35,30 @@
             {{else}}
               <div class="hab-desc">{{hab.desc}}</div>
             {{/if}}
+
+            {{#if hab.temSublista}}
+              {{#if hab.sublistaItens.length}}
+              <ul class="hab-sublista">
+                {{#each hab.sublistaItens as |sub|}}
+                <li class="hab-sub-item">
+                  <a class="btn-usar-sub-hab" data-action="usarSubitem" data-hab-id="{{sub.habId}}" data-sub-id="{{sub.id}}" title="Usar {{sub.label}}">
+                    <i class="fas fa-play"></i>
+                    <span class="sub-item-label">{{sub.label}}</span>
+                    {{#if sub.custo}}<span class="sub-item-cost">{{sub.custo}}</span>{{/if}}
+                    {{#if sub.acao}}<span class="sub-item-acao">{{sub.acao}}</span>{{/if}}
+                  </a>
+                </li>
+                {{/each}}
+              </ul>
+              {{/if}}
+              {{#if hab.sublistaLivre}}
+                <div class="hab-sub-livre">
+                  <i class="fas fa-circle-plus"></i>
+                  Pode escolher mais <b>{{hab.sublistaLivre}}</b> da lista
+                  <button type="button" data-action="abrirArvore" class="btn-link">escolher →</button>
+                </div>
+              {{/if}}
+            {{/if}}
           </div>
         </li>
         {{/each}}

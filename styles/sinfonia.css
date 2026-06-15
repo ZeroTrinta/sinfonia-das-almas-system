@@ -354,6 +354,12 @@
   background: var(--bg) !important;
 }
 
+/* Ficha de NPC (v1 ActorSheet): window-content sem padding, conteúdo rola dentro do .npc-v2 */
+.app.sheet.actor.sinfonia-das-almas:has(.npc-v2) .window-content {
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
 /* ── Sheet body scrollável ──
    Sem isso a ficha fica fixa no tamanho da janela e em monitores menores
    não dá pra ver o conteúdo inferior. */
@@ -4837,7 +4843,9 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  width: 100%;
   height: 100%;
+  overflow-x: hidden;
   overflow-y: auto;
   background:
     radial-gradient(ellipse 70% 40% at 90% -5%, color-mix(in srgb, var(--npc-accent) 12%, transparent), transparent 60%),
@@ -4851,7 +4859,16 @@
   border: 1px solid #2a2440;
   color: var(--text);
   font-family: 'EB Garamond', serif;
+  box-sizing: border-box;
+  max-width: 100%;
 }
+/* Contenção geral: nada escapa do container */
+.npc-v2, .npc-v2 * { box-sizing: border-box; }
+.npc-v2 .npc-body,
+.npc-v2 .npc-acoes-col,
+.npc-v2 .npc-side-col { min-width: 0; }
+.npc-v2 .npc-acao,
+.npc-v2 .npc-traco { min-width: 0; max-width: 100%; }
 .npc-v2 input:focus, .npc-v2 select:focus, .npc-v2 textarea:focus {
   outline: none;
   border-color: var(--npc-accent);
@@ -4906,6 +4923,27 @@
 .npc-v2 .npc-badge input { background: transparent; border: none; width: auto; max-width: 130px; color: var(--npc-accent-l); padding: 0; }
 .npc-v2 .npc-badge.nivel input, .npc-v2 .npc-badge.rd input { width: 34px; text-align: center; }
 .npc-v2 .npc-badge.rd { background: rgba(200,151,42,0.14); border-color: var(--gold-dim); color: var(--gold-light); }
+.npc-v2 .btn-desvincular-tokens {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Cinzel', serif;
+  font-size: 9px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  background: rgba(91,200,255,0.10);
+  border: 1px solid rgba(91,200,255,0.40);
+  color: #5bc8ff;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+.npc-v2 .btn-desvincular-tokens:hover {
+  background: rgba(91,200,255,0.22);
+  color: #bce8ff;
+  border-color: #5bc8ff;
+  text-shadow: 0 0 6px rgba(91,200,255,0.6);
+}
 
 /* Recursos */
 .npc-v2 .npc-recursos { display: flex; flex-direction: column; gap: 6px; padding: 12px 16px; }
@@ -5225,3 +5263,63 @@
   border-color: var(--npc-accent);
   color: var(--npc-accent-l);
 }
+
+/* ================================================================
+   v0.8.9 — Sublistas na aba Habilidades (chips com botão Usar)
+   Truques Sujos, Venenos, Manobras, Disparos escolhidos aparecem
+   abaixo do efeito da habilidade-mãe.
+================================================================ */
+.hab-sublista {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.hab-sub-item { display: inline-flex; }
+.btn-usar-sub-hab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(128, 232, 144, 0.10);
+  border: 1px solid rgba(128, 232, 144, 0.35);
+  border-left: 2px solid #80e890;
+  font-size: 11px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-usar-sub-hab:hover {
+  background: rgba(128, 232, 144, 0.22);
+  border-color: #80e890;
+  color: #c8ffd4;
+  text-shadow: 0 0 6px rgba(128, 232, 144, 0.5);
+}
+.btn-usar-sub-hab i { color: #80e890; font-size: 9px; }
+.btn-usar-sub-hab .sub-item-label {
+  font-family: 'EB Garamond', serif;
+  font-weight: 600;
+}
+.btn-usar-sub-hab .sub-item-cost,
+.btn-usar-sub-hab .sub-item-acao {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--silver-dim);
+  padding-left: 6px;
+  border-left: 1px solid rgba(120,136,160,0.4);
+}
+.hab-sub-livre {
+  margin-top: 8px;
+  font-size: 11px;
+  font-style: italic;
+  color: var(--silver-dim);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hab-sub-livre i { color: var(--gold); }
+.hab-sub-livre b { color: var(--gold-light); font-style: normal; }

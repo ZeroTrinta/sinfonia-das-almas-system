@@ -550,6 +550,22 @@ Hooks.once("init", () => {
   // colorido em volta do retrato). Quem já existia precisa abrir as configurações
   // do prototype token e ativar manualmente — ou usar a macro de "converter tokens".
   Hooks.on("preCreateActor", (actor, data, options, userId) => {
+    // NPCs: cada token deve ter vida PRÓPRIA (não compartilhada).
+    // actorLink: false faz cada token ser uma cópia independente — coloca 5
+    // goblins e cada um tem seu próprio PV. Também marca como hostil por padrão.
+    if (actor.type === "npc") {
+      actor.updateSource({
+        prototypeToken: {
+          actorLink: false,        // ← vida independente por token
+          disposition: -1,         // hostil por padrão
+          displayName: 20,         // hover mostra nome
+          displayBars: 20,         // hover mostra barras
+          bar1: { attribute: "recursos.pv" }
+        }
+      });
+      return;
+    }
+
     // Só mexe se for personagem (não em NPCs, a não ser que o GM queira)
     if (actor.type !== "personagem") return;
 
@@ -603,7 +619,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.8.7");
+  console.log("Sinfonia das Almas | Pronto. v0.8.9");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).

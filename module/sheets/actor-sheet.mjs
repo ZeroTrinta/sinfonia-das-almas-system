@@ -76,7 +76,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
       toggleFavorito:  SinfoniaActorSheet._onToggleFavorito,
       rolarTesteCrepusculo: SinfoniaActorSheet._onRolarTesteCrepusculo,
       colocarToken:    SinfoniaActorSheet._onColocarToken,
-      reviverPersonagem: SinfoniaActorSheet._onReviverPersonagem
+      reviverPersonagem: SinfoniaActorSheet._onReviverPersonagem,
+      usarSubitem:     SinfoniaActorSheet._onUsarSubitem
     }
   };
 
@@ -138,6 +139,7 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
 
     // ── Aba Habilidades: lista as habilidades investidas (v0.7.0 reformulado) ──
     const arvoreNH = doc.getFlag("sinfonia-das-almas", "arvoreNH") ?? {};
+    const sublistasFlag = doc.getFlag("sinfonia-das-almas", "sublistas") ?? {};
     const classe = sys.progressao?.classe ?? "";
     const habsDef = (globalThis.SINFONIA?.HABILIDADES_CLASSE?.[classe]) ?? [];
     const classeMeta = globalThis.SINFONIA?.CLS_META?.[classe];
@@ -151,6 +153,34 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
         if (typeof h.efeito === "function") {
           try { efeitoAtual = h.efeito(nh); } catch {}
         }
+
+        // ── Sublista (Manobras, Truques, Venenos, Disparos) ──
+        // Se a habilidade tem sublistaId, anexa os itens JÁ escolhidos (com
+        // label, custo e ação) pra exibir os chips com botão "Usar" na ficha.
+        let sublistaItens = [];
+        let temSublista = false;
+        if (h.sublistaId) {
+          temSublista = true;
+          const opcoes = globalThis.SINFONIA?.SUBLISTAS?.[h.sublistaId] ?? [];
+          const escolhidos = sublistasFlag[h.id] ?? [];
+          sublistaItens = escolhidos.map(subId => {
+            const opt = opcoes.find(o => o.id === subId);
+            if (!opt) return null;
+            // Monta string de custo legível
+            const custos = [];
+            if (opt.custoPE) custos.push(`${opt.custoPE} PE`);
+            if (opt.custoPI) custos.push(`${opt.custoPI} PI`);
+            const acaoLabel = { parcial: "Parcial", inicial: "Inicial", reacao: "Reação", livre: "Livre" }[opt.acao] ?? "";
+            return {
+              id: opt.id,
+              habId: h.id,
+              label: opt.label,
+              custo: custos.join(" · "),
+              acao: acaoLabel
+            };
+          }).filter(Boolean);
+        }
+
         return {
           id: h.id,
           label: h.label,
@@ -158,7 +188,11 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
           maxNH: h.maxNH,
           desc: h.desc || "",
           efeitoAtual,
-          passiva: !!h.passiva
+          passiva: !!h.passiva,
+          temSublista,
+          sublistaItens,
+          // Quantos ainda pode escolher (NH − já escolhidos)
+          sublistaLivre: temSublista ? Math.max(0, nh - sublistaItens.length) : 0
         };
       });
 
@@ -1236,6 +1270,57 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
   }
 
   /**
+   * Posta no chat o card de um subitem de sublista (Manobra, Truque, Veneno,
+   * Disparo) que o personagem aprendeu. Busca a definição em SINFONIA.SUBLISTAS
+   * a partir do habId (que contém o sublistaId) e do subId.
+   */
+  static async _onUsarSubitem(event, target) {
+    event.preventDefault();
+    const habId = target.dataset.habId;
+    const subId = target.dataset.subId;
+    if (!habId || !subId) return;
+
+    // Descobre o sublistaId a partir da habilidade-mãe
+    const classe = this.document.system.progressao?.classe ?? "";
+    const habsDef = globalThis.SINFONIA?.HABILIDADES_CLASSE?.[classe] ?? [];
+    const habDef = habsDef.find(h => h.id === habId);
+    const sublistaId = habDef?.sublistaId;
+    if (!sublistaId) return;
+
+    const opcoes = globalThis.SINFONIA?.SUBLISTAS?.[sublistaId] ?? [];
+    const sub = opcoes.find(o => o.id === subId);
+    if (!sub) {
+      ui.notifications.warn("Item da sublista não encontrado.");
+      return;
+    }
+
+    // Monta tags de custo / ação
+    const tags = [];
+    const acaoLabel = { parcial: "Ação Parcial", inicial: "Ação Inicial", reacao: "Reação", livre: "Ação Livre" }[sub.acao];
+    if (acaoLabel) tags.push(`<span class="hab-card-tag">${acaoLabel}</span>`);
+    if (sub.custoPE) tags.push(`<span class="hab-card-tag">⚡ ${sub.custoPE} PE</span>`);
+    if (sub.custoPI) tags.push(`<span class="hab-card-tag">◈ ${sub.custoPI} PI</span>`);
+
+    const aprimorado = sub.efeitoAprimorado
+      ? `<div class="hab-card-aprimorado"><b>Aprimorado:</b> ${sub.efeitoAprimorado}</div>`
+      : "";
+
+    await ChatMessage.implementation.create({
+      speaker: ChatMessage.getSpeaker({ actor: this.document }),
+      content: `
+        <div class="sinfonia-hab-card">
+          <div class="hab-card-header">
+            <span class="hab-card-nome">${sub.label}</span>
+            <span class="hab-card-origem">${habDef.label}</span>
+          </div>
+          ${tags.length ? `<div class="hab-card-tags">${tags.join(" ")}</div>` : ""}
+          <div class="hab-card-desc">${sub.desc || ""}</div>
+          ${aprimorado}
+        </div>`
+    });
+  }
+
+  /**
    * Dialog rico de ataque com arma. Reaproveita os mesmos modificadores
    * de Alma do dialog de perícia, mas lê o ND do alvo selecionado
    * automaticamente (Defesa do token alvo) ou pede ND manual.
@@ -1600,6 +1685,38 @@ export class SinfoniaNpcSheet extends ActorSheet {
     root.querySelectorAll(".npc-atrib-roll").forEach(btn => {
       btn.addEventListener("click", () => this._rolarAtributo(btn.dataset.attr));
     });
+
+    // Desvincular tokens (pra NPCs antigos com actorLink:true que compartilham vida)
+    root.querySelector(".btn-desvincular-tokens")?.addEventListener("click", () => this._desvincularTokens());
+  }
+
+  /**
+   * Desvincula o prototype token e todos os tokens deste NPC nas cenas,
+   * setando actorLink:false. Assim cada token passa a ter vida própria.
+   * Útil para NPCs criados antes do fix de preCreateActor.
+   */
+  async _desvincularTokens() {
+    // 1) Prototype token (afeta tokens futuros)
+    await this.actor.update({
+      "prototypeToken.actorLink": false,
+      "prototypeToken.bar1.attribute": "recursos.pv"
+    });
+
+    // 2) Tokens já colocados: cada um vira cópia independente.
+    //    actorLink:false num token existente cria os actorData locais.
+    let count = 0;
+    for (const scene of game.scenes) {
+      const tokensDeste = scene.tokens.filter(t => t.actorId === this.actor.id);
+      for (const token of tokensDeste) {
+        await token.update({ actorLink: false });
+        count++;
+      }
+    }
+    ui.notifications.info(
+      count > 0
+        ? `${count} token(s) desvinculado(s). Agora cada um tem vida própria. ⚠ Tokens que já estavam na cena podem precisar ser recolocados para zerar a vida compartilhada.`
+        : `Prototype desvinculado. Novos tokens terão vida própria.`
+    );
   }
 
   async _rolarAtributo(attr) {
