@@ -162,8 +162,8 @@ export class PersonagemDataModel extends BaseActorModel {
         tecnologia:     periciaMaestriaField()
       }),
 
-      biografia: new HTMLField({ required: true, blank: true }),
-      notas:     new HTMLField({ required: true, blank: true })
+      biografia: new StringField({ required: true, blank: true, initial: "" }),
+      notas:     new StringField({ required: true, blank: true, initial: "" })
     };
   }
 

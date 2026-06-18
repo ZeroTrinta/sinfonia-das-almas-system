@@ -432,8 +432,10 @@ export class SinfoniaActor extends Actor {
 
     // Bônus da arma vira penalidade negativa (ajuda no ataque)
     // rolarPericia já adiciona `penalidade` à ND; se bonus>0, devemos diminuir a ND.
+    // Soma também o bônus de acerto livre digitado no dialog.
     const bonusArma = Number(arma.system.bonus) || 0;
-    const penalidade = Math.max(0, (opts.penalidade || 0) - bonusArma);
+    const bonusAcertoLivre = Number(opts.bonusAcerto) || 0;
+    const penalidade = Math.max(0, (opts.penalidade || 0) - bonusArma - bonusAcertoLivre);
 
     const resultado = await this.rolarPericia(
       pericia, cfg.atribA, cfg.atribB, nd,
@@ -460,8 +462,8 @@ export class SinfoniaActor extends Actor {
     const acoesHtml = resultado.sucesso
       ? `<div class="sinfonia-ataque-acoes">
            <button type="button" class="btn-rolar-dano"
-             data-actor-uuid="${this.uuid}" data-actor-id="${this.id}" data-arma-id="${arma.id}">
-             <i class="fas fa-dice-d20"></i> Rolar Dano
+             data-actor-uuid="${this.uuid}" data-actor-id="${this.id}" data-arma-id="${arma.id}" data-bonus-dano="${Number(opts.bonusDano) || 0}">
+             <i class="fas fa-dice-d20"></i> Rolar Dano${(Number(opts.bonusDano) || 0) ? ` (+${opts.bonusDano})` : ""}
            </button>
          </div>`
       : "";
@@ -674,6 +676,12 @@ export class SinfoniaActor extends Actor {
     if (opts.critico) {
       formula = formula.replace(/(\d+)d(\d+)/gi, (_, n, f) => `${parseInt(n) * 2}d${f}`);
       if (isBrutal) formula = `${formula} + 5`;
+    }
+
+    // Bônus de dano livre (digitado no dialog de ataque)
+    const bonusDanoLivre = Number(opts.bonusDano) || 0;
+    if (bonusDanoLivre !== 0) {
+      formula = `${formula} + ${bonusDanoLivre}`;
     }
 
     let roll;

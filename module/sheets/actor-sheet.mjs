@@ -1374,6 +1374,14 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
           <label>Penalidade do Mestre</label>
           <input type="number" name="penalidade" value="0" min="0" max="20"/>
         </div>
+        <div class="linha linha-bonus">
+          <label>Bônus de Acerto (livre)</label>
+          <input type="number" name="bonusAcerto" value="0" placeholder="+0"/>
+        </div>
+        <div class="linha linha-bonus">
+          <label>Bônus de Dano (livre)</label>
+          <input type="number" name="bonusDano" value="0" placeholder="+0"/>
+        </div>
 
         <fieldset class="alma-bloco">
           <legend>★ Determinação (${det} disponíveis)</legend>
@@ -1440,6 +1448,8 @@ export class SinfoniaActorSheet extends HandlebarsApplicationMixin(DocumentSheet
             resolve({
               nd:           parseInt(f.nd.value) || ndDefault,
               penalidade:   parseInt(f.penalidade.value) || 0,
+              bonusAcerto:  parseInt(f.bonusAcerto.value) || 0,
+              bonusDano:    parseInt(f.bonusDano.value) || 0,
               empenhoA:     f.empenhoA.checked,
               empenhoB:     f.empenhoB.checked,
               perseveranca: f.perseveranca.checked,

@@ -5323,3 +5323,17 @@
 }
 .hab-sub-livre i { color: var(--gold); }
 .hab-sub-livre b { color: var(--gold-light); font-style: normal; }
+
+/* ================================================================
+   v0.9.0 — Campos de bônus livre no dialog de ataque
+================================================================ */
+.sinfonia-dialog-rolagem .linha-bonus label {
+  color: #80e8f8;
+}
+.sinfonia-dialog-rolagem .linha-bonus input {
+  border-color: rgba(128, 232, 248, 0.4);
+}
+.sinfonia-dialog-rolagem .linha-bonus input:focus {
+  border-color: #80e8f8;
+  box-shadow: 0 0 0 1px rgba(128, 232, 248, 0.4);
+}

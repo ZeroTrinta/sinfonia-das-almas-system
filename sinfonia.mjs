@@ -170,6 +170,9 @@ globalThis.SINFONIA = {
         sublistaId: "r_venenos",
         efeito: (nh) => `Fabrica e aplica ${nh} tipo(s) de veneno básico.`,
         desc: "Compreende toxinas. Fabrica venenos em Áreas de Descanso (2 PI cada, teste de Ofício ND 12)." },
+      { id: "r_ataque_vital", label: "Ataque Vital",               maxNH: 5, passiva: false, custoPE: 0,
+        efeito: (nh) => `Reserva de ${nh}d6. Contra Desprevenido ou alvo com aliado adjacente, gaste dados da reserva para +dano. Restaura no início do seu turno.`,
+        desc: "Golpe nos pontos vitais. A reserva de dados d6 é igual ao NH desta habilidade." },
       { id: "r_truques",      label: "Truques Sujos",             maxNH: 10, passiva: false,
         sublistaId: "r_truques",
         efeito: (nh) => `Conhece ${nh} truque(s) sujo(s) da lista.`,
@@ -317,8 +320,6 @@ globalThis.SINFONIA = {
 
     // ── GATUNO: Truques Sujos ──
     r_truques: [
-      { id: "ataque_vital", label: "Ataque Vital [5X]", custoPE: 0, acao: "livre",
-        desc: "Reserva de dados d6 = NH desta habilidade. Contra Desprevenido ou alvo com aliado adjacente, gaste dados desta reserva para +dano. Reserva restaura no início do seu turno." },
       { id: "passo_sombras", label: "Passo das Sombras", custoPE: 10, acao: "parcial",
         desc: "Move 6m (4 quadrados) instantaneamente sem provocar ataques de oportunidade. Em quadrado com cobertura, teste de Furtividade imediato." },
       { id: "bomba_fumaca", label: "Bomba de Fumaça", custoPE: 15, acao: "livre",
@@ -619,7 +620,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.8.9");
+  console.log("Sinfonia das Almas | Pronto. v0.9.0");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).
@@ -687,6 +688,7 @@ Hooks.once("ready", () => {
       const actorUuid = btn.dataset.actorUuid;
       const actorId   = btn.dataset.actorId;
       const armaId    = btn.dataset.armaId;
+      const bonusDano = parseInt(btn.dataset.bonusDano) || 0;
       let actor = null;
       if (actorUuid) {
         try { actor = fromUuidSync(actorUuid); } catch {}
@@ -703,7 +705,7 @@ Hooks.once("ready", () => {
         yes: { label: "Sim, crítico" },
         no:  { label: "Não, dano normal", default: true }
       });
-      await actor.rolarDano(arma, { critico: !!critico });
+      await actor.rolarDano(arma, { critico: !!critico, bonusDano });
       return;
     }
 
