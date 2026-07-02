@@ -236,6 +236,14 @@ export class NpcDataModel extends BaseActorModel {
       // Imunidades de condição (texto livre: "Amedrontado, Provocado")
       imunidadesCondicao: new StringField({ required: true, blank: true, initial: "" }),
 
+      // Perícias do monstro — lista de { key (SINFONIA.PERICIAS), maestria }.
+      // A rolagem usa os dados de atributo do próprio NPC + bônus de maestria.
+      pericias: new ArrayField(new SchemaField({
+        key:      new StringField({ required: true, blank: true, initial: "" }),
+        maestria: new StringField({ required: true, blank: true, initial: "treinado",
+                    choices: ["", "iniciante", "treinado", "experiente"] })
+      }), { required: false, initial: [] }),
+
       // Ações do monstro (ataques, reações, habilidades especiais)
       acoes: new ArrayField(new SchemaField({
         nome:     new StringField({ required: true, blank: true, initial: "" }),

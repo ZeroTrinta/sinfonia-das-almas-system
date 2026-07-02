@@ -157,6 +157,35 @@
 
     {{!-- LATERAL --}}
     <aside class="npc-side-col">
+      {{!-- Perícias --}}
+      <div class="npc-side-block">
+        <div class="npc-section-head sub">
+          <h4>Perícias</h4>
+          <button type="button" class="btn-add-pericia-npc" title="Adicionar perícia"><i class="fas fa-plus"></i></button>
+        </div>
+        {{#each periciasNpc}}
+        <div class="npc-pericia" data-idx="{{this.idx}}">
+          <button type="button" class="npc-pericia-roll" data-idx="{{this.idx}}" title="Rolar {{this.label}} ({{this.atribs}}{{#if this.bonus}} +{{this.bonus}}{{/if}})">
+            <i class="fas fa-dice-d20"></i>
+          </button>
+          <select class="npc-pericia-key" name="system.pericias.{{this.idx}}.key">
+            {{#each ../periciasOpcoes}}
+            <option value="{{this.key}}" {{#eq this.key ../key}}selected{{/eq}}>{{this.label}}</option>
+            {{/each}}
+          </select>
+          <select class="npc-pericia-maestria" name="system.pericias.{{this.idx}}.maestria">
+            <option value=""           {{#eq this.maestria ""}}selected{{/eq}}>—</option>
+            <option value="iniciante"  {{#eq this.maestria "iniciante"}}selected{{/eq}}>I +2</option>
+            <option value="treinado"   {{#eq this.maestria "treinado"}}selected{{/eq}}>T +4</option>
+            <option value="experiente" {{#eq this.maestria "experiente"}}selected{{/eq}}>E +6</option>
+          </select>
+          <button type="button" class="btn-del-pericia-npc" data-idx="{{this.idx}}" title="Remover"><i class="fas fa-trash"></i></button>
+        </div>
+        {{else}}
+        <p class="npc-vazio sub">Sem perícias. Clique em + para adicionar.</p>
+        {{/each}}
+      </div>
+
       {{!-- Imunidades de condição --}}
       <div class="npc-side-block">
         <h4>Imunidades de Condição</h4>

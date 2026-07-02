@@ -5337,3 +5337,114 @@
   border-color: #80e8f8;
   box-shadow: 0 0 0 1px rgba(128, 232, 248, 0.4);
 }
+
+/* ================================================================
+   v0.9.1 — Ficha de MOB: macro com espaço, alinhamento e perícias
+================================================================ */
+/* Campo de fórmula espremido: alguma regra global estica botões e
+   colapsa o input. Forçamos o flex correto na linha de rolagem. */
+.npc-v2 .npc-acao-roll-row {
+  display: flex !important;
+  gap: 6px;
+  align-items: stretch;
+  width: 100%;
+}
+.npc-v2 .npc-acao-roll-row .npc-acao-formula {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 140px !important;
+  max-width: none !important;
+  font-size: 12px !important;
+  font-family: monospace !important;
+  padding: 6px 9px !important;
+  height: 30px;
+}
+.npc-v2 .npc-acao-roll-row .npc-acao-tipodano {
+  flex: 0 0 96px !important;
+  width: 96px !important;
+  font-size: 11px !important;
+  padding: 6px 7px !important;
+  height: 30px;
+}
+.npc-v2 .npc-acao-roll-row .npc-roll-btn {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  max-width: none !important;
+  height: 30px;
+  line-height: 1;
+}
+/* Ação com mais respiro */
+.npc-v2 .npc-acao { padding: 10px 12px; gap: 6px; }
+.npc-v2 .npc-acao-pane { padding: 8px 0 4px; }
+.npc-v2 .npc-acao-field-label { margin-bottom: 5px; }
+
+/* ── Perícias do NPC ── */
+.npc-v2 .npc-pericia {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+.npc-v2 .npc-pericia-roll {
+  flex: 0 0 auto;
+  width: 26px !important;
+  height: 26px;
+  background: color-mix(in srgb, var(--npc-accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--npc-accent) 40%, transparent);
+  color: var(--npc-accent-l);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+.npc-v2 .npc-pericia-roll:hover {
+  background: color-mix(in srgb, var(--npc-accent) 28%, transparent);
+  text-shadow: 0 0 6px var(--npc-accent);
+}
+.npc-v2 .npc-pericia-key {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 11px;
+  height: 26px;
+  padding: 0 4px;
+}
+.npc-v2 .npc-pericia-maestria {
+  flex: 0 0 64px;
+  width: 64px;
+  font-size: 10px;
+  height: 26px;
+  padding: 0 2px;
+  text-align: center;
+  text-align-last: center;
+}
+.npc-v2 .btn-del-pericia-npc {
+  flex: 0 0 auto;
+  width: 26px !important;
+  height: 26px;
+  background: transparent;
+  border: 1px solid #2a2440;
+  color: var(--silver-dim);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+.npc-v2 .btn-del-pericia-npc:hover { border-color: #c84040; color: #ff8a8a; }
+.npc-v2 .btn-add-pericia-npc {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold-light);
+  width: 22px; height: 22px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.npc-v2 .btn-add-pericia-npc:hover { background: rgba(200,151,42,0.15); border-color: var(--gold); }
+
+/* Alinhamento fino dos cards de stats (labels sem quebrar) */
+.npc-v2 .npc-stat-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+.npc-v2 .npc-stats-row { align-items: stretch; }
+.npc-v2 .npc-stat { justify-content: space-between; min-height: 64px; }

@@ -592,6 +592,20 @@ Hooks.once("init", () => {
     });
   });
 
+  // ── Garantia extra: TODO token de NPC que cai no mapa nasce desvinculado ──
+  // Cobre NPCs antigos (criados antes do fix do preCreateActor) sem precisar
+  // do botão "Vida individual": no momento que o token é lançado na cena,
+  // forçamos actorLink:false — cada token vira cópia independente da ficha mãe.
+  Hooks.on("preCreateToken", (tokenDoc, data, options, userId) => {
+    const actor = tokenDoc.actor;
+    if (actor?.type === "npc" && tokenDoc.actorLink) {
+      tokenDoc.updateSource({
+        actorLink: false,
+        bar1: { attribute: "recursos.pv" }
+      });
+    }
+  });
+
   // Templates de Handlebars
   loadTemplates([
     "systems/sinfonia-das-almas/templates/actor/personagem-sheet.hbs",
@@ -620,7 +634,7 @@ Hooks.once("init", () => {
 ============================================================ */
 Hooks.once("ready", () => {
   globalThis.ArvoreHabilidades = ArvoreHabilidades;
-  console.log("Sinfonia das Almas | Pronto. v0.9.0");
+  console.log("Sinfonia das Almas | Pronto. v0.9.1");
 
   // Hook de combate: no início do turno do personagem, processa Crepúsculo da Morte
   // (perde 1 Det/turno, oferece teste de Vontade quando Det = 1).

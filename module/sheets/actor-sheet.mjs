@@ -1601,7 +1601,7 @@ export class SinfoniaNpcSheet extends ActorSheet {
     return foundry.utils.mergeObject(super.defaultOptions, {
       classes: ["sinfonia-das-almas","sheet","actor","npc","npc-v2"],
       template: "systems/sinfonia-das-almas/templates/actor/npc-sheet.hbs",
-      width: 720, height: 760,
+      width: 860, height: 800,
       resizable: true
     });
   }
@@ -1632,6 +1632,22 @@ export class SinfoniaNpcSheet extends ActorSheet {
     ctx.atributosList = Object.entries(SINFONIA.ATRIBUTOS).map(([k, m]) => ({
       key: k, abbr: m.abbr, dado: sys.atributos?.[k] ?? "d6"
     }));
+
+    // Perícias do NPC — opções disponíveis + linhas configuradas
+    ctx.periciasOpcoes = Object.entries(SINFONIA.PERICIAS)
+      .map(([key, v]) => ({ key, label: v.label }))
+      .sort((a, b) => a.label.localeCompare(b.label, "pt-BR"));
+    ctx.periciasNpc = (sys.pericias ?? []).map((p, idx) => {
+      const cfg = SINFONIA.PERICIAS[p.key];
+      return {
+        idx,
+        key: p.key,
+        maestria: p.maestria,
+        label: cfg?.label ?? p.key,
+        atribs: cfg ? `${cfg.atribA.toUpperCase()}+${cfg.atribB.toUpperCase()}` : "",
+        bonus: SINFONIA.MAESTRIA_BONUS[p.maestria] ?? 0
+      };
+    });
     return ctx;
   }
 
@@ -1698,6 +1714,47 @@ export class SinfoniaNpcSheet extends ActorSheet {
 
     // Desvincular tokens (pra NPCs antigos com actorLink:true que compartilham vida)
     root.querySelector(".btn-desvincular-tokens")?.addEventListener("click", () => this._desvincularTokens());
+
+    // ── Perícias do NPC ──
+    root.querySelector(".btn-add-pericia-npc")?.addEventListener("click", async () => {
+      const pericias = foundry.utils.deepClone(this.actor.system.pericias ?? []);
+      pericias.push({ key: "percepcao", maestria: "treinado" });
+      await this.actor.update({ "system.pericias": pericias });
+    });
+    root.querySelectorAll(".btn-del-pericia-npc").forEach(btn => {
+      btn.addEventListener("click", async () => {
+        const idx = Number(btn.dataset.idx);
+        const pericias = foundry.utils.deepClone(this.actor.system.pericias ?? []);
+        pericias.splice(idx, 1);
+        await this.actor.update({ "system.pericias": pericias });
+      });
+    });
+    root.querySelectorAll(".npc-pericia-roll").forEach(btn => {
+      btn.addEventListener("click", () => this._rolarPericiaNpc(Number(btn.dataset.idx)));
+    });
+  }
+
+  /**
+   * Rola uma perícia do NPC: dado do atributo A + dado do atributo B + bônus
+   * de maestria (mesma matemática dos personagens, usando os dados do monstro).
+   */
+  async _rolarPericiaNpc(idx) {
+    const p = this.actor.system.pericias?.[idx];
+    if (!p) return;
+    const cfg = SINFONIA.PERICIAS[p.key];
+    if (!cfg) {
+      ui.notifications.warn(`Perícia desconhecida: ${p.key}`);
+      return;
+    }
+    const dA = this.actor.system.atributos?.[cfg.atribA] ?? "d6";
+    const dB = this.actor.system.atributos?.[cfg.atribB] ?? "d6";
+    const bonus = SINFONIA.MAESTRIA_BONUS[p.maestria] ?? 0;
+    const formula = `1${dA} + 1${dB}${bonus ? ` + ${bonus}` : ""}`;
+    const roll = await new Roll(formula).roll();
+    await roll.toMessage({
+      speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+      flavor: `<b>${cfg.label}</b> (${cfg.atribA.toUpperCase()}+${cfg.atribB.toUpperCase()}${bonus ? ` +${bonus}` : ""})`
+    });
   }
 
   /**
